@@ -49,18 +49,18 @@ const AboutSection = () => {
             </p>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-background rounded-lg shadow-sm">
-                <div className="text-3xl font-bold text-primary">10+</div>
-                <div className="text-sm text-muted-foreground">Years Experience</div>
+            <div className="grid grid-cols-3 gap-2 md:gap-4">
+              <div className="text-center p-2 md:p-4 bg-background rounded-lg shadow-sm">
+                <div className="text-xl md:text-3xl font-bold text-primary">10+</div>
+                <div className="text-xs md:text-sm text-muted-foreground">Years Experience</div>
               </div>
-              <div className="text-center p-4 bg-background rounded-lg shadow-sm">
-                <div className="text-3xl font-bold text-primary">50+</div>
-                <div className="text-sm text-muted-foreground">Vehicles</div>
+              <div className="text-center p-2 md:p-4 bg-background rounded-lg shadow-sm">
+                <div className="text-xl md:text-3xl font-bold text-primary">50+</div>
+                <div className="text-xs md:text-sm text-muted-foreground">Vehicles</div>
               </div>
-              <div className="text-center p-4 bg-background rounded-lg shadow-sm">
-                <div className="text-3xl font-bold text-primary">10K+</div>
-                <div className="text-sm text-muted-foreground">Happy Customers</div>
+              <div className="text-center p-2 md:p-4 bg-background rounded-lg shadow-sm">
+                <div className="text-xl md:text-3xl font-bold text-primary">10K+</div>
+                <div className="text-xs md:text-sm text-muted-foreground">Happy Customers</div>
               </div>
             </div>
           </div>
