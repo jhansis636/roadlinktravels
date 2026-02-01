@@ -19,6 +19,7 @@ const Footer = () => {
     { href: "#why-us", label: "Why Choose Us" },
     { href: "#testimonials", label: "Testimonials" },
     { href: "#contact", label: "Contact" },
+    { href: "/admin/login", label: "Admin" },
   ];
 
   return (
