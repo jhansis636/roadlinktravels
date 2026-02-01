@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Phone, MessageCircle, MapPin, Clock, CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/assets/hero-banner.png";
 import BookingModal from "./BookingModal";
 
 const HeroSection = () => {
