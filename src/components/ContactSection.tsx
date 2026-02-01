@@ -111,7 +111,7 @@ const ContactSection = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-muted p-8 rounded-lg">
+          <div className="bg-muted p-4 md:p-8 rounded-lg">
             <h3 className="text-2xl font-bold text-foreground mb-6">
               Send Us a Message
             </h3>

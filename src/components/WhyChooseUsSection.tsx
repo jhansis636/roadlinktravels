@@ -52,20 +52,20 @@ const WhyChooseUsSection = () => {
         </div>
 
         {/* Reasons Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {reasons.map((reason) => (
             <div
               key={reason.title}
-              className="flex gap-4 p-6 rounded-lg bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 hover:bg-primary-foreground/10 transition-colors"
+              className="flex gap-3 md:gap-4 p-4 md:p-6 rounded-lg bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 hover:bg-primary-foreground/10 transition-colors"
             >
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
-                  <reason.icon className="w-6 h-6 text-secondary-foreground" />
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-secondary flex items-center justify-center">
+                  <reason.icon className="w-5 h-5 md:w-6 md:h-6 text-secondary-foreground" />
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-2">{reason.title}</h3>
-                <p className="text-primary-foreground/80 text-sm leading-relaxed">
+                <h3 className="text-base md:text-lg font-semibold mb-1 md:mb-2">{reason.title}</h3>
+                <p className="text-primary-foreground/80 text-xs md:text-sm leading-relaxed">
                   {reason.description}
                 </p>
               </div>
