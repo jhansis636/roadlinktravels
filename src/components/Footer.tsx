@@ -33,9 +33,9 @@ const Footer = () => {
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-base md:text-lg">K</span>
               </div>
-              <div>
-                <span className="text-lg md:text-xl font-bold">Kavya</span>
-                <span className="text-lg md:text-xl font-bold text-secondary">Travels</span>
+              <div className="flex flex-col leading-tight">
+                <span className="text-base md:text-lg font-bold">Kavya Tours</span>
+                <span className="text-xs font-medium text-secondary">and Travels</span>
               </div>
             </div>
             <p className="text-background/70 mb-4 md:mb-6 text-xs md:text-sm leading-relaxed">
@@ -146,7 +146,7 @@ const Footer = () => {
       <div className="border-t border-background/10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-background/60">
-            <p>© {currentYear} KavyaTravels. All rights reserved.</p>
+            <p>© {currentYear} Kavya Tours and Travels. All rights reserved.</p>
             <p>Taxi Services in Coimbatore, Tamil Nadu</p>
           </div>
         </div>
