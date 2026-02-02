@@ -21,9 +21,9 @@ const Header = () => {
           {/* Logo */}
           <a href="#home" className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">K</span>
+              <span className="text-primary-foreground font-bold text-lg">R</span>
             </div>
-            <span className="text-xl font-bold text-foreground">Kavya Tours and Travels</span>
+            <span className="text-xl font-bold text-foreground">Roadlink Tours and Travels</span>
           </a>
 
           {/* Desktop Navigation */}

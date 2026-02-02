@@ -38,7 +38,7 @@ const HeroSection = () => {
 
             {/* Subheading */}
             <p className="text-base md:text-xl text-background/90 mb-3 md:mb-4">
-              Kavya Tours and Travels – Your Trusted Travel Partner
+              Roadlink Tours and Travels – Your Trusted Travel Partner
             </p>
 
             {/* Services List */}

@@ -31,9 +31,9 @@ const Footer = () => {
           <div className="col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-base md:text-lg">K</span>
+                <span className="text-primary-foreground font-bold text-base md:text-lg">R</span>
               </div>
-              <span className="text-lg md:text-xl font-bold">Kavya Tours and Travels</span>
+              <span className="text-lg md:text-xl font-bold">Roadlink Tours and Travels</span>
             </div>
             <p className="text-background/70 mb-4 md:mb-6 text-xs md:text-sm leading-relaxed">
               Your trusted taxi service partner in Coimbatore. Safe, reliable, and 
@@ -143,7 +143,7 @@ const Footer = () => {
       <div className="border-t border-background/10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-background/60">
-            <p>© {currentYear} Kavya Tours and Travels. All rights reserved.</p>
+            <p>© {currentYear} Roadlink Tours and Travels. All rights reserved.</p>
             <p>Taxi Services in Coimbatore, Tamil Nadu</p>
           </div>
         </div>
