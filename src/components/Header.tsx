@@ -23,10 +23,7 @@ const Header = () => {
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">K</span>
             </div>
-            <div className="flex flex-col leading-tight">
-              <span className="text-lg font-bold text-foreground">Kavya Tours</span>
-              <span className="text-xs font-medium text-primary">and Travels</span>
-            </div>
+            <span className="text-xl font-bold text-foreground">Kavya Tours and Travels</span>
           </a>
 
           {/* Desktop Navigation */}
