@@ -33,10 +33,7 @@ const Footer = () => {
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-base md:text-lg">K</span>
               </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-base md:text-lg font-bold">Kavya Tours</span>
-                <span className="text-xs font-medium text-secondary">and Travels</span>
-              </div>
+              <span className="text-lg md:text-xl font-bold">Kavya Tours and Travels</span>
             </div>
             <p className="text-background/70 mb-4 md:mb-6 text-xs md:text-sm leading-relaxed">
               Your trusted taxi service partner in Coimbatore. Safe, reliable, and 
