@@ -37,7 +37,7 @@ const AboutSection = () => {
               Your Trusted Taxi Partner in Coimbatore
             </h2>
             <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
-              KavyaTravels is a premier taxi service provider in Coimbatore, offering safe, 
+              Kavya Tours and Travels is a premier taxi service provider in Coimbatore, offering safe, 
               affordable, and comfortable rides for all your travel needs. Whether you need 
               a local taxi, outstation travel, or airport pickup, we've got you covered.
             </p>

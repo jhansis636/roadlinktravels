@@ -43,7 +43,7 @@ const WhyChooseUsSection = () => {
             Why Choose Us
           </span>
           <h2 className="text-3xl md:text-4xl font-bold mt-2 mb-4">
-            The KavyaTravels Difference
+            The Kavya Tours Difference
           </h2>
           <p className="text-primary-foreground/80 text-lg">
             We go above and beyond to ensure every journey with us is comfortable, 

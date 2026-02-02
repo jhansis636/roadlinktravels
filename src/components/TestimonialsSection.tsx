@@ -5,7 +5,7 @@ const testimonials = [
     name: "Rajesh Kumar",
     location: "Coimbatore",
     rating: 5,
-    text: "Excellent service! The driver arrived on time and the car was spotlessly clean. I regularly use KavyaTravels for my airport transfers. Highly recommended!",
+    text: "Excellent service! The driver arrived on time and the car was spotlessly clean. I regularly use Kavya Tours and Travels for my airport transfers. Highly recommended!",
   },
   {
     name: "Priya Venkatesh",
@@ -35,7 +35,7 @@ const testimonials = [
     name: "Sangeetha Ravi",
     location: "Coimbatore",
     rating: 5,
-    text: "Safe and comfortable ride even during late night hours. The 24/7 availability is a huge plus. Thank you KavyaTravels!",
+    text: "Safe and comfortable ride even during late night hours. The 24/7 availability is a huge plus. Thank you Kavya Tours and Travels!",
   },
 ];
 
@@ -53,7 +53,7 @@ const TestimonialsSection = () => {
           </h2>
           <p className="text-muted-foreground text-lg">
             Don't just take our word for it. Here's what our happy customers have to say 
-            about their experience with KavyaTravels.
+            about their experience with Kavya Tours and Travels.
           </p>
         </div>
 

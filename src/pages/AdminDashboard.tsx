@@ -178,7 +178,7 @@ const AdminDashboard = () => {
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">K</span>
             </div>
-            <span className="font-semibold text-lg">KavyaTravels Admin</span>
+            <span className="font-semibold text-lg">Kavya Tours Admin</span>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" size="sm" onClick={fetchBookings}>

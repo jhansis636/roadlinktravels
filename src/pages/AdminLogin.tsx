@@ -64,7 +64,7 @@ const AdminLogin = () => {
 
     toast({
       title: "Login Successful",
-      description: "Welcome to KavyaTravels Admin",
+      description: "Welcome to Kavya Tours and Travels Admin",
     });
     // The useEffect will handle navigation once isAdmin is true
     setIsLoading(false);
