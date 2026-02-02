@@ -5,7 +5,7 @@ const testimonials = [
     name: "Rajesh Kumar",
     location: "Coimbatore",
     rating: 5,
-    text: "Excellent service! The driver arrived on time and the car was spotlessly clean. I regularly use Kavya Tours and Travels for my airport transfers. Highly recommended!",
+    text: "Excellent service! The driver arrived on time and the car was spotlessly clean. I regularly use Roadlink Tours and Travels for my airport transfers. Highly recommended!",
   },
   {
     name: "Priya Venkatesh",
@@ -35,7 +35,7 @@ const testimonials = [
     name: "Sangeetha Ravi",
     location: "Coimbatore",
     rating: 5,
-    text: "Safe and comfortable ride even during late night hours. The 24/7 availability is a huge plus. Thank you Kavya Tours and Travels!",
+    text: "Safe and comfortable ride even during late night hours. The 24/7 availability is a huge plus. Thank you Roadlink Tours and Travels!",
   },
 ];
 
