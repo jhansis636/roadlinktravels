@@ -55,7 +55,7 @@ const Footer = () => {
                 <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
               </a>
               <a
-                href="mailto:info@kavyatravels.com"
+                href="mailto:info@roadlinktravels.com"
                 className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors"
               >
                 <Mail className="w-4 h-4 md:w-5 md:h-5" />
@@ -118,10 +118,10 @@ const Footer = () => {
                 <div>
                   <div className="text-xs md:text-sm font-medium">Email</div>
                   <a
-                    href="mailto:info@kavyatravels.com"
+                    href="mailto:info@roadlinktravels.com"
                     className="text-background/70 text-xs md:text-sm hover:text-secondary break-all"
                   >
-                    info@kavyatravels.com
+                    info@roadlinktravels.com
                   </a>
                 </div>
               </li>
