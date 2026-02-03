@@ -1,0 +1,172 @@
+import HeroSection from "@/components/HeroSection";
+import { Link } from "react-router-dom";
+import { Shield, Users, Car, Headphones, MapPin, Plane, Building2, Palmtree } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const features = [
+  {
+    icon: Shield,
+    title: "Safe & Secure",
+    description: "Your safety is our priority with verified drivers and sanitized vehicles.",
+  },
+  {
+    icon: Users,
+    title: "Experienced Drivers",
+    description: "Professional drivers with years of experience and local knowledge.",
+  },
+  {
+    icon: Car,
+    title: "Well-Maintained Fleet",
+    description: "Modern, clean, and regularly serviced vehicles for comfortable rides.",
+  },
+  {
+    icon: Headphones,
+    title: "24/7 Support",
+    description: "Round-the-clock customer support for all your travel needs.",
+  },
+];
+
+const services = [
+  {
+    icon: Car,
+    title: "Local Taxi Services",
+    description: "Convenient and affordable local taxi services within Coimbatore city.",
+  },
+  {
+    icon: MapPin,
+    title: "Outstation Taxi",
+    description: "Comfortable outstation trips to any destination in Tamil Nadu and beyond.",
+  },
+  {
+    icon: Plane,
+    title: "Airport Transfers",
+    description: "Reliable airport transfer services to and from Coimbatore International Airport.",
+  },
+  {
+    icon: Building2,
+    title: "Corporate Travel",
+    description: "Professional corporate travel solutions for businesses.",
+  },
+  {
+    icon: Users,
+    title: "Family Trips",
+    description: "Spacious vehicles for family outings and group travel.",
+  },
+  {
+    icon: Palmtree,
+    title: "Tourist Trips",
+    description: "Explore popular tourist destinations around Coimbatore.",
+  },
+];
+
+const Home = () => {
+  return (
+    <>
+      <HeroSection />
+      
+      {/* About Preview Section */}
+      <section className="py-20 bg-muted">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+                About Us
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-6">
+                Your Trusted Taxi Partner in Coimbatore
+              </h2>
+              <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+                Roadlink Tours and Travels is a premier taxi service provider in Coimbatore, offering safe, 
+                affordable, and comfortable rides for all your travel needs.
+              </p>
+              <Button asChild>
+                <Link to="/about">Learn More About Us</Link>
+              </Button>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-6">
+              {features.map((feature) => (
+                <div
+                  key={feature.title}
+                  className="bg-background p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                    <feature.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm">{feature.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Preview Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+              Our Services
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
+              Taxi Services for Every Need
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              From local trips to outstation journeys, we offer a complete range of taxi 
+              services to meet all your travel requirements.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service) => (
+              <div
+                key={service.title}
+                className="group bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-all hover:border-primary/30"
+              >
+                <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <service.icon className="w-7 h-7 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">
+                  {service.title}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {service.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Button size="lg" asChild>
+              <Link to="/services">View All Services</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Ready to Book Your Ride?
+          </h2>
+          <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
+            Experience the best taxi service in Coimbatore. Book now and travel with comfort and reliability.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" variant="secondary" asChild>
+              <a href="tel:+919876543210">Call Now</a>
+            </Button>
+            <Button size="lg" variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10" asChild>
+              <Link to="/contact">Contact Us</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default Home;
