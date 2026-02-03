@@ -1,4 +1,5 @@
 import { Phone, MessageCircle, MapPin, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -13,12 +14,12 @@ const Footer = () => {
   ];
 
   const quickLinks = [
-    { href: "#home", label: "Home" },
-    { href: "#about", label: "About Us" },
-    { href: "#services", label: "Services" },
-    { href: "#why-us", label: "Why Choose Us" },
-    { href: "#testimonials", label: "Testimonials" },
-    { href: "#contact", label: "Contact" },
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About Us" },
+    { href: "/services", label: "Services" },
+    { href: "/why-us", label: "Why Choose Us" },
+    { href: "/testimonials", label: "Testimonials" },
+    { href: "/contact", label: "Contact" },
     { href: "/admin/login", label: "Admin" },
   ];
 
@@ -29,12 +30,12 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {/* Brand Column */}
           <div className="col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-base md:text-lg">R</span>
               </div>
               <span className="text-lg md:text-xl font-bold">Roadlink Tours and Travels</span>
-            </div>
+            </Link>
             <p className="text-background/70 mb-4 md:mb-6 text-xs md:text-sm leading-relaxed">
               Your trusted taxi service partner in Coimbatore. Safe, reliable, and 
               affordable travel solutions for all your needs.
@@ -69,12 +70,12 @@ const Footer = () => {
             <ul className="space-y-1.5 md:space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
+                  <Link
+                    to={link.href}
                     className="text-background/70 hover:text-secondary transition-colors text-xs md:text-sm"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -86,12 +87,12 @@ const Footer = () => {
             <ul className="space-y-1.5 md:space-y-2">
               {services.map((service) => (
                 <li key={service}>
-                  <a
-                    href="#services"
+                  <Link
+                    to="/services"
                     className="text-background/70 hover:text-secondary transition-colors text-xs md:text-sm"
                   >
                     {service}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
