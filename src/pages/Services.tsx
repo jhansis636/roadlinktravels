@@ -1,52 +1,98 @@
 import { MapPin, Plane, Building2, Users, Palmtree, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useServices } from "@/hooks/useServices";
+import type { LucideIcon } from "lucide-react";
 
-const services = [
+const iconMap: Record<string, LucideIcon> = {
+  Car,
+  MapPin,
+  Plane,
+  Building2,
+  Users,
+  Palmtree,
+};
+
+const defaultServices = [
   {
-    icon: Car,
+    id: "1",
+    icon_name: "Car",
     title: "Local Taxi Services",
-    description:
-      "Convenient and affordable local taxi services within Coimbatore city. Perfect for daily commutes, shopping trips, and city tours.",
+    description: "Convenient and affordable local taxi services within Coimbatore city. Perfect for daily commutes, shopping trips, and city tours.",
     features: ["Hourly Rentals", "City Tours", "Shopping Trips", "Daily Commute"],
+    is_active: true,
+    display_order: 0,
+    image_url: null,
+    created_at: "",
+    updated_at: "",
   },
   {
-    icon: MapPin,
+    id: "2",
+    icon_name: "MapPin",
     title: "Outstation Taxi Services",
-    description:
-      "Comfortable outstation trips to any destination in Tamil Nadu and beyond. One-way and round-trip options available.",
+    description: "Comfortable outstation trips to any destination in Tamil Nadu and beyond. One-way and round-trip options available.",
     features: ["One-way Trips", "Round Trips", "Multi-city Tours", "Interstate Travel"],
+    is_active: true,
+    display_order: 1,
+    image_url: null,
+    created_at: "",
+    updated_at: "",
   },
   {
-    icon: Plane,
+    id: "3",
+    icon_name: "Plane",
     title: "Airport Pickup & Drop",
-    description:
-      "Reliable airport transfer services to and from Coimbatore International Airport. On-time pickup guaranteed.",
+    description: "Reliable airport transfer services to and from Coimbatore International Airport. On-time pickup guaranteed.",
     features: ["Flight Tracking", "Meet & Greet", "24/7 Service", "Luggage Assistance"],
+    is_active: true,
+    display_order: 2,
+    image_url: null,
+    created_at: "",
+    updated_at: "",
   },
   {
-    icon: Building2,
+    id: "4",
+    icon_name: "Building2",
     title: "Corporate Travel",
-    description:
-      "Professional corporate travel solutions for businesses. Monthly packages and dedicated vehicles available.",
+    description: "Professional corporate travel solutions for businesses. Monthly packages and dedicated vehicles available.",
     features: ["Employee Transport", "Client Pickup", "Event Transport", "Monthly Contracts"],
+    is_active: true,
+    display_order: 3,
+    image_url: null,
+    created_at: "",
+    updated_at: "",
   },
   {
-    icon: Users,
+    id: "5",
+    icon_name: "Users",
     title: "Family Trips",
-    description:
-      "Spacious vehicles for family outings and group travel. Safe and comfortable journey for all ages.",
+    description: "Spacious vehicles for family outings and group travel. Safe and comfortable journey for all ages.",
     features: ["Tempo Travellers", "Innova Crysta", "Family Packages", "Child-Friendly"],
+    is_active: true,
+    display_order: 4,
+    image_url: null,
+    created_at: "",
+    updated_at: "",
   },
   {
-    icon: Palmtree,
+    id: "6",
+    icon_name: "Palmtree",
     title: "Tourist Trips",
-    description:
-      "Explore popular tourist destinations around Coimbatore including Ooty, Kodaikanal, Munnar, and more.",
+    description: "Explore popular tourist destinations around Coimbatore including Ooty, Kodaikanal, Munnar, and more.",
     features: ["Hill Stations", "Temple Tours", "Weekend Getaways", "Guided Tours"],
+    is_active: true,
+    display_order: 5,
+    image_url: null,
+    created_at: "",
+    updated_at: "",
   },
 ];
 
 const Services = () => {
+  const { data: dbServices, isLoading } = useServices(true);
+  
+  // Use database services if available, otherwise use defaults
+  const services = dbServices && dbServices.length > 0 ? dbServices : defaultServices;
+
   return (
     <div className="pt-16 md:pt-20">
       {/* Hero Section */}
@@ -63,38 +109,47 @@ const Services = () => {
       {/* Services Grid */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service) => (
-              <div
-                key={service.title}
-                className="group bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-all hover:border-primary/30"
-              >
-                <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <service.icon className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">
-                  {service.title}
-                </h3>
-                <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-                  {service.description}
-                </p>
-                <ul className="space-y-2 mb-6">
-                  {service.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="flex items-center gap-2 text-sm text-muted-foreground"
-                    >
-                      <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <a href="tel:+919876543210">Book Now</a>
-                </Button>
-              </div>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="text-center text-muted-foreground py-12">Loading services...</div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {services.map((service) => {
+                const IconComponent = iconMap[service.icon_name || "Car"] || Car;
+                return (
+                  <div
+                    key={service.id}
+                    className="group bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-all hover:border-primary/30"
+                  >
+                    <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                      <IconComponent className="w-7 h-7 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-foreground mb-3">
+                      {service.title}
+                    </h3>
+                    <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
+                      {service.description}
+                    </p>
+                    {service.features && service.features.length > 0 && (
+                      <ul className="space-y-2 mb-6">
+                        {service.features.map((feature) => (
+                          <li
+                            key={feature}
+                            className="flex items-center gap-2 text-sm text-muted-foreground"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <Button variant="outline" size="sm" className="w-full" asChild>
+                      <a href="tel:+919876543210">Book Now</a>
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

@@ -1,65 +1,95 @@
 import { Star, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useTestimonials } from "@/hooks/useTestimonials";
 
-const testimonials = [
+const defaultTestimonials = [
   {
-    name: "Rajesh Kumar",
+    id: "1",
+    customer_name: "Rajesh Kumar",
     location: "Coimbatore",
     rating: 5,
-    text: "Excellent service! The driver arrived on time and the car was spotlessly clean. I regularly use Roadlink Tours and Travels for my airport transfers. Highly recommended!",
+    review_text: "Excellent service! The driver arrived on time and the car was spotlessly clean. I regularly use Roadlink Tours and Travels for my airport transfers. Highly recommended!",
+    avatar_url: null,
+    is_featured: false,
+    is_active: true,
+    display_order: 0,
+    created_at: "",
+    updated_at: "",
   },
   {
-    name: "Priya Venkatesh",
+    id: "2",
+    customer_name: "Priya Venkatesh",
     location: "Chennai",
     rating: 5,
-    text: "Booked a taxi for our Ooty trip. The driver was very professional and knew all the best spots. Made our family vacation truly memorable.",
+    review_text: "Booked a taxi for our Ooty trip. The driver was very professional and knew all the best spots. Made our family vacation truly memorable.",
+    avatar_url: null,
+    is_featured: false,
+    is_active: true,
+    display_order: 1,
+    created_at: "",
+    updated_at: "",
   },
   {
-    name: "Mohammed Farhan",
+    id: "3",
+    customer_name: "Mohammed Farhan",
     location: "Coimbatore",
     rating: 5,
-    text: "Very reliable service for corporate travel. Our clients are always impressed with the quality of vehicles and punctuality. Great for business needs.",
+    review_text: "Very reliable service for corporate travel. Our clients are always impressed with the quality of vehicles and punctuality. Great for business needs.",
+    avatar_url: null,
+    is_featured: false,
+    is_active: true,
+    display_order: 2,
+    created_at: "",
+    updated_at: "",
   },
   {
-    name: "Lakshmi Sundaram",
+    id: "4",
+    customer_name: "Lakshmi Sundaram",
     location: "Tirupur",
     rating: 5,
-    text: "Used their service for my daughter's wedding. Multiple vehicles, coordinated pickup, and excellent service. Will definitely use again!",
+    review_text: "Used their service for my daughter's wedding. Multiple vehicles, coordinated pickup, and excellent service. Will definitely use again!",
+    avatar_url: null,
+    is_featured: false,
+    is_active: true,
+    display_order: 3,
+    created_at: "",
+    updated_at: "",
   },
   {
-    name: "Arun Prakash",
+    id: "5",
+    customer_name: "Arun Prakash",
     location: "Coimbatore",
     rating: 5,
-    text: "The best taxi service in Coimbatore! Affordable prices, clean cars, and friendly drivers. My go-to choice for all travel needs.",
+    review_text: "The best taxi service in Coimbatore! Affordable prices, clean cars, and friendly drivers. My go-to choice for all travel needs.",
+    avatar_url: null,
+    is_featured: false,
+    is_active: true,
+    display_order: 4,
+    created_at: "",
+    updated_at: "",
   },
   {
-    name: "Sangeetha Ravi",
+    id: "6",
+    customer_name: "Sangeetha Ravi",
     location: "Coimbatore",
     rating: 5,
-    text: "Safe and comfortable ride even during late night hours. The 24/7 availability is a huge plus. Thank you Roadlink Tours and Travels!",
-  },
-  {
-    name: "Karthik Subramanian",
-    location: "Erode",
-    rating: 5,
-    text: "Excellent outstation service. The driver was patient, knowledgeable, and ensured our comfort throughout the journey. Will recommend to friends.",
-  },
-  {
-    name: "Meena Krishnan",
-    location: "Salem",
-    rating: 5,
-    text: "Used their airport pickup service. The driver was waiting for us despite our flight delay. Very professional and understanding service.",
-  },
-  {
-    name: "Vijay Anand",
-    location: "Coimbatore",
-    rating: 5,
-    text: "Great experience with the corporate travel package. Reliable, punctual, and the vehicles are always in pristine condition.",
+    review_text: "Safe and comfortable ride even during late night hours. The 24/7 availability is a huge plus. Thank you Roadlink Tours and Travels!",
+    avatar_url: null,
+    is_featured: false,
+    is_active: true,
+    display_order: 5,
+    created_at: "",
+    updated_at: "",
   },
 ];
 
 const Testimonials = () => {
+  const { data: dbTestimonials, isLoading } = useTestimonials(true);
+  
+  // Use database testimonials if available, otherwise use defaults
+  const testimonials = dbTestimonials && dbTestimonials.length > 0 ? dbTestimonials : defaultTestimonials;
+
   return (
     <div className="pt-16 md:pt-20">
       {/* Hero Section */}
@@ -99,39 +129,51 @@ const Testimonials = () => {
       {/* Testimonials Grid */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow relative"
-              >
-                <Quote className="absolute top-4 right-4 w-8 h-8 text-primary/10" />
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-secondary text-secondary" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground mb-6 leading-relaxed text-sm">
-                  "{testimonial.text}"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-primary-foreground font-semibold text-sm">
-                      {testimonial.name.charAt(0)}
-                    </span>
+          {isLoading ? (
+            <div className="text-center text-muted-foreground py-12">Loading testimonials...</div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {testimonials.map((testimonial) => (
+                <div
+                  key={testimonial.id}
+                  className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow relative"
+                >
+                  <Quote className="absolute top-4 right-4 w-8 h-8 text-primary/10" />
+                  <div className="flex items-center gap-1 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-secondary text-secondary" />
+                    ))}
                   </div>
-                  <div>
-                    <div className="font-semibold text-foreground text-sm">
-                      {testimonial.name}
-                    </div>
-                    <div className="text-muted-foreground text-xs">
-                      {testimonial.location}
+                  <p className="text-muted-foreground mb-6 leading-relaxed text-sm">
+                    "{testimonial.review_text}"
+                  </p>
+                  <div className="flex items-center gap-3">
+                    {testimonial.avatar_url ? (
+                      <img
+                        src={testimonial.avatar_url}
+                        alt={testimonial.customer_name}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-primary-foreground font-semibold text-sm">
+                          {testimonial.customer_name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-semibold text-foreground text-sm">
+                        {testimonial.customer_name}
+                      </div>
+                      <div className="text-muted-foreground text-xs">
+                        {testimonial.location}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
