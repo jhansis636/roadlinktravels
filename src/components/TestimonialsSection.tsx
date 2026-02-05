@@ -1,45 +1,59 @@
 import { Star, Quote } from "lucide-react";
+import { useTestimonials } from "@/hooks/useTestimonials";
 
-const testimonials = [
+const defaultTestimonials = [
   {
-    name: "Rajesh Kumar",
+    id: "1",
+    customer_name: "Rajesh Kumar",
     location: "Coimbatore",
     rating: 5,
-    text: "Excellent service! The driver arrived on time and the car was spotlessly clean. I regularly use Roadlink Tours and Travels for my airport transfers. Highly recommended!",
+    review_text: "Excellent service! The driver arrived on time and the car was spotlessly clean. I regularly use Roadlink Tours and Travels for my airport transfers. Highly recommended!",
   },
   {
-    name: "Priya Venkatesh",
+    id: "2",
+    customer_name: "Priya Venkatesh",
     location: "Tirupur",
     rating: 5,
-    text: "We booked a taxi for our family trip to Ooty. The driver was very professional and knew all the scenic routes. Made our trip memorable!",
+    review_text: "We booked a taxi for our family trip to Ooty. The driver was very professional and knew all the scenic routes. Made our trip memorable!",
   },
   {
-    name: "Mohammed Farook",
+    id: "3",
+    customer_name: "Mohammed Farook",
     location: "Coimbatore",
     rating: 5,
-    text: "Best taxi service in Coimbatore! Affordable rates, punctual drivers, and well-maintained vehicles. I've been using their service for over 2 years.",
+    review_text: "Best taxi service in Coimbatore! Affordable rates, punctual drivers, and well-maintained vehicles. I've been using their service for over 2 years.",
   },
   {
-    name: "Lakshmi Narayanan",
+    id: "4",
+    customer_name: "Lakshmi Narayanan",
     location: "Erode",
     rating: 5,
-    text: "Booked an outstation taxi to Chennai. The booking process was smooth and the journey was very comfortable. Will definitely use again.",
+    review_text: "Booked an outstation taxi to Chennai. The booking process was smooth and the journey was very comfortable. Will definitely use again.",
   },
   {
-    name: "Arun Prakash",
+    id: "5",
+    customer_name: "Arun Prakash",
     location: "Salem",
     rating: 5,
-    text: "Very reliable service for corporate travel. They handle all our employee transportation needs efficiently. Great partnership!",
+    review_text: "Very reliable service for corporate travel. They handle all our employee transportation needs efficiently. Great partnership!",
   },
   {
-    name: "Sangeetha Ravi",
+    id: "6",
+    customer_name: "Sangeetha Ravi",
     location: "Coimbatore",
     rating: 5,
-    text: "Safe and comfortable ride even during late night hours. The 24/7 availability is a huge plus. Thank you Roadlink Tours and Travels!",
+    review_text: "Safe and comfortable ride even during late night hours. The 24/7 availability is a huge plus. Thank you Roadlink Tours and Travels!",
   },
 ];
 
 const TestimonialsSection = () => {
+  const { data: dbTestimonials } = useTestimonials(true);
+  
+  // Use database testimonials if available (limit to 6), otherwise use defaults
+  const testimonials = dbTestimonials && dbTestimonials.length > 0 
+    ? dbTestimonials.slice(0, 6) 
+    : defaultTestimonials;
+
   return (
     <section id="testimonials" className="py-20 bg-muted">
       <div className="container mx-auto px-4">
@@ -53,25 +67,25 @@ const TestimonialsSection = () => {
           </h2>
           <p className="text-muted-foreground text-lg">
             Don't just take our word for it. Here's what our happy customers have to say 
-            about their experience with Kavya Tours and Travels.
+            about their experience with Roadlink Tours and Travels.
           </p>
         </div>
 
         {/* Testimonials Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <div
-              key={index}
+              key={testimonial.id}
               className="bg-background p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
             >
               <Quote className="w-10 h-10 text-primary/20 mb-4" />
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                "{testimonial.text}"
+                "{testimonial.review_text}"
               </p>
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-semibold text-foreground">
-                    {testimonial.name}
+                    {testimonial.customer_name}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {testimonial.location}

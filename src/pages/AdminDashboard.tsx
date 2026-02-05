@@ -1,167 +1,59 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
-import { LogOut, Trash2, RefreshCw, Loader2, Calendar, Users, CheckCircle, Clock } from "lucide-react";
-import { format } from "date-fns";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar } from "lucide-react";
+import BookingsManager from "@/components/admin/BookingsManager";
+import TestimonialsManager from "@/components/admin/TestimonialsManager";
+import ServicesManager from "@/components/admin/ServicesManager";
+import ContentEditor from "@/components/admin/ContentEditor";
 
-type BookingStatus = "new" | "confirmed" | "completed";
+const homeContentSections = [
+  { key: "hero", label: "Hero Section", fields: ["title", "subtitle", "content", "image_url"] },
+  { key: "about_preview", label: "About Preview", fields: ["title", "subtitle", "content"] },
+  { key: "cta", label: "Call to Action", fields: ["title", "content"] },
+] as const;
 
-interface Booking {
-  id: string;
-  customer_name: string;
-  phone_number: string;
-  email: string | null;
-  pickup_location: string;
-  destination: string;
-  booking_date: string;
-  status: BookingStatus;
-  created_at: string;
-}
+const aboutContentSections = [
+  { key: "hero", label: "Page Header", fields: ["title", "subtitle"] },
+  { key: "story", label: "Our Story", fields: ["title", "content", "image_url"] },
+  { key: "mission", label: "Mission Statement", fields: ["title", "content"] },
+  { key: "vision", label: "Vision Statement", fields: ["title", "content"] },
+] as const;
+
+const whyUsContentSections = [
+  { key: "hero", label: "Page Header", fields: ["title", "subtitle"] },
+  { key: "main", label: "Main Content", fields: ["title", "content"] },
+] as const;
+
+const contactContentSections = [
+  { key: "hero", label: "Page Header", fields: ["title", "subtitle"] },
+  { key: "address", label: "Address", fields: ["title", "content"] },
+  { key: "phone", label: "Phone Numbers", fields: ["content"] },
+  { key: "email", label: "Email", fields: ["content"] },
+  { key: "hours", label: "Business Hours", fields: ["content"] },
+] as const;
 
 const AdminDashboard = () => {
   const { user, isAdmin, isLoading: authLoading, signOut } = useAuth();
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/admin/login");
     } else if (!authLoading && user && !isAdmin) {
-      toast({
-        title: "Access Denied",
-        description: "You do not have admin privileges.",
-        variant: "destructive",
-      });
       signOut();
       navigate("/admin/login");
     }
-  }, [user, isAdmin, authLoading, navigate, toast, signOut]);
-
-  const fetchBookings = async () => {
-    setIsLoading(true);
-    const { data, error } = await supabase
-      .from("bookings")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch bookings",
-        variant: "destructive",
-      });
-    } else {
-      setBookings(data || []);
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    if (user && isAdmin) {
-      fetchBookings();
-    }
-  }, [user, isAdmin]);
-
-  const updateStatus = async (id: string, newStatus: BookingStatus) => {
-    setUpdatingId(id);
-    const { error } = await supabase
-      .from("bookings")
-      .update({ status: newStatus })
-      .eq("id", id);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update booking status",
-        variant: "destructive",
-      });
-    } else {
-      setBookings((prev) =>
-        prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
-      );
-      toast({
-        title: "Status Updated",
-        description: `Booking marked as ${newStatus}`,
-      });
-    }
-    setUpdatingId(null);
-  };
-
-  const deleteBooking = async (id: string) => {
-    const { error } = await supabase.from("bookings").delete().eq("id", id);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete booking",
-        variant: "destructive",
-      });
-    } else {
-      setBookings((prev) => prev.filter((b) => b.id !== id));
-      toast({
-        title: "Booking Deleted",
-        description: "The booking has been removed",
-      });
-    }
-  };
+  }, [user, isAdmin, authLoading, navigate, signOut]);
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/admin/login");
   };
 
-  const getStatusBadge = (status: BookingStatus) => {
-    switch (status) {
-      case "new":
-        return <Badge variant="default">New</Badge>;
-      case "confirmed":
-        return <Badge className="bg-secondary text-secondary-foreground">Confirmed</Badge>;
-      case "completed":
-        return <Badge variant="outline" className="border-primary text-primary">Completed</Badge>;
-    }
-  };
-
-  // Statistics
-  const totalBookings = bookings.length;
-  const newBookings = bookings.filter((b) => b.status === "new").length;
-  const confirmedBookings = bookings.filter((b) => b.status === "confirmed").length;
-  const completedBookings = bookings.filter((b) => b.status === "completed").length;
-
-  if (authLoading || isLoading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -169,165 +61,105 @@ const AdminDashboard = () => {
     );
   }
 
+  if (!user || !isAdmin) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-muted/30">
       {/* Header */}
-      <header className="bg-background border-b border-border px-4 py-3">
+      <header className="bg-background border-b border-border px-4 py-3 sticky top-0 z-50">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">K</span>
+              <span className="text-primary-foreground font-bold text-sm">R</span>
             </div>
-            <span className="font-semibold text-lg">Kavya Tours Admin</span>
+            <span className="font-semibold text-lg">Roadlink Admin</span>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={fetchBookings}>
-              <RefreshCw className="h-4 w-4 mr-1" />
-              Refresh
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-1" />
-              Logout
-            </Button>
-          </div>
+          <Button variant="ghost" size="sm" onClick={handleSignOut}>
+            <LogOut className="h-4 w-4 mr-1" />
+            Logout
+          </Button>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-6">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalBookings}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">New</CardTitle>
-              <Users className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">{newBookings}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Confirmed</CardTitle>
-              <Clock className="h-4 w-4 text-secondary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-secondary">{confirmedBookings}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Completed</CardTitle>
-              <CheckCircle className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">{completedBookings}</div>
-            </CardContent>
-          </Card>
-        </div>
+        <Tabs defaultValue="bookings" className="space-y-6">
+          <TabsList className="flex flex-wrap h-auto gap-1 bg-muted p-1">
+            <TabsTrigger value="bookings" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span className="hidden sm:inline">Bookings</span>
+            </TabsTrigger>
+            <TabsTrigger value="home" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              <span className="hidden sm:inline">Home</span>
+            </TabsTrigger>
+            <TabsTrigger value="about" className="flex items-center gap-2">
+              <Info className="h-4 w-4" />
+              <span className="hidden sm:inline">About</span>
+            </TabsTrigger>
+            <TabsTrigger value="services" className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4" />
+              <span className="hidden sm:inline">Services</span>
+            </TabsTrigger>
+            <TabsTrigger value="whyus" className="flex items-center gap-2">
+              <Award className="h-4 w-4" />
+              <span className="hidden sm:inline">Why Us</span>
+            </TabsTrigger>
+            <TabsTrigger value="testimonials" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Testimonials</span>
+            </TabsTrigger>
+            <TabsTrigger value="contact" className="flex items-center gap-2">
+              <Phone className="h-4 w-4" />
+              <span className="hidden sm:inline">Contact</span>
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Bookings Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Customer Bookings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {bookings.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                No bookings yet. Bookings will appear here when customers submit them.
-              </p>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Booking ID</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Pickup</TableHead>
-                      <TableHead>Destination</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {bookings.map((booking) => (
-                      <TableRow key={booking.id}>
-                        <TableCell className="font-mono text-xs">
-                          {booking.id.slice(0, 8)}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {booking.customer_name}
-                        </TableCell>
-                        <TableCell>{booking.phone_number}</TableCell>
-                        <TableCell>{booking.email || "-"}</TableCell>
-                        <TableCell>{booking.pickup_location}</TableCell>
-                        <TableCell>{booking.destination}</TableCell>
-                        <TableCell>
-                          {format(new Date(booking.booking_date), "MMM dd, yyyy HH:mm")}
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={booking.status}
-                            onValueChange={(value: BookingStatus) =>
-                              updateStatus(booking.id, value)
-                            }
-                            disabled={updatingId === booking.id}
-                          >
-                            <SelectTrigger className="w-28">
-                              <SelectValue>{getStatusBadge(booking.status)}</SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="new">New</SelectItem>
-                              <SelectItem value="confirmed">Confirmed</SelectItem>
-                              <SelectItem value="completed">Completed</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Booking?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. This will permanently delete the booking from {booking.customer_name}.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => deleteBooking(booking.id)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          <TabsContent value="bookings">
+            <BookingsManager />
+          </TabsContent>
+
+          <TabsContent value="home">
+            <ContentEditor
+              pageName="home"
+              pageTitle="Home"
+              sectionConfigs={homeContentSections}
+            />
+          </TabsContent>
+
+          <TabsContent value="about">
+            <ContentEditor
+              pageName="about"
+              pageTitle="About Us"
+              sectionConfigs={aboutContentSections}
+            />
+          </TabsContent>
+
+          <TabsContent value="services">
+            <ServicesManager />
+          </TabsContent>
+
+          <TabsContent value="whyus">
+            <ContentEditor
+              pageName="whyus"
+              pageTitle="Why Choose Us"
+              sectionConfigs={whyUsContentSections}
+            />
+          </TabsContent>
+
+          <TabsContent value="testimonials">
+            <TestimonialsManager />
+          </TabsContent>
+
+          <TabsContent value="contact">
+            <ContentEditor
+              pageName="contact"
+              pageTitle="Contact"
+              sectionConfigs={contactContentSections}
+            />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
