@@ -50,14 +50,14 @@ const Header = () => {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
             <Button variant="outline" size="sm" asChild>
-              <a href="tel:+919876543210" className="flex items-center gap-2">
+              <a href="tel:+918248199154" className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
                 Call Now
               </a>
             </Button>
             <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90" asChild>
               <a
-                href="https://wa.me/919876543210?text=Hi, I want to book a taxi"
+                href="https://wa.me/918248199154?text=Hi, I want to book a taxi"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -96,14 +96,14 @@ const Header = () => {
               ))}
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
                 <Button variant="outline" asChild>
-                  <a href="tel:+919876543210" className="flex items-center justify-center gap-2">
+                  <a href="tel:+918248199154" className="flex items-center justify-center gap-2">
                     <Phone className="w-4 h-4" />
                     Call Now
                   </a>
                 </Button>
                 <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90" asChild>
                   <a
-                    href="https://wa.me/919876543210?text=Hi, I want to book a taxi"
+                    href="https://wa.me/918248199154?text=Hi, I want to book a taxi"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

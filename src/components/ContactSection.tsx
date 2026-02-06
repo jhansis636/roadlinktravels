@@ -49,7 +49,7 @@ const ContactSection = () => {
             {/* Contact Cards */}
             <div className="space-y-4 mb-8">
               <a
-                href="tel:+919876543210"
+                href="tel:+918248199154"
                 className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
               >
                 <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
@@ -57,12 +57,12 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <div className="font-semibold text-foreground">Call Us</div>
-                  <div className="text-muted-foreground">+91 98765 43210</div>
+                  <div className="text-muted-foreground">+91 824 819 9154</div>
                 </div>
               </a>
 
               <a
-                href="https://wa.me/919876543210?text=Hi, I want to book a taxi"
+                href="https://wa.me/918248199154?text=Hi, I want to book a taxi"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
@@ -72,7 +72,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <div className="font-semibold text-foreground">WhatsApp</div>
-                  <div className="text-muted-foreground">+91 98765 43210</div>
+                  <div className="text-muted-foreground">+91 824 819 9154</div>
                 </div>
               </a>
 

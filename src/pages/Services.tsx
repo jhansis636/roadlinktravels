@@ -143,7 +143,7 @@ const Services = () => {
                       </ul>
                     )}
                     <Button variant="outline" size="sm" className="w-full" asChild>
-                      <a href="tel:+919876543210">Book Now</a>
+                      <a href="tel:+918248199154">Book Now</a>
                     </Button>
                   </div>
                 );
@@ -163,11 +163,11 @@ const Services = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" asChild>
-              <a href="tel:+919876543210">Get a Free Quote</a>
+              <a href="tel:+918248199154">Get a Free Quote</a>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <a
-                href="https://wa.me/919876543210?text=Hi, I want to inquire about pricing"
+                href="https://wa.me/918248199154?text=Hi, I want to inquire about pricing"
                 target="_blank"
                 rel="noopener noreferrer"
               >
