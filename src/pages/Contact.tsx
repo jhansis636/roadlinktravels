@@ -4,33 +4,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-
 const Contact = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
-    message: "",
+    message: ""
   });
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
       title: "Message Sent!",
-      description: "Thank you for contacting us. We'll get back to you soon.",
+      description: "Thank you for contacting us. We'll get back to you soon."
     });
-    setFormData({ name: "", phone: "", email: "", message: "" });
+    setFormData({
+      name: "",
+      phone: "",
+      email: "",
+      message: ""
+    });
   };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
-
-  return (
-    <div className="pt-16 md:pt-20">
+  return <div className="pt-16 md:pt-20">
       {/* Hero Section */}
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
@@ -61,10 +64,7 @@ const Contact = () => {
 
               {/* Contact Cards */}
               <div className="space-y-4 mb-8">
-                <a
-                  href="tel:+918248199154"
-                  className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
-                >
+                <a href="tel:+918248199154" className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors">
                   <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
                     <Phone className="w-6 h-6 text-primary-foreground" />
                   </div>
@@ -74,12 +74,7 @@ const Contact = () => {
                   </div>
                 </a>
 
-                <a
-                  href="https://wa.me/918248199154?text=Hi, I want to book a taxi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
-                >
+                <a href="https://wa.me/918248199154?text=Hi, I want to book a taxi" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors">
                   <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
                     <MessageCircle className="w-6 h-6 text-secondary-foreground" />
                   </div>
@@ -105,9 +100,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <div className="font-semibold text-foreground">Service Area</div>
-                    <div className="text-muted-foreground">
-                      Coimbatore & Nearby Cities
-                    </div>
+                    <div className="text-muted-foreground">All over South India</div>
                   </div>
                 </div>
 
@@ -130,46 +123,16 @@ const Contact = () => {
               </h3>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Input
-                    name="name"
-                    placeholder="Your Name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="bg-background"
-                  />
+                  <Input name="name" placeholder="Your Name" value={formData.name} onChange={handleChange} required className="bg-background" />
                 </div>
                 <div>
-                  <Input
-                    name="phone"
-                    type="tel"
-                    placeholder="Phone Number"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    className="bg-background"
-                  />
+                  <Input name="phone" type="tel" placeholder="Phone Number" value={formData.phone} onChange={handleChange} required className="bg-background" />
                 </div>
                 <div>
-                  <Input
-                    name="email"
-                    type="email"
-                    placeholder="Email Address"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="bg-background"
-                  />
+                  <Input name="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleChange} className="bg-background" />
                 </div>
                 <div>
-                  <Textarea
-                    name="message"
-                    placeholder="Your Message (e.g., pickup location, destination, date)"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={4}
-                    required
-                    className="bg-background resize-none"
-                  />
+                  <Textarea name="message" placeholder="Your Message (e.g., pickup location, destination, date)" value={formData.message} onChange={handleChange} rows={4} required className="bg-background resize-none" />
                 </div>
                 <Button type="submit" size="lg" className="w-full">
                   <Send className="w-4 h-4 mr-2" />
@@ -196,12 +159,7 @@ const Contact = () => {
               </a>
             </Button>
             <Button size="lg" variant="secondary" asChild>
-              <a
-                href="https://wa.me/918248199154?text=Hi, I need a taxi urgently"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
-              >
+              <a href="https://wa.me/918248199154?text=Hi, I need a taxi urgently" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <MessageCircle className="w-5 h-5" />
                 WhatsApp
               </a>
@@ -209,8 +167,6 @@ const Contact = () => {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Contact;
