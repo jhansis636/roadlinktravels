@@ -1,30 +1,31 @@
 import { Phone, MessageCircle, MapPin, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-
-  const services = [
-    "Local Taxi Services",
-    "Outstation Taxi",
-    "Airport Pickup & Drop",
-    "Corporate Travel",
-    "Family Trips",
-    "Tourist Packages",
-  ];
-
-  const quickLinks = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About Us" },
-    { href: "/services", label: "Services" },
-    { href: "/why-us", label: "Why Choose Us" },
-    { href: "/testimonials", label: "Testimonials" },
-    { href: "/contact", label: "Contact" },
-    { href: "/admin/login", label: "Admin" },
-  ];
-
-  return (
-    <footer className="bg-foreground text-background">
+  const services = ["Local Taxi Services", "Outstation Taxi", "Airport Pickup & Drop", "Corporate Travel", "Family Trips", "Tourist Packages"];
+  const quickLinks = [{
+    href: "/",
+    label: "Home"
+  }, {
+    href: "/about",
+    label: "About Us"
+  }, {
+    href: "/services",
+    label: "Services"
+  }, {
+    href: "/why-us",
+    label: "Why Choose Us"
+  }, {
+    href: "/testimonials",
+    label: "Testimonials"
+  }, {
+    href: "/contact",
+    label: "Contact"
+  }, {
+    href: "/admin/login",
+    label: "Admin"
+  }];
+  return <footer className="bg-foreground text-background">
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
@@ -41,24 +42,13 @@ const Footer = () => {
               affordable travel solutions for all your needs.
             </p>
             <div className="flex gap-2 md:gap-3">
-              <a
-                href="tel:+919876543210"
-                className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors"
-              >
+              <a href="tel:+919876543210" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
                 <Phone className="w-4 h-4 md:w-5 md:h-5" />
               </a>
-              <a
-                href="https://wa.me/919876543210"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-secondary hover:text-secondary-foreground transition-colors"
-              >
+              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-secondary hover:text-secondary-foreground transition-colors">
                 <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
               </a>
-              <a
-                href="mailto:info@roadlinktravels.com"
-                className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors"
-              >
+              <a href="mailto:info@roadlinktravels.com" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
                 <Mail className="w-4 h-4 md:w-5 md:h-5" />
               </a>
             </div>
@@ -68,16 +58,11 @@ const Footer = () => {
           <div>
             <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Quick Links</h3>
             <ul className="space-y-1.5 md:space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    to={link.href}
-                    className="text-background/70 hover:text-secondary transition-colors text-xs md:text-sm"
-                  >
+              {quickLinks.map(link => <li key={link.href}>
+                  <Link to={link.href} className="text-background/70 hover:text-secondary transition-colors text-xs md:text-sm">
                     {link.label}
                   </Link>
-                </li>
-              ))}
+                </li>)}
             </ul>
           </div>
 
@@ -85,16 +70,11 @@ const Footer = () => {
           <div>
             <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Our Services</h3>
             <ul className="space-y-1.5 md:space-y-2">
-              {services.map((service) => (
-                <li key={service}>
-                  <Link
-                    to="/services"
-                    className="text-background/70 hover:text-secondary transition-colors text-xs md:text-sm"
-                  >
+              {services.map(service => <li key={service}>
+                  <Link to="/services" className="text-background/70 hover:text-secondary transition-colors text-xs md:text-sm">
                     {service}
                   </Link>
-                </li>
-              ))}
+                </li>)}
             </ul>
           </div>
 
@@ -106,24 +86,14 @@ const Footer = () => {
                 <Phone className="w-4 h-4 md:w-5 md:h-5 text-secondary flex-shrink-0 mt-0.5" />
                 <div>
                   <div className="text-xs md:text-sm font-medium">Phone</div>
-                  <a
-                    href="tel:+919876543210"
-                    className="text-background/70 text-xs md:text-sm hover:text-secondary"
-                  >
-                    +91 98765 43210
-                  </a>
+                  <a href="tel:+919876543210" className="text-background/70 text-xs md:text-sm hover:text-secondary">+91 987</a>
                 </div>
               </li>
               <li className="flex items-start gap-2 md:gap-3">
                 <Mail className="w-4 h-4 md:w-5 md:h-5 text-secondary flex-shrink-0 mt-0.5" />
                 <div>
                   <div className="text-xs md:text-sm font-medium">Email</div>
-                  <a
-                    href="mailto:info@roadlinktravels.com"
-                    className="text-background/70 text-xs md:text-sm hover:text-secondary break-all"
-                  >
-                    info@roadlinktravels.com
-                  </a>
+                  <a href="mailto:info@roadlinktravels.com" className="text-background/70 text-xs md:text-sm hover:text-secondary break-all">roadlinktoursandtravels95@gmail.com</a>
                 </div>
               </li>
               <li className="flex items-start gap-2 md:gap-3">
@@ -149,8 +119,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
