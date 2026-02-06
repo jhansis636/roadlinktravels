@@ -90,7 +90,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <div className="font-semibold text-foreground">Email</div>
-                    <div className="text-muted-foreground">info@roadlinktravels.com</div>
+                    <div className="text-muted-foreground">roadlinktoursandtravels95@gmail.com</div>
                   </div>
                 </div>
 
