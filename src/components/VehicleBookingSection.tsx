@@ -31,12 +31,12 @@ const vehicles = [{
   capacity: 7,
   rating: 5
 }, {
-  name: "14 or 18 Seater",
+  name: "Tempo Traveller",
   image: tempoTraveller,
   capacity: 12,
   rating: 5
 }, {
-  name: "12 or 18 Seater",
+  name: "Force Urbania",
   image: forceUrbania,
   capacity: 17,
   rating: 5
