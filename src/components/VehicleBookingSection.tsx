@@ -13,42 +13,42 @@ import touristBus from "@/assets/vehicles/tourist-bus.jpg";
 const vehicles = [{
   name: "Honda Amaze",
   image: hondaAmaze,
-  capacity: 4,
+  capacity: "4 Seater",
   rating: 5
 }, {
   name: "Ertiga",
   image: ertiga,
-  capacity: 7,
+  capacity: "7 Seater",
   rating: 5
 }, {
   name: "Innova Crysta",
   image: innovaCrysta,
-  capacity: 7,
+  capacity: "7 Seater",
   rating: 5
 }, {
   name: "Innova Hycross",
   image: innovaHycross,
-  capacity: 7,
+  capacity: "7 Seater",
   rating: 5
 }, {
   name: "Tempo Traveller",
   image: tempoTraveller,
-  capacity: 12,
+  capacity: "14 or 18 Seater",
   rating: 5
 }, {
   name: "Force Urbania",
   image: forceUrbania,
-  capacity: 17,
+  capacity: "12 or 18 Seater",
   rating: 5
 }, {
   name: "Mini Coach Van",
   image: miniCoach,
-  capacity: 20,
+  capacity: "20 Seater",
   rating: 5
 }, {
   name: "Tourist Bus",
   image: touristBus,
-  capacity: 45,
+  capacity: "45 Seater",
   rating: 5
 }];
 const VehicleBookingSection = () => {
@@ -96,7 +96,7 @@ const VehicleBookingSection = () => {
                 {/* Seating Capacity */}
                 <div className="flex items-center gap-2 text-muted-foreground mb-4">
                   <Users className="w-4 h-4" />
-                  <span className="text-sm">{vehicle.capacity} Seater</span>
+                  <span className="text-sm">{vehicle.capacity}</span>
                 </div>
 
                 {/* Rent Now Button */}
