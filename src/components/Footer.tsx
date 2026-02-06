@@ -100,9 +100,7 @@ const Footer = () => {
                 <MapPin className="w-4 h-4 md:w-5 md:h-5 text-secondary flex-shrink-0 mt-0.5" />
                 <div>
                   <div className="text-xs md:text-sm font-medium">Service Area</div>
-                  <span className="text-background/70 text-xs md:text-sm">
-                    Coimbatore, Tamil Nadu
-                  </span>
+                  <span className="text-background/70 text-xs md:text-sm">22XV+4FV Civil Aerodrome Post, Peelamedu, Tamil Nadu</span>
                 </div>
               </li>
             </ul>
