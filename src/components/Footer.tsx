@@ -42,10 +42,10 @@ const Footer = () => {
               affordable travel solutions for all your needs.
             </p>
             <div className="flex gap-2 md:gap-3">
-              <a href="tel:+919876543210" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
+              <a href="tel:+918248199154" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
                 <Phone className="w-4 h-4 md:w-5 md:h-5" />
               </a>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-secondary hover:text-secondary-foreground transition-colors">
+              <a href="https://wa.me/918248199154" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-secondary hover:text-secondary-foreground transition-colors">
                 <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
               </a>
               <a href="mailto:info@roadlinktravels.com" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">

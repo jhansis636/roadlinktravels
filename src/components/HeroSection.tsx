@@ -70,7 +70,7 @@ const HeroSection = () => {
                 className="bg-primary hover:bg-primary/90 text-primary-foreground text-base md:text-lg px-6 md:px-8 h-11 md:h-12"
                 asChild
               >
-                <a href="tel:+919876543210" className="flex items-center gap-2">
+                <a href="tel:+918248199154" className="flex items-center gap-2">
                   <Phone className="w-4 h-4 md:w-5 md:h-5" />
                   Call Now
                 </a>
@@ -82,7 +82,7 @@ const HeroSection = () => {
                 asChild
               >
                 <a
-                  href="https://wa.me/919876543210?text=Hi, I want to book a taxi"
+                  href="https://wa.me/918248199154?text=Hi, I want to book a taxi"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"

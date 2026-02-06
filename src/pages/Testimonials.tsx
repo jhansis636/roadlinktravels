@@ -188,7 +188,7 @@ const Testimonials = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" asChild>
-              <a href="tel:+919876543210">Book Now</a>
+              <a href="tel:+918248199154">Book Now</a>
             </Button>
             <Button size="lg" variant="outline" className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10" asChild>
               <Link to="/contact">Contact Us</Link>
