@@ -1,4 +1,5 @@
 import HeroSection from "@/components/HeroSection";
+import VehicleBookingSection from "@/components/VehicleBookingSection";
 import { Link } from "react-router-dom";
 import { Shield, Users, Car, Headphones, MapPin, Plane, Building2, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,9 @@ const Home = () => {
   return (
     <>
       <HeroSection />
+      
+      {/* Vehicle Booking Section */}
+      <VehicleBookingSection />
       
       {/* About Preview Section */}
       <section className="py-20 bg-muted">
