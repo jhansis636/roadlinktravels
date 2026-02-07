@@ -1,4 +1,5 @@
 import { Shield, Users, Car, Headphones, Award, Target, Heart } from "lucide-react";
+import PageSlider from "@/components/PageSlider";
 
 const features = [
   {
@@ -35,6 +36,9 @@ const About = () => {
           </p>
         </div>
       </section>
+
+      {/* About Page Slider */}
+      <PageSlider pageName="about" className="container mx-auto px-4 py-8" />
 
       {/* About Content */}
       <section className="py-20 bg-muted">

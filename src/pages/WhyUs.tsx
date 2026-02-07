@@ -1,6 +1,7 @@
 import { Clock, IndianRupee, Sparkles, UserCheck, Phone, MapPin, Shield, ThumbsUp, Car, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import PageSlider from "@/components/PageSlider";
 
 const reasons = [
   {
@@ -71,6 +72,9 @@ const WhyUs = () => {
           </p>
         </div>
       </section>
+
+      {/* Why Us Page Slider */}
+      <PageSlider pageName="whyus" className="container mx-auto px-4 py-8" />
 
       {/* Reasons Section */}
       <section className="py-20 bg-background">

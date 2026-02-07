@@ -1,6 +1,7 @@
 import { MapPin, Plane, Building2, Users, Palmtree, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useServices } from "@/hooks/useServices";
+import PageSlider from "@/components/PageSlider";
 import type { LucideIcon } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -105,6 +106,9 @@ const Services = () => {
           </p>
         </div>
       </section>
+
+      {/* Services Page Slider */}
+      <PageSlider pageName="services" className="container mx-auto px-4 py-8" />
 
       {/* Services Grid */}
       <section className="py-20 bg-background">
