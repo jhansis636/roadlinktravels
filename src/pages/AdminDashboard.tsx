@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar } from "lucide-react";
+import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar, Car } from "lucide-react";
 import BookingsManager from "@/components/admin/BookingsManager";
 import TestimonialsManager from "@/components/admin/TestimonialsManager";
 import ServicesManager from "@/components/admin/ServicesManager";
 import ContentEditor from "@/components/admin/ContentEditor";
+import VehiclesManager from "@/components/admin/VehiclesManager";
 
 const homeContentSections = [
   { key: "hero", label: "Hero Section", fields: ["title", "subtitle", "content", "image_url"] },
@@ -114,6 +115,10 @@ const AdminDashboard = () => {
               <Phone className="h-4 w-4" />
               <span className="hidden sm:inline">Contact</span>
             </TabsTrigger>
+            <TabsTrigger value="vehicles" className="flex items-center gap-2">
+              <Car className="h-4 w-4" />
+              <span className="hidden sm:inline">Vehicles</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings">
@@ -158,6 +163,10 @@ const AdminDashboard = () => {
               pageTitle="Contact"
               sectionConfigs={contactContentSections}
             />
+          </TabsContent>
+
+          <TabsContent value="vehicles">
+            <VehiclesManager />
           </TabsContent>
         </Tabs>
       </main>
