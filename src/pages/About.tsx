@@ -23,9 +23,7 @@ const About = () => {
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">About Roadlink Tours and Travels</h1>
-          <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto">
-            Your trusted taxi partner in Coimbatore, dedicated to providing safe, reliable, and comfortable travel experiences since 2014.
-          </p>
+          <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto"></p>
         </div>
       </section>
 
