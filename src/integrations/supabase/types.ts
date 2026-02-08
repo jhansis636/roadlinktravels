@@ -98,6 +98,39 @@ export type Database = {
         }
         Relationships: []
       }
+      page_videos: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          page_name: string
+          title: string | null
+          updated_at: string
+          youtube_url: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          page_name: string
+          title?: string | null
+          updated_at?: string
+          youtube_url: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          page_name?: string
+          title?: string | null
+          updated_at?: string
+          youtube_url?: string
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           created_at: string

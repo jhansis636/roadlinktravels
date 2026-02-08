@@ -1,5 +1,6 @@
 import { Shield, Users, Car, Headphones, Award, Target, Heart } from "lucide-react";
 import PageSlider from "@/components/PageSlider";
+import PageVideos from "@/components/PageVideos";
 const features = [{
   icon: Shield,
   title: "Safe & Secure",
@@ -29,6 +30,9 @@ const About = () => {
 
       {/* About Page Slider */}
       <PageSlider pageName="about" className="container mx-auto px-4 py-8" />
+
+      {/* About Page Videos */}
+      <PageVideos pageName="about" />
 
       {/* About Content */}
       <section className="py-20 bg-muted">

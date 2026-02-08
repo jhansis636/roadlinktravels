@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar, Car, Images } from "lucide-react";
+import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar, Car, Images, Youtube } from "lucide-react";
 import BookingsManager from "@/components/admin/BookingsManager";
 import TestimonialsManager from "@/components/admin/TestimonialsManager";
 import ServicesManager from "@/components/admin/ServicesManager";
 import ContentEditor from "@/components/admin/ContentEditor";
 import VehiclesManager from "@/components/admin/VehiclesManager";
 import SliderManager from "@/components/admin/SliderManager";
+import VideosManager from "@/components/admin/VideosManager";
 
 const homeContentSections = [
   { key: "hero", label: "Hero Section", fields: ["title", "subtitle", "content", "image_url"] },
@@ -124,6 +125,10 @@ const AdminDashboard = () => {
               <Images className="h-4 w-4" />
               <span className="hidden sm:inline">Sliders</span>
             </TabsTrigger>
+            <TabsTrigger value="videos" className="flex items-center gap-2">
+              <Youtube className="h-4 w-4" />
+              <span className="hidden sm:inline">Videos</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings">
@@ -176,6 +181,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="sliders">
             <SliderManager />
+          </TabsContent>
+
+          <TabsContent value="videos">
+            <VideosManager />
           </TabsContent>
         </Tabs>
       </main>

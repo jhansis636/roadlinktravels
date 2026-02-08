@@ -2,6 +2,7 @@ import { Clock, IndianRupee, Sparkles, UserCheck, Phone, MapPin, Shield, ThumbsU
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import PageSlider from "@/components/PageSlider";
+import PageVideos from "@/components/PageVideos";
 
 const reasons = [
   {
@@ -75,6 +76,9 @@ const WhyUs = () => {
 
       {/* Why Us Page Slider */}
       <PageSlider pageName="whyus" className="container mx-auto px-4 py-8" />
+
+      {/* Why Us Page Videos */}
+      <PageVideos pageName="whyus" />
 
       {/* Reasons Section */}
       <section className="py-20 bg-background">

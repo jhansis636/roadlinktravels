@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useTestimonials } from "@/hooks/useTestimonials";
 import PageSlider from "@/components/PageSlider";
+import PageVideos from "@/components/PageVideos";
 
 const defaultTestimonials = [
   {
@@ -105,6 +106,9 @@ const Testimonials = () => {
 
       {/* Testimonials Page Slider */}
       <PageSlider pageName="testimonials" className="container mx-auto px-4 py-8" />
+
+      {/* Testimonials Page Videos */}
+      <PageVideos pageName="testimonials" />
 
       {/* Stats Section */}
       <section className="py-12 bg-muted">
