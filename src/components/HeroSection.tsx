@@ -69,9 +69,7 @@ const HeroSection = () => {
               </div>
               <div className="flex items-center gap-2 text-background/90 text-sm md:text-base">
                 <MapPin className="w-4 h-4 md:w-5 md:h-5 text-secondary" />
-                <span>
-All Over South India 
-Our Chauffeur Knows English, Hindi, Telugu, Malayalam, Kannada, Tamil  </span>
+                <span>All Over South India🌍-💬Our Chauffeur Knows English, Hindi, Telugu, Malayalam, Kannada, Tamil </span>
               </div>
             </div>
           </div>
