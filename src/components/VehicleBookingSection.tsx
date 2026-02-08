@@ -101,7 +101,7 @@ const VehicleBookingSection = () => {
                   className="w-full"
                   onClick={() => handleRentNow(vehicle.name)}
                 >
-                  Rent Now
+                  Book Now
                 </Button>
               </CardContent>
             </Card>
