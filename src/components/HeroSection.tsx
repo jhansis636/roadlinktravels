@@ -36,7 +36,7 @@ const HeroSection = () => {
 
             {/* Services List */}
             <div className="flex flex-wrap gap-2 md:gap-3 mb-6 md:mb-8">
-              {["Local Taxi", "Outstation", "Airport Pickup", "Tour Packages"].map(service => <span key={service} className="bg-background/10 backdrop-blur-sm border border-background/20 rounded-full px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm text-background">
+              {["Day Basics, Hourly/Km Basics, Airport Transfers, Corporate Booking, Round Trips, Temple Tours, Honeymoon Packages, Adventure Packages, IV Trips & Students Trips, Group Trip, Hotels, Resorts and Tent House Booking, Flight, Train, Bus"].map(service => <span key={service} className="bg-background/10 backdrop-blur-sm border border-background/20 rounded-full px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm text-background">
                     {service}
                   </span>)}
             </div>
