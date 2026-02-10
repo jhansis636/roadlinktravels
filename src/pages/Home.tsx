@@ -67,12 +67,6 @@ const Home = () => {
     <>
       <HeroSection />
       
-      {/* Home Page Slider */}
-      <PageSlider pageName="home" className="container mx-auto px-4 py-8" />
-      
-      {/* Home Page Videos */}
-      <PageVideos pageName="home" title="Watch Our Videos" />
-      
       {/* Vehicle Booking Section */}
       <VehicleBookingSection />
       
