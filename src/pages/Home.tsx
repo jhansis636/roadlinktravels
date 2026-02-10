@@ -67,6 +67,12 @@ const Home = () => {
     <>
       <HeroSection />
       
+      {/* Home Page Slider */}
+      <PageSlider pageName="home" className="container mx-auto px-4 py-8" />
+      
+      {/* Home Page Videos */}
+      <PageVideos pageName="home" title="Watch Our Videos" />
+      
       {/* Vehicle Booking Section */}
       <VehicleBookingSection />
       
@@ -109,11 +115,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Home Page Slider */}
-      <PageSlider pageName="home" className="container mx-auto px-4 py-8" />
-      
-      {/* Home Page Videos */}
-      <PageVideos pageName="home" title="Watch Our Videos" />
+      {/* Services Preview Section */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-12">
