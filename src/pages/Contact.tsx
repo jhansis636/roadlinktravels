@@ -20,6 +20,10 @@ const Contact = () => {
       title: "Message Sent!",
       description: "Thank you for contacting us. We'll get back to you soon."
     });
+    // Send details to WhatsApp
+    const whatsappMessage = `New Contact Message:%0AName: ${encodeURIComponent(formData.name.trim())}%0APhone: ${encodeURIComponent(formData.phone.trim())}${formData.email.trim() ? `%0AEmail: ${encodeURIComponent(formData.email.trim())}` : ""}%0AMessage: ${encodeURIComponent(formData.message.trim())}`;
+    window.open(`https://wa.me/918248199154?text=${whatsappMessage}`, "_blank", "noopener,noreferrer");
+
     setFormData({
       name: "",
       phone: "",
