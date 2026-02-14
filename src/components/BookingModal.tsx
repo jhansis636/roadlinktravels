@@ -104,6 +104,10 @@ const BookingModal = ({ open, onOpenChange }: BookingModalProps) => {
       return;
     }
 
+    // Send details to WhatsApp as well
+    const whatsappMessage = `New Booking Request:%0APickup: ${encodeURIComponent(formData.pickup_location.trim())}%0ADestination: ${encodeURIComponent(formData.destination.trim())}%0AName: ${encodeURIComponent(formData.customer_name.trim())}%0APhone: ${encodeURIComponent(formData.phone_number.trim())}${formData.email.trim() ? `%0AEmail: ${encodeURIComponent(formData.email.trim())}` : ""}`;
+    window.open(`https://wa.me/918248199154?text=${whatsappMessage}`, "_blank", "noopener,noreferrer");
+
     setIsSuccess(true);
   };
 
