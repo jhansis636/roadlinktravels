@@ -1,4 +1,5 @@
 import { useState } from "react";
+import scanToPayImg from "@/assets/scan-to-pay.jpeg";
 import { Phone, MessageCircle, MapPin, Clock, Mail, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -123,6 +124,9 @@ const Contact = () => {
 
             {/* Contact Form */}
             <div className="bg-muted p-4 md:p-8 rounded-lg">
+              <div className="flex justify-center mb-6">
+                <img src={scanToPayImg} alt="Scan to Pay - Roadlink Tours and Travels" className="w-64 h-auto rounded-lg" />
+              </div>
               <h3 className="text-2xl font-bold text-foreground mb-6">
                 Send Us a Message
               </h3>
