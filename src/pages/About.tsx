@@ -1,4 +1,5 @@
-import { Shield, Users, Car, Headphones, Award, Target, Heart } from "lucide-react";
+import { Shield, Users, Car, Headphones } from "lucide-react";
+import placesToVisitImg from "@/assets/places-to-visit.jpg";
 import PageSlider from "@/components/PageSlider";
 import PageVideos from "@/components/PageVideos";
 const features = [{
@@ -77,49 +78,14 @@ const About = () => {
         </div>
       </section>
 
-      {/* Mission, Vision, Values */}
-      <section className="py-20 bg-background">
+      {/* Places to Visit */}
+      <section className="py-12 md:py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
-              What Drives Us
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
-              Our Mission, Vision & Values
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 bg-muted rounded-lg">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto">
-                <Target className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Our Mission</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                To provide safe, reliable, and affordable transportation services that exceed customer expectations while maintaining the highest standards of professionalism.
-              </p>
-            </div>
-
-            <div className="text-center p-8 bg-muted rounded-lg">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto">
-                <Award className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Our Vision</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                To become the most trusted and preferred taxi service provider in Tamil Nadu, known for excellence in customer service and operational efficiency.
-              </p>
-            </div>
-
-            <div className="text-center p-8 bg-muted rounded-lg">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto">
-                <Heart className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Our Values</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Customer safety, punctuality, transparency in pricing, continuous improvement, and building lasting relationships with our valued customers.
-              </p>
-            </div>
-          </div>
+          <img
+            src={placesToVisitImg}
+            alt="Explore South India - Places to visit with Roadlink Tours and Travels"
+            className="w-full h-auto rounded-lg"
+          />
         </div>
       </section>
     </div>;
