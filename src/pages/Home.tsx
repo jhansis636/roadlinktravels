@@ -80,8 +80,10 @@ const Home = () => {
       <VehicleBookingSection />
 
       {/* Cab Booking Form below fleet */}
-      <CabBookingForm />
-      
+      <div className="-mt-10 pb-8 bg-muted">
+        <CabBookingForm />
+      </div>
+
       {/* About Preview Section */}
       <section className="py-20 bg-muted">
         <div className="container mx-auto px-4">
