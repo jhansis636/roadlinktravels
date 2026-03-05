@@ -78,6 +78,9 @@ const Home = () => {
       
       {/* Vehicle Booking Section */}
       <VehicleBookingSection />
+
+      {/* Cab Booking Form below fleet */}
+      <CabBookingForm />
       
       {/* About Preview Section */}
       <section className="py-20 bg-muted">
