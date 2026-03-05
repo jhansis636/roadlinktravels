@@ -1,4 +1,5 @@
 import HeroSection from "@/components/HeroSection";
+import CabBookingForm from "@/components/CabBookingForm";
 import VehicleBookingSection from "@/components/VehicleBookingSection";
 import PageSlider from "@/components/PageSlider";
 import PageVideos from "@/components/PageVideos";
