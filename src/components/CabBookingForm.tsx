@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Car, ArrowLeftRight, Plane, MapPin } from "lucide-react";
+import { Car, ArrowLeftRight, Plane } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import TourComboItinerary, { tourCombos } from "@/components/TourComboItinerary";
 
 const tabs = [
   { id: "outstation", label: "Out Station", icon: Car },
@@ -42,6 +43,7 @@ const CabBookingForm = () => {
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("");
   const [ampm, setAmpm] = useState("AM");
+  const [selectedCombo, setSelectedCombo] = useState("");
 
   const getTabLabel = () => {
     const tab = tabs.find((t) => t.id === activeTab);
@@ -54,6 +56,8 @@ const CabBookingForm = () => {
     }
     return "";
   };
+
+  const selectedComboData = tourCombos.find((c) => c.id === selectedCombo);
 
   const handleBookNow = () => {
     const tabLabel = getTabLabel();
@@ -69,6 +73,12 @@ const CabBookingForm = () => {
       message += `*Drop-off Date:* ${dropoffDate || "Not specified"}\n`;
     }
     message += `*Pickup Time:* ${time}\n`;
+
+    if (activeTab === "tour" && selectedComboData) {
+      message += `\n*Tour Combo:* ${selectedComboData.label}\n`;
+      message += `*Duration:* ${selectedComboData.duration}\n`;
+      message += `*Route:* ${selectedComboData.destinations.join(" → ")}\n`;
+    }
 
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/918248199154?text=${encoded}`, "_blank");
@@ -129,8 +139,31 @@ const CabBookingForm = () => {
               {getTripLabel() ? ` ${getTripLabel()}` : ""}
             </h3>
 
+            {/* Tour Combo dropdown (only for tour tab) */}
+            {activeTab === "tour" && (
+              <div className="mb-4">
+                <Select value={selectedCombo} onValueChange={setSelectedCombo}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Tour Combo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tourCombos.map((combo) => (
+                      <SelectItem key={combo.id} value={combo.id}>
+                        {combo.label} – {combo.duration}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Tour Itinerary Card */}
+            {activeTab === "tour" && selectedComboData && (
+              <TourComboItinerary combo={selectedComboData} />
+            )}
+
             {/* Form Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4">
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4 ${activeTab === "tour" && selectedComboData ? "mt-4" : ""}`}>
               {/* Pickup Location */}
               <Input
                 type="text"
