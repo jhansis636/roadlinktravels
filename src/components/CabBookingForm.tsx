@@ -17,26 +17,16 @@ const tabs = [
   { id: "tour", label: "Tour Packages", icon: Plane },
 ];
 
-const cities = [
-  "Coimbatore",
-  "Chennai",
-  "Bangalore",
-  "Madurai",
-  "Trichy",
-  "Salem",
-  "Ooty",
-  "Kodaikanal",
-  "Munnar",
-  "Kochi",
-];
-
-const tariffTypes = [
-  "Sedan",
-  "SUV",
-  "Innova",
+const vehicles = [
+  "Honda Amaze",
+  "Ertiga",
+  "Toyota Fortuner",
+  "Innova Crysta",
+  "Innova Hycross",
   "Tempo Traveller",
-  "Mini Bus",
-  "Bus",
+  "Force Urbania",
+  "Mini Coach Van",
+  "Tourist Bus",
 ];
 
 const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
@@ -45,8 +35,8 @@ const minutes = ["00", "15", "30", "45"];
 const CabBookingForm = () => {
   const [activeTab, setActiveTab] = useState("outstation");
   const [tripType, setTripType] = useState("round");
-  const [city, setCity] = useState("Coimbatore");
-  const [tariff, setTariff] = useState("");
+  const [pickupLocation, setPickupLocation] = useState("");
+  const [vehicle, setVehicle] = useState("");
   const [pickupDate, setPickupDate] = useState("");
   const [dropoffDate, setDropoffDate] = useState("");
   const [hour, setHour] = useState("");
@@ -72,8 +62,8 @@ const CabBookingForm = () => {
 
     let message = `Hi, I want to book a cab.\n\n`;
     message += `*Service:* ${tabLabel}${tripLabel ? ` - ${tripLabel}` : ""}\n`;
-    message += `*City:* ${city || "Not specified"}\n`;
-    message += `*Tariff Type:* ${tariff || "Not specified"}\n`;
+    message += `*Pickup Location:* ${pickupLocation || "Not specified"}\n`;
+    message += `*Vehicle:* ${vehicle || "Not specified"}\n`;
     message += `*Pick-up Date:* ${pickupDate || "Not specified"}\n`;
     if (activeTab !== "oneway" && activeTab !== "local") {
       message += `*Drop-off Date:* ${dropoffDate || "Not specified"}\n`;
@@ -141,29 +131,23 @@ const CabBookingForm = () => {
 
             {/* Form Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4">
-              {/* City */}
-              <Select value={city} onValueChange={setCity}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select City" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Pickup Location */}
+              <Input
+                type="text"
+                placeholder="Enter pickup location"
+                value={pickupLocation}
+                onChange={(e) => setPickupLocation(e.target.value)}
+              />
 
-              {/* Tariff Type */}
-              <Select value={tariff} onValueChange={setTariff}>
+              {/* Choose your Vehicle */}
+              <Select value={vehicle} onValueChange={setVehicle}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select tariff type" />
+                  <SelectValue placeholder="Choose your Vehicle" />
                 </SelectTrigger>
                 <SelectContent>
-                  {tariffTypes.map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t}
+                  {vehicles.map((v) => (
+                    <SelectItem key={v} value={v}>
+                      {v}
                     </SelectItem>
                   ))}
                 </SelectContent>
