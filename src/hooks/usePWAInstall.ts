@@ -8,9 +8,9 @@ interface BeforeInstallPromptEvent extends Event {
 export const usePWAInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [promptReady, setPromptReady] = useState(false);
 
   useEffect(() => {
-    // Check if already installed
     if (window.matchMedia("(display-mode: standalone)").matches) {
       setIsInstalled(true);
       return;
@@ -19,6 +19,7 @@ export const usePWAInstall = () => {
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
+      setPromptReady(true);
     };
 
     const installedHandler = () => {
@@ -36,14 +37,17 @@ export const usePWAInstall = () => {
   }, []);
 
   const installApp = async () => {
-    if (!deferredPrompt) return;
-    await deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === "accepted") {
-      setIsInstalled(true);
+    if (deferredPrompt) {
+      await deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        setIsInstalled(true);
+      }
+      setDeferredPrompt(null);
+      return true;
     }
-    setDeferredPrompt(null);
+    return false;
   };
 
-  return { canInstall: !!deferredPrompt && !isInstalled, installApp, isInstalled };
+  return { canInstall: promptReady && !isInstalled, installApp, isInstalled };
 };
