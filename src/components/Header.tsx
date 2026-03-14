@@ -49,6 +49,12 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
+            {canInstall && (
+              <Button variant="outline" size="sm" onClick={installApp} className="flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                Install App
+              </Button>
+            )}
             <Button variant="outline" size="sm" asChild>
               <a href="tel:+918248199154" className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
