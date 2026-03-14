@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Phone, Menu, X } from "lucide-react";
+import { Phone, Menu, X, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import { usePWAInstall } from "@/hooks/usePWAInstall";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { canInstall, installApp } = usePWAInstall();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -47,6 +49,12 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
+            {canInstall && (
+              <Button variant="outline" size="sm" onClick={installApp} className="flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                Install App
+              </Button>
+            )}
             <Button variant="outline" size="sm" asChild>
               <a href="tel:+918248199154" className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
@@ -93,6 +101,12 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                {canInstall && (
+                  <Button variant="outline" onClick={installApp} className="flex items-center justify-center gap-2">
+                    <Download className="w-4 h-4" />
+                    Install App
+                  </Button>
+                )}
                 <Button variant="outline" asChild>
                   <a href="tel:+918248199154" className="flex items-center justify-center gap-2">
                     <Phone className="w-4 h-4" />
