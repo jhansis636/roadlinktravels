@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Phone, Menu, X } from "lucide-react";
+import { Phone, Menu, X, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import { usePWAInstall } from "@/hooks/usePWAInstall";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
