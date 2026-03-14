@@ -58,8 +58,21 @@ const Footer = () => {
                 <Mail className="w-4 h-4 md:w-5 md:h-5" />
               </a>
             </div>
-            {canInstall && (
-              <Button variant="outline" size="sm" onClick={installApp} className="mt-4 flex items-center gap-2 border-background/20 text-background hover:bg-background/10">
+            {!isInstalled && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  const prompted = await installApp();
+                  if (!prompted) {
+                    toast({
+                      title: "Install feature not supported on this browser.",
+                      description: "Try opening this website in Chrome on Android for the best experience.",
+                    });
+                  }
+                }}
+                className="mt-4 flex items-center gap-2 border-background/20 text-background hover:bg-background/10"
+              >
                 <Download className="w-4 h-4" />
                 Install App
               </Button>
