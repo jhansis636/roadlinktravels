@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { canInstall, installApp } = usePWAInstall();
   const services = ["Local Taxi Services", "Outstation Taxi", "Airport Pickup & Drop", "Corporate Travel", "Family Trips", "Tourist Packages"];
   const quickLinks = [{
     href: "/",
