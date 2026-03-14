@@ -108,8 +108,13 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                {canInstall && (
-                  <Button variant="outline" onClick={installApp} className="flex items-center justify-center gap-2">
+                {!isInstalled && (
+                  <Button variant="outline" onClick={async () => {
+                    const prompted = await installApp();
+                    if (!prompted) {
+                      toast({ title: "Install feature not supported on this browser.", description: "Try opening this website in Chrome on Android for the best experience." });
+                    }
+                  }} className="flex items-center justify-center gap-2">
                     <Download className="w-4 h-4" />
                     Install App
                   </Button>
