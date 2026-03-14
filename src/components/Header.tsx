@@ -8,6 +8,7 @@ import { usePWAInstall } from "@/hooks/usePWAInstall";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { canInstall, installApp } = usePWAInstall();
 
   const navLinks = [
     { href: "/", label: "Home" },
