@@ -55,6 +55,12 @@ const Footer = () => {
                 <Mail className="w-4 h-4 md:w-5 md:h-5" />
               </a>
             </div>
+            {canInstall && (
+              <Button variant="outline" size="sm" onClick={installApp} className="mt-4 flex items-center gap-2 border-background/20 text-background hover:bg-background/10">
+                <Download className="w-4 h-4" />
+                Install App
+              </Button>
+            )}
           </div>
 
           {/* Quick Links */}
