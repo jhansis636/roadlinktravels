@@ -101,6 +101,12 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                {canInstall && (
+                  <Button variant="outline" onClick={installApp} className="flex items-center justify-center gap-2">
+                    <Download className="w-4 h-4" />
+                    Install App
+                  </Button>
+                )}
                 <Button variant="outline" asChild>
                   <a href="tel:+918248199154" className="flex items-center justify-center gap-2">
                     <Phone className="w-4 h-4" />
