@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
+import { useToast } from "@/hooks/use-toast";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const { canInstall, installApp } = usePWAInstall();
+  const { canInstall, installApp, isInstalled } = usePWAInstall();
+  const { toast } = useToast();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -49,8 +51,13 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            {canInstall && (
-              <Button variant="outline" size="sm" onClick={installApp} className="flex items-center gap-2">
+            {!isInstalled && (
+              <Button variant="outline" size="sm" onClick={async () => {
+                const prompted = await installApp();
+                if (!prompted) {
+                  toast({ title: "Install feature not supported on this browser.", description: "Try opening this website in Chrome on Android for the best experience." });
+                }
+              }} className="flex items-center gap-2">
                 <Download className="w-4 h-4" />
                 Install App
               </Button>
@@ -101,8 +108,13 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                {canInstall && (
-                  <Button variant="outline" onClick={installApp} className="flex items-center justify-center gap-2">
+                {!isInstalled && (
+                  <Button variant="outline" onClick={async () => {
+                    const prompted = await installApp();
+                    if (!prompted) {
+                      toast({ title: "Install feature not supported on this browser.", description: "Try opening this website in Chrome on Android for the best experience." });
+                    }
+                  }} className="flex items-center justify-center gap-2">
                     <Download className="w-4 h-4" />
                     Install App
                   </Button>

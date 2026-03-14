@@ -2,9 +2,12 @@ import { Phone, MessageCircle, MapPin, Mail, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
+import { useToast } from "@/hooks/use-toast";
+
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const { canInstall, installApp } = usePWAInstall();
+  const { canInstall, installApp, isInstalled } = usePWAInstall();
+  const { toast } = useToast();
   const services = ["Local Taxi Services", "Outstation Taxi", "Airport Pickup & Drop", "Corporate Travel", "Family Trips", "Tourist Packages"];
   const quickLinks = [{
     href: "/",
@@ -55,8 +58,21 @@ const Footer = () => {
                 <Mail className="w-4 h-4 md:w-5 md:h-5" />
               </a>
             </div>
-            {canInstall && (
-              <Button variant="outline" size="sm" onClick={installApp} className="mt-4 flex items-center gap-2 border-background/20 text-background hover:bg-background/10">
+            {!isInstalled && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  const prompted = await installApp();
+                  if (!prompted) {
+                    toast({
+                      title: "Install feature not supported on this browser.",
+                      description: "Try opening this website in Chrome on Android for the best experience.",
+                    });
+                  }
+                }}
+                className="mt-4 flex items-center gap-2 border-background/20 text-background hover:bg-background/10"
+              >
                 <Download className="w-4 h-4" />
                 Install App
               </Button>
