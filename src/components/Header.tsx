@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
+import { useToast } from "@/hooks/use-toast";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const { canInstall, installApp } = usePWAInstall();
+  const { canInstall, installApp, isInstalled } = usePWAInstall();
+  const { toast } = useToast();
 
   const navLinks = [
     { href: "/", label: "Home" },
