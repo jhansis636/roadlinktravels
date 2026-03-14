@@ -51,8 +51,13 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            {canInstall && (
-              <Button variant="outline" size="sm" onClick={installApp} className="flex items-center gap-2">
+            {!isInstalled && (
+              <Button variant="outline" size="sm" onClick={async () => {
+                const prompted = await installApp();
+                if (!prompted) {
+                  toast({ title: "Install feature not supported on this browser.", description: "Try opening this website in Chrome on Android for the best experience." });
+                }
+              }} className="flex items-center gap-2">
                 <Download className="w-4 h-4" />
                 Install App
               </Button>
