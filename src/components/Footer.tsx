@@ -1,7 +1,10 @@
-import { Phone, MessageCircle, MapPin, Mail } from "lucide-react";
+import { Phone, MessageCircle, MapPin, Mail, Download } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { usePWAInstall } from "@/hooks/usePWAInstall";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { canInstall, installApp } = usePWAInstall();
   const services = ["Local Taxi Services", "Outstation Taxi", "Airport Pickup & Drop", "Corporate Travel", "Family Trips", "Tourist Packages"];
   const quickLinks = [{
     href: "/",
@@ -52,6 +55,12 @@ const Footer = () => {
                 <Mail className="w-4 h-4 md:w-5 md:h-5" />
               </a>
             </div>
+            {canInstall && (
+              <Button variant="outline" size="sm" onClick={installApp} className="mt-4 flex items-center gap-2 border-background/20 text-background hover:bg-background/10">
+                <Download className="w-4 h-4" />
+                Install App
+              </Button>
+            )}
           </div>
 
           {/* Quick Links */}
