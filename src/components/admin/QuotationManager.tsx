@@ -238,7 +238,7 @@ const QuotationManager = () => {
       doc.save(`Quotation_${quotationNo}.pdf`);
       toast({ title: "Quotation PDF generated successfully!" });
       setOpen(false);
-      setForm({ to: "", pickup: "", drop: "", days: "", price: "", message: "" });
+      setForm({ to: "", pickup: "", drop: "", vehicle: "", days: "", price: "", message: "" });
     } catch (err) {
       console.error(err);
       toast({ title: "Failed to generate PDF.", variant: "destructive" });
