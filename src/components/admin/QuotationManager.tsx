@@ -293,6 +293,15 @@ const QuotationManager = () => {
                   onChange={(e) => handleChange("drop", e.target.value)}
                 />
               </div>
+              <div>
+                <Label htmlFor="q-vehicle">Vehicle *</Label>
+                <Input
+                  id="q-vehicle"
+                  placeholder="e.g. Innova Crysta"
+                  value={form.vehicle}
+                  onChange={(e) => handleChange("vehicle", e.target.value)}
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="q-days">Number of Days *</Label>
