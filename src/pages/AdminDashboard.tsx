@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar, Car, Images, Youtube } from "lucide-react";
+import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar, Car, Images, Youtube, FileText } from "lucide-react";
 import BookingsManager from "@/components/admin/BookingsManager";
 import TestimonialsManager from "@/components/admin/TestimonialsManager";
 import ServicesManager from "@/components/admin/ServicesManager";
@@ -11,6 +11,7 @@ import ContentEditor from "@/components/admin/ContentEditor";
 import VehiclesManager from "@/components/admin/VehiclesManager";
 import SliderManager from "@/components/admin/SliderManager";
 import VideosManager from "@/components/admin/VideosManager";
+import QuotationManager from "@/components/admin/QuotationManager";
 
 const homeContentSections = [
   { key: "hero", label: "Hero Section", fields: ["title", "subtitle", "content", "image_url"] },
@@ -129,6 +130,10 @@ const AdminDashboard = () => {
               <Youtube className="h-4 w-4" />
               <span className="hidden sm:inline">Videos</span>
             </TabsTrigger>
+            <TabsTrigger value="quotation" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Quotation</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings">
@@ -181,6 +186,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="sliders">
             <SliderManager />
+          </TabsContent>
+
+          <TabsContent value="quotation">
+            <QuotationManager />
           </TabsContent>
 
           <TabsContent value="videos">
