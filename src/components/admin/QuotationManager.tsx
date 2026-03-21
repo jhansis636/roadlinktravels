@@ -34,6 +34,7 @@ const QuotationManager = () => {
     to: "",
     pickup: "",
     drop: "",
+    vehicle: "",
     days: "",
     price: "",
     message: "",
@@ -54,7 +55,7 @@ const QuotationManager = () => {
   };
 
   const handleGenerate = async () => {
-    if (!form.to || !form.pickup || !form.drop || !form.days || !form.price) {
+    if (!form.to || !form.pickup || !form.drop || !form.vehicle || !form.days || !form.price) {
       toast({ title: "Please fill all required fields.", variant: "destructive" });
       return;
     }
@@ -131,6 +132,7 @@ const QuotationManager = () => {
       const details = [
         ["Pickup Location", form.pickup],
         ["Drop Location", form.drop],
+        ["Vehicle", form.vehicle],
         ["Number of Days", form.days],
         ["Price", `Rs. ${form.price}`],
       ];
@@ -236,7 +238,7 @@ const QuotationManager = () => {
       doc.save(`Quotation_${quotationNo}.pdf`);
       toast({ title: "Quotation PDF generated successfully!" });
       setOpen(false);
-      setForm({ to: "", pickup: "", drop: "", days: "", price: "", message: "" });
+      setForm({ to: "", pickup: "", drop: "", vehicle: "", days: "", price: "", message: "" });
     } catch (err) {
       console.error(err);
       toast({ title: "Failed to generate PDF.", variant: "destructive" });
@@ -289,6 +291,15 @@ const QuotationManager = () => {
                   placeholder="Drop location"
                   value={form.drop}
                   onChange={(e) => handleChange("drop", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="q-vehicle">Vehicle *</Label>
+                <Input
+                  id="q-vehicle"
+                  placeholder="e.g. Innova Crysta"
+                  value={form.vehicle}
+                  onChange={(e) => handleChange("vehicle", e.target.value)}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
