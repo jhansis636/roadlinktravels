@@ -132,6 +132,7 @@ const QuotationManager = () => {
       const details = [
         ["Pickup Location", form.pickup],
         ["Drop Location", form.drop],
+        ["Vehicle", form.vehicle],
         ["Number of Days", form.days],
         ["Price", `Rs. ${form.price}`],
       ];
