@@ -221,9 +221,6 @@ const QuotationManager = () => {
         y += 10;
       }
 
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.text("Proprietor", margin, y);
 
       // Footer line
       const pageH = doc.internal.pageSize.getHeight();
