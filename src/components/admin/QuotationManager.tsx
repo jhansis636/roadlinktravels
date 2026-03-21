@@ -34,6 +34,7 @@ const QuotationManager = () => {
     to: "",
     pickup: "",
     drop: "",
+    vehicle: "",
     days: "",
     price: "",
     message: "",
