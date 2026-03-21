@@ -11,6 +11,7 @@ import ContentEditor from "@/components/admin/ContentEditor";
 import VehiclesManager from "@/components/admin/VehiclesManager";
 import SliderManager from "@/components/admin/SliderManager";
 import VideosManager from "@/components/admin/VideosManager";
+import QuotationManager from "@/components/admin/QuotationManager";
 
 const homeContentSections = [
   { key: "hero", label: "Hero Section", fields: ["title", "subtitle", "content", "image_url"] },
