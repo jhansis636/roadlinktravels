@@ -55,7 +55,7 @@ const QuotationManager = () => {
   };
 
   const handleGenerate = async () => {
-    if (!form.to || !form.pickup || !form.drop || !form.days || !form.price) {
+    if (!form.to || !form.pickup || !form.drop || !form.vehicle || !form.days || !form.price) {
       toast({ title: "Please fill all required fields.", variant: "destructive" });
       return;
     }
