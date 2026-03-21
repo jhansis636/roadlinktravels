@@ -304,7 +304,7 @@ const QuotationManager = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="q-price">Price (₹) *</Label>
+                  <Label htmlFor="q-price">Price (Rs.) *</Label>
                   <Input
                     id="q-price"
                     type="number"
