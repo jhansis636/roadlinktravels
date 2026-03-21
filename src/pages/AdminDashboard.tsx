@@ -188,6 +188,10 @@ const AdminDashboard = () => {
             <SliderManager />
           </TabsContent>
 
+          <TabsContent value="quotation">
+            <QuotationManager />
+          </TabsContent>
+
           <TabsContent value="videos">
             <VideosManager />
           </TabsContent>
