@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar, Car, Images, Youtube } from "lucide-react";
+import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar, Car, Images, Youtube, FileText } from "lucide-react";
 import BookingsManager from "@/components/admin/BookingsManager";
 import TestimonialsManager from "@/components/admin/TestimonialsManager";
 import ServicesManager from "@/components/admin/ServicesManager";
