@@ -132,7 +132,7 @@ const QuotationManager = () => {
         ["Pickup Location", form.pickup],
         ["Drop Location", form.drop],
         ["Number of Days", form.days],
-        ["Price", `₹ ${form.price}`],
+        ["Price", `Rs. ${form.price}`],
       ];
 
       // Table header
