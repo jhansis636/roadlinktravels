@@ -380,6 +380,35 @@ const QuotationManager = () => {
                   />
                 </div>
               </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Price Breakdown</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="q-dayRent">Day Rent (Rs.)</Label>
+                    <Input id="q-dayRent" type="number" min="0" placeholder="e.g. 3000" value={form.dayRent} onChange={(e) => handleChange("dayRent", e.target.value)} />
+                  </div>
+                  <div>
+                    <Label htmlFor="q-perKm">Per Running KM (Rs.)</Label>
+                    <Input id="q-perKm" type="number" min="0" placeholder="e.g. 12" value={form.perKm} onChange={(e) => handleChange("perKm", e.target.value)} />
+                  </div>
+                  <div>
+                    <Label htmlFor="q-parking">Parking (Rs.)</Label>
+                    <Input id="q-parking" type="number" min="0" placeholder="e.g. 500" value={form.parking} onChange={(e) => handleChange("parking", e.target.value)} />
+                  </div>
+                  <div>
+                    <Label htmlFor="q-permit">Permit (Rs.)</Label>
+                    <Input id="q-permit" type="number" min="0" placeholder="e.g. 1000" value={form.permit} onChange={(e) => handleChange("permit", e.target.value)} />
+                  </div>
+                  <div>
+                    <Label htmlFor="q-toll">Toll (Rs.)</Label>
+                    <Input id="q-toll" type="number" min="0" placeholder="e.g. 800" value={form.toll} onChange={(e) => handleChange("toll", e.target.value)} />
+                  </div>
+                  <div>
+                    <Label htmlFor="q-overall">Overall Amount (Rs.)</Label>
+                    <Input id="q-overall" type="number" min="0" placeholder="e.g. 25000" value={form.overallAmount} onChange={(e) => handleChange("overallAmount", e.target.value)} />
+                  </div>
+                </div>
+              </div>
               <div>
                 <Label htmlFor="q-msg">Custom Message</Label>
                 <Textarea
