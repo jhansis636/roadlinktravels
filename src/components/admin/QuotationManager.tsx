@@ -70,8 +70,10 @@ const QuotationManager = () => {
     try {
       const doc = new jsPDF("p", "mm", "a4");
       const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
       const margin = 20;
       const contentW = pageW - margin * 2;
+      const footerZone = 30; // reserved for footer line + text
       const today = new Date().toLocaleDateString("en-IN", {
         day: "2-digit",
         month: "long",
@@ -80,6 +82,13 @@ const QuotationManager = () => {
       const quotationNo = generateQuotationNumber();
 
       let y = 15;
+
+      const checkPage = (needed: number) => {
+        if (y + needed > pageH - footerZone) {
+          doc.addPage();
+          y = 20;
+        }
+      };
 
       // Logo
       try {
@@ -123,9 +132,10 @@ const QuotationManager = () => {
       doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
       doc.line(margin, y, pageW - margin, y);
-      y += 10;
+      y += 8;
 
       // To
+      checkPage(10);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
       doc.setTextColor(40, 40, 40);
@@ -133,6 +143,38 @@ const QuotationManager = () => {
       doc.setFont("helvetica", "normal");
       doc.text(form.to, margin + 40, y);
       y += 10;
+
+      // Helper to draw a table
+      const drawTable = (headerLeft: string, headerRight: string, rows: string[][]) => {
+        checkPage(12 + rows.length * 10);
+        doc.setFillColor(30, 58, 138);
+        doc.rect(margin, y, contentW, 10, "F");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(255, 255, 255);
+        doc.text(headerLeft, margin + 5, y + 7);
+        doc.text(headerRight, margin + contentW / 2 + 5, y + 7);
+        y += 10;
+
+        rows.forEach((row, i) => {
+          checkPage(10);
+          const rowH = 10;
+          if (i % 2 === 0) {
+            doc.setFillColor(245, 247, 250);
+            doc.rect(margin, y, contentW, rowH, "F");
+          }
+          doc.setDrawColor(220, 220, 220);
+          doc.line(margin, y + rowH, pageW - margin, y + rowH);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(60, 60, 60);
+          doc.text(row[0], margin + 5, y + 7);
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(40, 40, 40);
+          doc.text(row[1], margin + contentW / 2 + 5, y + 7);
+          y += rowH;
+        });
+      };
 
       // Details table
       const details = [
@@ -142,39 +184,8 @@ const QuotationManager = () => {
         ["Number of Days", form.days],
         ["Price", `Rs. ${form.price}`],
       ];
-
-      // Table header
-      doc.setFillColor(30, 58, 138);
-      doc.rect(margin, y, contentW, 10, "F");
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.setTextColor(255, 255, 255);
-      doc.text("Description", margin + 5, y + 7);
-      doc.text("Details", margin + contentW / 2 + 5, y + 7);
+      drawTable("Description", "Details", details);
       y += 10;
-
-      // Table rows
-      details.forEach((row, i) => {
-        const rowH = 10;
-        if (i % 2 === 0) {
-          doc.setFillColor(245, 247, 250);
-          doc.rect(margin, y, contentW, rowH, "F");
-        }
-        doc.setDrawColor(220, 220, 220);
-        doc.line(margin, y + rowH, pageW - margin, y + rowH);
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(10);
-        doc.setTextColor(60, 60, 60);
-        doc.text(row[0], margin + 5, y + 7);
-
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(40, 40, 40);
-        doc.text(row[1], margin + contentW / 2 + 5, y + 7);
-        y += rowH;
-      });
-
-      y += 12;
 
       // Price Breakdown section
       const breakdown = [
@@ -189,46 +200,19 @@ const QuotationManager = () => {
       const hasBreakdown = [form.dayRent, form.perKm, form.parking, form.permit, form.toll, form.overallAmount].some(v => v.trim());
 
       if (hasBreakdown) {
+        checkPage(20);
         doc.setFont("helvetica", "bold");
         doc.setFontSize(12);
         doc.setTextColor(30, 58, 138);
         doc.text("Price Breakdown", margin, y);
         y += 8;
-
-        doc.setFillColor(30, 58, 138);
-        doc.rect(margin, y, contentW, 10, "F");
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.setTextColor(255, 255, 255);
-        doc.text("Item", margin + 5, y + 7);
-        doc.text("Amount", margin + contentW / 2 + 5, y + 7);
+        drawTable("Item", "Amount", breakdown);
         y += 10;
-
-        breakdown.forEach((row, i) => {
-          const rowH = 10;
-          if (i % 2 === 0) {
-            doc.setFillColor(245, 247, 250);
-            doc.rect(margin, y, contentW, rowH, "F");
-          }
-          doc.setDrawColor(220, 220, 220);
-          doc.line(margin, y + rowH, pageW - margin, y + rowH);
-
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(10);
-          doc.setTextColor(60, 60, 60);
-          doc.text(row[0], margin + 5, y + 7);
-
-          doc.setFont("helvetica", "normal");
-          doc.setTextColor(40, 40, 40);
-          doc.text(row[1], margin + contentW / 2 + 5, y + 7);
-          y += rowH;
-        });
-
-        y += 12;
       }
 
       // Custom message
       if (form.message.trim()) {
+        checkPage(20);
         doc.setFont("helvetica", "bold");
         doc.setFontSize(11);
         doc.setTextColor(30, 58, 138);
@@ -239,16 +223,21 @@ const QuotationManager = () => {
         doc.setFontSize(10);
         doc.setTextColor(60, 60, 60);
         const lines = doc.splitTextToSize(form.message, contentW);
-        doc.text(lines, margin, y);
-        y += lines.length * 5 + 8;
+        lines.forEach((line: string) => {
+          checkPage(6);
+          doc.text(line, margin, y);
+          y += 5;
+        });
+        y += 5;
       }
 
       // Terms
-      y += 5;
+      checkPage(20);
+      y += 3;
       doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
       doc.line(margin, y, pageW - margin, y);
-      y += 8;
+      y += 7;
 
       doc.setFont("helvetica", "italic");
       doc.setFontSize(9);
@@ -257,8 +246,10 @@ const QuotationManager = () => {
       y += 5;
       doc.text("* GST and tolls may apply additionally.", margin, y);
 
-      // Signature section
-      y += 15;
+      // Signature section — ensure enough space (sincerely + seal + gap)
+      const sigH = 22;
+      checkPage(sigH + 20);
+      y += 12;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
       doc.setTextColor(40, 40, 40);
@@ -270,7 +261,6 @@ const QuotationManager = () => {
 
       try {
         const sig = await loadImage(signatureImg);
-        const sigH = 22;
         const sigW = (sig.width / sig.height) * sigH;
         doc.addImage(sig, "JPEG", margin, y, sigW, sigH);
         y += sigH + 3;
@@ -278,16 +268,20 @@ const QuotationManager = () => {
         y += 10;
       }
 
+      // Footer line on every page
+      const totalPages = doc.getNumberOfPages();
+      for (let p = 1; p <= totalPages; p++) {
+        doc.setPage(p);
+        doc.setDrawColor(30, 58, 138);
+        doc.setLineWidth(0.8);
+        doc.line(margin, pageH - 15, pageW - margin, pageH - 15);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(120, 120, 120);
+        doc.text("Roadlink Tours and Travels | www.roadlinktravels.com", pageW / 2, pageH - 10, { align: "center" });
+      }
 
-      // Footer line
-      const pageH = doc.internal.pageSize.getHeight();
-      doc.setDrawColor(30, 58, 138);
-      doc.setLineWidth(0.8);
-      doc.line(margin, pageH - 15, pageW - margin, pageH - 15);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8);
-      doc.setTextColor(120, 120, 120);
-      doc.text("Roadlink Tours and Travels | www.roadlinktravels.com", pageW / 2, pageH - 10, { align: "center" });
+
 
       doc.save(`Quotation_${quotationNo}.pdf`);
       toast({ title: "Quotation PDF generated successfully!" });
