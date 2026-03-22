@@ -93,7 +93,7 @@ const QuotationManager = () => {
       // Logo
       try {
         const logo = await loadImage(logoImg);
-        const logoH = 18;
+        const logoH = 24;
         const logoW = (logo.width / logo.height) * logoH;
         doc.addImage(logo, "PNG", margin, y, logoW, logoH);
         y += logoH + 4;
