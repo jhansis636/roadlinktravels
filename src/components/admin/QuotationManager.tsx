@@ -176,6 +176,57 @@ const QuotationManager = () => {
 
       y += 12;
 
+      // Price Breakdown section
+      const breakdown = [
+        ["Day Rent", form.dayRent ? `Rs. ${form.dayRent}` : "-"],
+        ["Per Running Kilometer", form.perKm ? `Rs. ${form.perKm}` : "-"],
+        ["Parking", form.parking ? `Rs. ${form.parking}` : "-"],
+        ["Permit", form.permit ? `Rs. ${form.permit}` : "-"],
+        ["Toll", form.toll ? `Rs. ${form.toll}` : "-"],
+        ["Overall Amount", form.overallAmount ? `Rs. ${form.overallAmount}` : "-"],
+      ];
+
+      const hasBreakdown = [form.dayRent, form.perKm, form.parking, form.permit, form.toll, form.overallAmount].some(v => v.trim());
+
+      if (hasBreakdown) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.setTextColor(30, 58, 138);
+        doc.text("Price Breakdown", margin, y);
+        y += 8;
+
+        doc.setFillColor(30, 58, 138);
+        doc.rect(margin, y, contentW, 10, "F");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(255, 255, 255);
+        doc.text("Item", margin + 5, y + 7);
+        doc.text("Amount", margin + contentW / 2 + 5, y + 7);
+        y += 10;
+
+        breakdown.forEach((row, i) => {
+          const rowH = 10;
+          if (i % 2 === 0) {
+            doc.setFillColor(245, 247, 250);
+            doc.rect(margin, y, contentW, rowH, "F");
+          }
+          doc.setDrawColor(220, 220, 220);
+          doc.line(margin, y + rowH, pageW - margin, y + rowH);
+
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(60, 60, 60);
+          doc.text(row[0], margin + 5, y + 7);
+
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(40, 40, 40);
+          doc.text(row[1], margin + contentW / 2 + 5, y + 7);
+          y += rowH;
+        });
+
+        y += 12;
+      }
+
       // Custom message
       if (form.message.trim()) {
         doc.setFont("helvetica", "bold");
