@@ -280,15 +280,8 @@ const QuotationManager = () => {
         doc.setTextColor(120, 120, 120);
         doc.text("Roadlink Tours and Travels | www.roadlinktravels.com", pageW / 2, pageH - 10, { align: "center" });
       }
-      // Footer line
-      const pageH = doc.internal.pageSize.getHeight();
-      doc.setDrawColor(30, 58, 138);
-      doc.setLineWidth(0.8);
-      doc.line(margin, pageH - 15, pageW - margin, pageH - 15);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8);
-      doc.setTextColor(120, 120, 120);
-      doc.text("Roadlink Tours and Travels | www.roadlinktravels.com", pageW / 2, pageH - 10, { align: "center" });
+
+
 
       doc.save(`Quotation_${quotationNo}.pdf`);
       toast({ title: "Quotation PDF generated successfully!" });
