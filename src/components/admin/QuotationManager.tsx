@@ -93,7 +93,7 @@ const QuotationManager = () => {
       // Logo
       try {
         const logo = await loadImage(logoImg);
-        const logoH = 18;
+        const logoH = 24;
         const logoW = (logo.width / logo.height) * logoH;
         doc.addImage(logo, "PNG", margin, y, logoW, logoH);
         y += logoH + 4;
@@ -244,19 +244,13 @@ const QuotationManager = () => {
       doc.setTextColor(120, 120, 120);
       doc.text("* Prices are subject to change based on season and availability.", margin, y);
       y += 5;
-      doc.text("* GST and tolls may apply additionally.", margin, y);
-
-      // Signature section — ensure enough space (sincerely + seal + gap)
-      const sigH = 22;
-      checkPage(sigH + 20);
-      y += 12;
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      doc.setTextColor(40, 40, 40);
-      doc.text("Sincerely,", margin, y);
+      doc.text("* Extra Hours Beta Or Night Travelling Driver Beta", margin, y);
       y += 5;
-      doc.setFont("helvetica", "bold");
-      doc.text("For ROAD LINK Tours & Travels", margin, y);
+      doc.text("* Time and kilometer calculated by office to office", margin, y);
+
+      // Signature section — ensure enough space (seal + gap)
+      const sigH = 22;
+      checkPage(sigH + 12);
       y += 5;
 
       try {
