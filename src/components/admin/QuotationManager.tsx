@@ -37,6 +37,12 @@ const QuotationManager = () => {
     vehicle: "",
     days: "",
     price: "",
+    dayRent: "",
+    perKm: "",
+    parking: "",
+    permit: "",
+    toll: "",
+    overallAmount: "",
     message: "",
   });
 
