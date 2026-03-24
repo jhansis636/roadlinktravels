@@ -1,4 +1,4 @@
-import { Phone, MessageCircle, MapPin, Mail, Download } from "lucide-react";
+import { Phone, MessageCircle, MapPin, Mail, Download, Facebook, Instagram, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
@@ -56,6 +56,15 @@ const Footer = () => {
               </a>
               <a href="mailto:info@roadlinktravels.com" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
                 <Mail className="w-4 h-4 md:w-5 md:h-5" />
+              </a>
+              <a href="https://www.facebook.com/people/Road-Link-Tours-and-Travels-Coimbatore/61574651784647/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-[#1877F2] transition-colors">
+                <Facebook className="w-4 h-4 md:w-5 md:h-5" />
+              </a>
+              <a href="https://www.instagram.com/roadlinktoursandtravels?igsh=MW12NHZiNXk0MjFyNQ==" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-[#E4405F] transition-colors">
+                <Instagram className="w-4 h-4 md:w-5 md:h-5" />
+              </a>
+              <a href="https://g.page/r/CWb9iblFoyItEBM/review" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-[#FBBC05] transition-colors">
+                <Star className="w-4 h-4 md:w-5 md:h-5" />
               </a>
             </div>
             {!isInstalled && (
