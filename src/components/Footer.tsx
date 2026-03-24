@@ -80,7 +80,7 @@ const Footer = () => {
                     });
                   }
                 }}
-                className="mt-4 flex items-center gap-2 border-background/20 text-background hover:bg-background/10"
+                className="mt-4 flex items-center gap-2 bg-primary text-primary-foreground font-semibold hover:bg-primary/90"
               >
                 <Download className="w-4 h-4" />
                 Install App
