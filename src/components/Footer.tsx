@@ -1,4 +1,4 @@
-import { Phone, MessageCircle, MapPin, Mail, Download } from "lucide-react";
+import { Phone, MessageCircle, MapPin, Mail, Download, Facebook, Instagram, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
