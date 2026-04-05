@@ -148,6 +148,7 @@ const Footer = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-background/60">
             <p>© {currentYear} Roadlink Tours and Travels. All rights reserved.</p>
+            <p>Designed by - Digi Eyez</p>
             <p>Taxi Services in Coimbatore, Tamil Nadu</p>
           </div>
         </div>
