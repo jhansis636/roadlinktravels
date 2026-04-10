@@ -11,6 +11,10 @@ import Services from "./pages/Services";
 import WhyUs from "./pages/WhyUs";
 import Testimonials from "./pages/Testimonials";
 import Contact from "./pages/Contact";
+import Tariff from "./pages/Tariff";
+import TourPackages from "./pages/TourPackages";
+import Vehicles from "./pages/Vehicles";
+import Gallery from "./pages/Gallery";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -38,6 +42,10 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/tariff" element={<Tariff />} />
+              <Route path="/tour-packages/:duration" element={<TourPackages />} />
+              <Route path="/vehicles" element={<Vehicles />} />
+              <Route path="/gallery" element={<Gallery />} />
               <Route path="/why-us" element={<WhyUs />} />
               <Route path="/testimonials" element={<Testimonials />} />
               <Route path="/contact" element={<Contact />} />
