@@ -1,13 +1,26 @@
 import { useState } from "react";
-import { Phone, Menu, X, Download } from "lucide-react";
+import { Phone, Menu, X, Download, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+
+const tourPackages = [
+  { href: "/tour-packages/1-day", label: "One Day Tour Packages" },
+  { href: "/tour-packages/2-days", label: "Two Days Tour Packages" },
+  { href: "/tour-packages/3-days", label: "Three Days Tour Packages" },
+  { href: "/tour-packages/4-days", label: "Four Days Tour Packages" },
+  { href: "/tour-packages/5-days", label: "Five Days Tour Packages" },
+  { href: "/tour-packages/6-days", label: "Six Days Tour Packages" },
+  { href: "/tour-packages/7-days", label: "Seven Days Tour Packages" },
+  { href: "/tour-packages/8-days", label: "Eight Days Tour Packages" },
+];
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isTourOpen, setIsTourOpen] = useState(false);
   const location = useLocation();
   const { canInstall, installApp, isInstalled } = usePWAInstall();
   const { toast } = useToast();
@@ -15,13 +28,14 @@ const Header = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About Us" },
-    { href: "/services", label: "Services" },
-    { href: "/why-us", label: "Why Us" },
-    { href: "/testimonials", label: "Testimonials" },
-    { href: "/contact", label: "Contact" },
+    { href: "/tariff", label: "Tariff" },
+    { href: "/vehicles", label: "Vehicles" },
+    { href: "/gallery", label: "Gallery" },
+    { href: "/contact", label: "Contact Us" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
+  const isTourActive = location.pathname.startsWith("/tour-packages");
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -33,16 +47,83 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
+          <nav className="hidden lg:flex items-center gap-1">
+            {navLinks.slice(0, 3).map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className={`transition-colors font-medium ${
+                className={cn(
+                  "px-3 xl:px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200",
                   isActive(link.href)
                     ? "text-primary"
-                    : "text-muted-foreground hover:text-primary"
-                }`}
+                    : "text-foreground/80 hover:text-primary hover:bg-muted"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {/* Tour Packages Dropdown */}
+            <div
+              className="relative group"
+              onMouseEnter={() => setIsTourOpen(true)}
+              onMouseLeave={() => setIsTourOpen(false)}
+            >
+              <button
+                className={cn(
+                  "flex items-center gap-1 px-3 xl:px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 cursor-pointer",
+                  isTourActive
+                    ? "text-primary"
+                    : "text-foreground/80 hover:text-primary hover:bg-muted"
+                )}
+              >
+                Tour Packages
+                <ChevronDown
+                  className={cn(
+                    "w-3.5 h-3.5 transition-transform duration-300",
+                    isTourOpen && "rotate-180"
+                  )}
+                />
+              </button>
+
+              {/* Dropdown */}
+              <div
+                className={cn(
+                  "absolute top-full left-0 pt-2 transition-all duration-200",
+                  isTourOpen
+                    ? "opacity-100 translate-y-0 pointer-events-auto"
+                    : "opacity-0 -translate-y-1 pointer-events-none"
+                )}
+              >
+                <div className="bg-background rounded-lg border border-border shadow-xl py-2 min-w-[260px]">
+                  {tourPackages.map((pkg) => (
+                    <Link
+                      key={pkg.href}
+                      to={pkg.href}
+                      className={cn(
+                        "block px-4 py-2.5 text-sm transition-all duration-200 cursor-pointer",
+                        isActive(pkg.href)
+                          ? "bg-[hsl(152,73%,18%)] text-white font-semibold"
+                          : "text-foreground/80 hover:bg-[hsl(152,73%,18%)]/10 hover:text-[hsl(152,73%,18%)] hover:font-semibold hover:pl-5"
+                      )}
+                    >
+                      {pkg.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {navLinks.slice(3).map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={cn(
+                  "px-3 xl:px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200",
+                  isActive(link.href)
+                    ? "text-primary"
+                    : "text-foreground/80 hover:text-primary hover:bg-muted"
+                )}
               >
                 {link.label}
               </Link>
@@ -91,23 +172,89 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border">
-            <nav className="flex flex-col gap-4">
-              {navLinks.map((link) => (
+          <div className="lg:hidden py-4 border-t border-border animate-fade-in">
+            <nav className="flex flex-col gap-1">
+              {navLinks.slice(0, 3).map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`transition-colors font-medium py-2 ${
+                  className={cn(
+                    "px-4 py-2.5 rounded-md transition-colors font-medium text-sm",
                     isActive(link.href)
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-primary"
-                  }`}
+                      ? "text-primary bg-primary/5"
+                      : "text-foreground/80 hover:text-primary hover:bg-muted"
+                  )}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="flex flex-col gap-2 pt-4 border-t border-border">
+
+              {/* Mobile Tour Packages Accordion */}
+              <div>
+                <button
+                  onClick={() => setIsTourOpen(!isTourOpen)}
+                  className={cn(
+                    "w-full flex items-center justify-between px-4 py-2.5 rounded-md transition-colors font-medium text-sm cursor-pointer",
+                    isTourActive
+                      ? "text-primary bg-primary/5"
+                      : "text-foreground/80 hover:text-primary hover:bg-muted"
+                  )}
+                >
+                  Tour Packages
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-300",
+                      isTourOpen && "rotate-180"
+                    )}
+                  />
+                </button>
+                <div
+                  className={cn(
+                    "overflow-hidden transition-all duration-300 ease-in-out",
+                    isTourOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                  )}
+                >
+                  <div className="ml-4 border-l-2 border-border pl-3 py-1">
+                    {tourPackages.map((pkg) => (
+                      <Link
+                        key={pkg.href}
+                        to={pkg.href}
+                        className={cn(
+                          "block px-3 py-2 rounded-md text-sm transition-all duration-200",
+                          isActive(pkg.href)
+                            ? "text-[hsl(152,73%,18%)] font-semibold bg-[hsl(152,73%,18%)]/10"
+                            : "text-foreground/70 hover:text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)]/5 hover:font-semibold"
+                        )}
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          setIsTourOpen(false);
+                        }}
+                      >
+                        {pkg.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {navLinks.slice(3).map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={cn(
+                    "px-4 py-2.5 rounded-md transition-colors font-medium text-sm",
+                    isActive(link.href)
+                      ? "text-primary bg-primary/5"
+                      : "text-foreground/80 hover:text-primary hover:bg-muted"
+                  )}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              <div className="flex flex-col gap-2 pt-4 border-t border-border mt-2">
                 {!isInstalled && (
                   <Button variant="outline" onClick={async () => {
                     const prompted = await installApp();
