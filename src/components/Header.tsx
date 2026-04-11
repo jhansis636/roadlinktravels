@@ -28,9 +28,13 @@ const Header = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About Us" },
+    { href: "/services", label: "Services" },
     { href: "/tariff", label: "Tariff" },
-    { href: "/vehicles", label: "Vehicles" },
-    { href: "/gallery", label: "Gallery" },
+  ];
+
+  const navLinksAfterTour = [
+    { href: "/why-us", label: "Why Us" },
+    { href: "/testimonials", label: "Testimonials" },
     { href: "/contact", label: "Contact Us" },
   ];
 
@@ -48,7 +52,7 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.slice(0, 3).map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
@@ -114,7 +118,7 @@ const Header = () => {
               </div>
             </div>
 
-            {navLinks.slice(3).map((link) => (
+            {navLinksAfterTour.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
@@ -174,7 +178,7 @@ const Header = () => {
         {isMenuOpen && (
           <div className="lg:hidden py-4 border-t border-border animate-fade-in">
             <nav className="flex flex-col gap-1">
-              {navLinks.slice(0, 3).map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
@@ -238,7 +242,7 @@ const Header = () => {
                 </div>
               </div>
 
-              {navLinks.slice(3).map((link) => (
+              {navLinksAfterTour.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
@@ -253,7 +257,6 @@ const Header = () => {
                   {link.label}
                 </Link>
               ))}
-
               <div className="flex flex-col gap-2 pt-4 border-t border-border mt-2">
                 {!isInstalled && (
                   <Button variant="outline" onClick={async () => {
