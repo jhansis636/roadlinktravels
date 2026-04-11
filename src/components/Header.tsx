@@ -28,9 +28,13 @@ const Header = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About Us" },
+    { href: "/services", label: "Services" },
     { href: "/tariff", label: "Tariff" },
-    { href: "/vehicles", label: "Vehicles" },
-    { href: "/gallery", label: "Gallery" },
+  ];
+
+  const navLinksAfterTour = [
+    { href: "/why-us", label: "Why Us" },
+    { href: "/testimonials", label: "Testimonials" },
     { href: "/contact", label: "Contact Us" },
   ];
 
