@@ -178,7 +178,7 @@ const Header = () => {
         {isMenuOpen && (
           <div className="lg:hidden py-4 border-t border-border animate-fade-in">
             <nav className="flex flex-col gap-1">
-              {navLinks.slice(0, 3).map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
@@ -242,7 +242,7 @@ const Header = () => {
                 </div>
               </div>
 
-              {navLinks.slice(3).map((link) => (
+              {navLinksAfterTour.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
@@ -253,6 +253,10 @@ const Header = () => {
                       : "text-foreground/80 hover:text-primary hover:bg-muted"
                   )}
                   onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
                 >
                   {link.label}
                 </Link>
