@@ -256,11 +256,6 @@ const Header = () => {
                 >
                   {link.label}
                 </Link>
-              ))}
-                >
-                  {link.label}
-                </Link>
-              ))}
 
               <div className="flex flex-col gap-2 pt-4 border-t border-border mt-2">
                 {!isInstalled && (
