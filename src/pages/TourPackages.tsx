@@ -111,15 +111,26 @@ const TourPackages = () => {
                     <Star className="w-4 h-4 text-primary" />
                     Places Covered / Highlights
                   </h3>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                     {route.highlights.map((highlight, hIdx) => (
-                      <span
+                      <div
                         key={hIdx}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/5 text-sm text-foreground/80 border border-primary/10"
+                        className="group relative rounded-lg overflow-hidden border border-border shadow-sm aspect-[3/2]"
                       >
-                        <MapPin className="w-3 h-3 text-primary" />
-                        {highlight}
-                      </span>
+                        <img
+                          src={getDestinationImage(highlight)}
+                          alt={highlight}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-2">
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-white drop-shadow-md">
+                            <MapPin className="w-3 h-3 flex-shrink-0" />
+                            {highlight}
+                          </span>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
