@@ -52,7 +52,7 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.slice(0, 3).map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
@@ -118,7 +118,7 @@ const Header = () => {
               </div>
             </div>
 
-            {navLinks.slice(3).map((link) => (
+            {navLinksAfterTour.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
