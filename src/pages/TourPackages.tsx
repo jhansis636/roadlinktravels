@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { MapPin, Clock, Navigation, ChevronRight, Phone, Star, Route } from "lucide-react";
 import { tourPackagesData } from "@/data/tourPackagesData";
+import { getDestinationImage } from "@/data/destinationImages";
 import { Button } from "@/components/ui/button";
 
 const TourPackages = () => {
