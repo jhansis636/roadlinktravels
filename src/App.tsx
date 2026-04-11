@@ -13,8 +13,6 @@ import Testimonials from "./pages/Testimonials";
 import Contact from "./pages/Contact";
 import Tariff from "./pages/Tariff";
 import TourPackages from "./pages/TourPackages";
-import Vehicles from "./pages/Vehicles";
-import Gallery from "./pages/Gallery";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
