@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Star, Users, Loader2 } from "lucide-react";
+import roadlinkLogo from "@/assets/roadlink-logo-fleet.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
