@@ -127,6 +127,10 @@ const AdminDashboard = () => {
               <Images className="h-4 w-4" />
               <span className="hidden sm:inline">Sliders</span>
             </TabsTrigger>
+            <TabsTrigger value="banners" className="flex items-center gap-2">
+              <PanelTop className="h-4 w-4" />
+              <span className="hidden sm:inline">Banners</span>
+            </TabsTrigger>
             <TabsTrigger value="videos" className="flex items-center gap-2">
               <Youtube className="h-4 w-4" />
               <span className="hidden sm:inline">Videos</span>
@@ -187,6 +191,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="sliders">
             <SliderManager />
+          </TabsContent>
+
+          <TabsContent value="banners">
+            <BannerManager />
           </TabsContent>
 
           <TabsContent value="quotation">
