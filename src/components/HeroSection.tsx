@@ -71,7 +71,7 @@ const HeroSection = () => {
             </div>
 
             {/* Headline */}
-            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 leading-tight text-secondary-foreground">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 leading-tight text-primary">
               Reliable Taxi & Travel Services in{" "}
               <span className="text-secondary">Coimbatore</span>
             </h1>
