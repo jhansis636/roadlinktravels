@@ -152,9 +152,9 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5" data-anim="card-group">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {services.map((service) => (
-              <Tilt3DCard
+              <div
                 key={service.title}
                 className="group bg-card border border-border rounded-2xl p-6 shadow-md hover:shadow-xl hover:scale-[1.03] transition-all duration-300 hover:border-primary/40"
               >
@@ -167,7 +167,7 @@ const Home = () => {
                 <p className="text-foreground/60 text-sm leading-relaxed">
                   {service.description}
                 </p>
-              </Tilt3DCard>
+              </div>
             ))}
           </div>
 
