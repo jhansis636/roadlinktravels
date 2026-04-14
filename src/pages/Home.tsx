@@ -137,41 +137,41 @@ const Home = () => {
       </div>
 
       {/* Services Preview Section */}
-      <section className="py-20 bg-background overflow-hidden">
+      <section className="py-12 bg-muted overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-12" data-anim="section" style={{ willChange: "transform" }}>
-            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+          <div className="text-center max-w-2xl mx-auto mb-8" data-anim="section" style={{ willChange: "transform" }}>
+            <span className="text-primary font-bold text-sm uppercase tracking-wider">
               Our Services
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">
               Taxi Services for Every Need
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-foreground/70 text-lg">
               From local trips to outstation journeys, we offer a complete range of taxi 
               services to meet all your travel requirements.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-anim="card-group">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5" data-anim="card-group">
             {services.map((service) => (
               <Tilt3DCard
                 key={service.title}
-                className="group bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-all hover:border-primary/30"
+                className="group bg-card border border-border rounded-2xl p-6 shadow-md hover:shadow-xl hover:scale-[1.03] transition-all duration-300 hover:border-primary/40"
               >
-                <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                <div className="w-14 h-14 rounded-xl bg-primary/15 flex items-center justify-center mb-4 group-hover:bg-primary/25 transition-colors">
                   <service.icon className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">
+                <h3 className="text-xl font-bold text-foreground mb-2">
                   {service.title}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <p className="text-foreground/60 text-sm leading-relaxed">
                   {service.description}
                 </p>
               </Tilt3DCard>
             ))}
           </div>
 
-          <div className="text-center mt-10" data-anim="section">
+          <div className="text-center mt-8" data-anim="section">
             <Button size="lg" asChild>
               <Link to="/services">View All Services</Link>
             </Button>
