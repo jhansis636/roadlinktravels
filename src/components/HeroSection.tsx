@@ -62,10 +62,10 @@ const HeroSection = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-foreground/50 via-foreground/30 to-foreground/10 md:from-foreground/40 md:to-foreground/10" style={{ zIndex: 2 }} />
 
         {/* Content */}
-        <div className="relative container mx-auto px-4 py-12 md:py-20" style={{ zIndex: 3 }}>
+        <div className="relative container mx-auto px-4 py-12 md:py-20" style={{ zIndex: 3, perspective: "1200px" }}>
           <div className="max-w-3xl">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm border border-secondary/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-4 md:mb-6">
+            <div data-anim="hero-text" className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm border border-secondary/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-4 md:mb-6" style={{ willChange: "transform, opacity" }}>
               <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 text-secondary" />
               <span className="text-xs md:text-sm font-medium text-background">Coimbatore, Tamil Nadu</span>
             </div>
