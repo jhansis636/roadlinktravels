@@ -1,3 +1,4 @@
+import { useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import CabBookingForm from "@/components/CabBookingForm";
 import VehicleBookingSection from "@/components/VehicleBookingSection";
@@ -8,6 +9,7 @@ import { Shield, Users, Car, Headphones, MapPin, Plane, Building2, Palmtree } fr
 import { Button } from "@/components/ui/button";
 import { useScrollAnimations } from "@/hooks/useScrollAnimations";
 import Tilt3DCard from "@/components/Tilt3DCard";
+import FloatingLogo from "@/components/FloatingLogo";
 
 const features = [
   {
