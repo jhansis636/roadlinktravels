@@ -6,6 +6,8 @@ import PageVideos from "@/components/PageVideos";
 import { Link } from "react-router-dom";
 import { Shield, Users, Car, Headphones, MapPin, Plane, Building2, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useScrollAnimations } from "@/hooks/useScrollAnimations";
+import Tilt3DCard from "@/components/Tilt3DCard";
 
 const features = [
   {
@@ -64,30 +66,37 @@ const services = [
 ];
 
 const Home = () => {
+  const containerRef = useScrollAnimations();
+
   return (
-    <>
+    <div ref={containerRef} style={{ perspective: "1200px" }}>
       <HeroSection />
       
-      
       {/* Home Page Slider */}
-      <PageSlider pageName="home" className="container mx-auto px-4 py-8" />
+      <div data-anim="banner">
+        <PageSlider pageName="home" className="container mx-auto px-4 py-8" />
+      </div>
       
       {/* Home Page Videos */}
-      <PageVideos pageName="home" title="Watch Our Videos" />
+      <div data-anim="section">
+        <PageVideos pageName="home" title="Watch Our Videos" />
+      </div>
       
       {/* Vehicle Booking Section */}
-      <VehicleBookingSection />
+      <div data-anim="section" style={{ willChange: "transform" }}>
+        <VehicleBookingSection />
+      </div>
 
       {/* Cab Booking Form below fleet */}
-      <div className="-mt-10 pb-8 bg-muted">
+      <div className="-mt-10 pb-8 bg-muted" data-anim="section">
         <CabBookingForm />
       </div>
 
       {/* About Preview Section */}
-      <section className="py-20 bg-muted">
+      <section className="py-20 bg-muted overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <div data-anim="section" style={{ willChange: "transform" }}>
               <span className="text-primary font-semibold text-sm uppercase tracking-wider">
                 About Us
               </span>
@@ -102,9 +111,9 @@ const Home = () => {
                 <Link to="/about">Learn More About Us</Link>
               </Button>
             </div>
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="grid sm:grid-cols-2 gap-6" data-anim="card-group">
               {features.map((feature) => (
-                <div
+                <Tilt3DCard
                   key={feature.title}
                   className="bg-background p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
@@ -115,7 +124,7 @@ const Home = () => {
                     {feature.title}
                   </h3>
                   <p className="text-muted-foreground text-sm">{feature.description}</p>
-                </div>
+                </Tilt3DCard>
               ))}
             </div>
           </div>
@@ -123,12 +132,14 @@ const Home = () => {
       </section>
 
       {/* Services Page Slider */}
-      <PageSlider pageName="services" className="container mx-auto px-4 py-8" />
+      <div data-anim="banner">
+        <PageSlider pageName="services" className="container mx-auto px-4 py-8" />
+      </div>
 
       {/* Services Preview Section */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-background overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="text-center max-w-2xl mx-auto mb-12" data-anim="section" style={{ willChange: "transform" }}>
             <span className="text-primary font-semibold text-sm uppercase tracking-wider">
               Our Services
             </span>
@@ -141,9 +152,9 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-anim="card-group">
             {services.map((service) => (
-              <div
+              <Tilt3DCard
                 key={service.title}
                 className="group bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-all hover:border-primary/30"
               >
@@ -156,11 +167,11 @@ const Home = () => {
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   {service.description}
                 </p>
-              </div>
+              </Tilt3DCard>
             ))}
           </div>
 
-          <div className="text-center mt-10">
+          <div className="text-center mt-10" data-anim="section">
             <Button size="lg" asChild>
               <Link to="/services">View All Services</Link>
             </Button>
@@ -169,15 +180,15 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
+      <section className="py-16 bg-primary text-primary-foreground overflow-hidden" data-anim="parallax-bg">
+        <div className="container mx-auto px-4 text-center" data-anim="section" style={{ willChange: "transform" }}>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Book Your Ride?
           </h2>
           <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
             Experience the best taxi service in Coimbatore. Book now and travel with comfort and reliability.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center" data-anim="parallax-fg">
             <Button size="lg" variant="secondary" asChild>
               <a href="tel:+918248199154">Call Now</a>
             </Button>
@@ -187,7 +198,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

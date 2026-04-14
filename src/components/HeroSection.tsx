@@ -62,27 +62,27 @@ const HeroSection = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-foreground/50 via-foreground/30 to-foreground/10 md:from-foreground/40 md:to-foreground/10" style={{ zIndex: 2 }} />
 
         {/* Content */}
-        <div className="relative container mx-auto px-4 py-12 md:py-20" style={{ zIndex: 3 }}>
+        <div className="relative container mx-auto px-4 py-12 md:py-20" style={{ zIndex: 3, perspective: "1200px" }}>
           <div className="max-w-3xl">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm border border-secondary/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-4 md:mb-6">
+            <div data-anim="hero-text" className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm border border-secondary/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-4 md:mb-6" style={{ willChange: "transform, opacity" }}>
               <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4 text-secondary" />
               <span className="text-xs md:text-sm font-medium text-background">Coimbatore, Tamil Nadu</span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 leading-tight text-primary">
+            <h1 data-anim="hero-text" className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 leading-tight text-primary" style={{ willChange: "transform, opacity" }}>
               Reliable Taxi & Travel Services in{" "}
               <span className="text-secondary">Coimbatore</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-base md:text-xl text-background/90 mb-3 md:mb-4">
+            <p data-anim="hero-text" className="text-base md:text-xl text-background/90 mb-3 md:mb-4" style={{ willChange: "transform, opacity" }}>
               Roadlink Tours and Travels – Your Trusted Travel Partner
             </p>
 
             {/* Services List */}
-            <div className="flex flex-wrap gap-2 md:gap-3 mb-6 md:mb-8">
+            <div data-anim="hero-text" className="flex flex-wrap gap-2 md:gap-3 mb-6 md:mb-8" style={{ willChange: "transform, opacity" }}>
               {["Day Basis, Hourly/Km Basis, Airport Transfers, Corporate Booking, Round Trips, Temple Tours, Honeymoon Packages, Adventure Packages, IV Trips & Students Trips, Group Trip, Hotels, Resorts and Tent House Booking, Flight, Train and Bus"].map(service => (
                 <span key={service} className="bg-background/10 backdrop-blur-sm border border-background/20 rounded-full px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm text-background">
                   {service}
@@ -91,7 +91,7 @@ const HeroSection = () => {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-8 md:mb-12">
+            <div data-anim="hero-buttons" className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-8 md:mb-12" style={{ willChange: "transform, opacity" }}>
               <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground text-base md:text-lg px-6 md:px-8 h-11 md:h-12" onClick={() => setIsBookingOpen(true)}>
                 <CalendarCheck className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                 Book Online
