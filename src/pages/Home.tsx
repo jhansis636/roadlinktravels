@@ -69,10 +69,16 @@ const services = [
 
 const Home = () => {
   const containerRef = useScrollAnimations();
+  const [triggerBooking, setTriggerBooking] = useState(false);
+
+  const handleFloatingLogoClick = () => {
+    const bookBtn = document.querySelector('[data-booking-trigger]') as HTMLButtonElement;
+    if (bookBtn) bookBtn.click();
+  };
 
   return (
     <div ref={containerRef} style={{ perspective: "1200px" }}>
-      <HeroSection />
+      <FloatingLogo onBookingClick={handleFloatingLogoClick} />
       
       {/* Home Page Slider */}
       <div data-anim="banner">
