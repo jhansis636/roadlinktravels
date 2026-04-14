@@ -92,7 +92,7 @@ const HeroSection = () => {
 
             {/* CTA Buttons */}
             <div data-anim="hero-buttons" className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-8 md:mb-12" style={{ willChange: "transform, opacity" }}>
-              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground text-base md:text-lg px-6 md:px-8 h-11 md:h-12" onClick={() => setIsBookingOpen(true)}>
+              <Button data-booking-trigger size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground text-base md:text-lg px-6 md:px-8 h-11 md:h-12" onClick={() => setIsBookingOpen(true)}>
                 <CalendarCheck className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                 Book Online
               </Button>
