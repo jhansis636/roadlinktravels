@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Star, Users, Loader2 } from "lucide-react";
-import roadlinkLogo from "@/assets/roadlink-logo-fleet.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -40,17 +39,6 @@ const VehicleBookingSection = () => {
   return (
     <section className="py-20 bg-muted">
       <div className="container mx-auto px-4">
-        {/* Logo above section */}
-        <div className="flex justify-center mb-8">
-          <div className="w-[500px] h-[500px] max-w-full">
-            <img
-              src={roadlinkLogo}
-              alt="Roadlink Tours and Travels"
-              className="w-full h-full object-contain rounded-lg border border-border bg-background shadow-sm"
-            />
-          </div>
-        </div>
-
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-primary font-semibold text-sm uppercase tracking-wider">
