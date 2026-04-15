@@ -11,7 +11,8 @@ import Services from "./pages/Services";
 import WhyUs from "./pages/WhyUs";
 import Testimonials from "./pages/Testimonials";
 import Contact from "./pages/Contact";
-import Tariff from "./pages/Tariff";
+import TariffDayBasis from "./pages/TariffDayBasis";
+import TariffKmBasis from "./pages/TariffKmBasis";
 import TourPackages from "./pages/TourPackages";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
@@ -40,7 +41,8 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/services" element={<Services />} />
-              <Route path="/tariff" element={<Tariff />} />
+              <Route path="/tariff/day-basis" element={<TariffDayBasis />} />
+              <Route path="/tariff/km-basis" element={<TariffKmBasis />} />
               <Route path="/tour-packages/:duration" element={<TourPackages />} />
               <Route path="/why-us" element={<WhyUs />} />
               <Route path="/testimonials" element={<Testimonials />} />
