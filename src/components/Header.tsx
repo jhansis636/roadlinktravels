@@ -76,7 +76,55 @@ const Header = () => {
               </Link>
             ))}
 
-            {/* Tour Packages Dropdown */}
+            {/* Tariff Dropdown */}
+            <div
+              className="relative group"
+              onMouseEnter={() => setIsTariffOpen(true)}
+              onMouseLeave={() => setIsTariffOpen(false)}
+            >
+              <button
+                className={cn(
+                  "flex items-center gap-1 px-3 xl:px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 cursor-pointer",
+                  isTariffActive
+                    ? "text-primary"
+                    : "text-foreground/80 hover:text-primary hover:bg-muted"
+                )}
+              >
+                Tariff
+                <ChevronDown
+                  className={cn(
+                    "w-3.5 h-3.5 transition-transform duration-300",
+                    isTariffOpen && "rotate-180"
+                  )}
+                />
+              </button>
+              <div
+                className={cn(
+                  "absolute top-full left-0 pt-2 transition-all duration-200",
+                  isTariffOpen
+                    ? "opacity-100 translate-y-0 pointer-events-auto"
+                    : "opacity-0 -translate-y-1 pointer-events-none"
+                )}
+              >
+                <div className="bg-background rounded-lg border border-border shadow-xl py-2 min-w-[300px]">
+                  {tariffItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      to={item.href}
+                      className={cn(
+                        "block px-4 py-2.5 text-sm transition-all duration-200 cursor-pointer",
+                        isActive(item.href)
+                          ? "bg-[hsl(152,73%,18%)] text-white font-semibold"
+                          : "text-foreground/80 hover:bg-[hsl(152,73%,18%)]/10 hover:text-[hsl(152,73%,18%)] hover:font-semibold hover:pl-5"
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div
               className="relative group"
               onMouseEnter={() => setIsTourOpen(true)}
