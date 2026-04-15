@@ -22,6 +22,7 @@ const tourPackages = [
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTourOpen, setIsTourOpen] = useState(false);
+  const [isTariffOpen, setIsTariffOpen] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const location = useLocation();
   const { canInstall, installApp, isInstalled } = usePWAInstall();
