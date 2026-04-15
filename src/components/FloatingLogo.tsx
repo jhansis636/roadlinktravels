@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
 import floatingLogo from "@/assets/floating-logo.png";
+import BookingModal from "./BookingModal";
 
-const FloatingLogo = ({ onBookingClick }: { onBookingClick: () => void }) => {
+const FloatingLogo = () => {
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const logoRef = useRef<HTMLImageElement>(null);
   const [hidden, setHidden] = useState(false);
   const posRef = useRef({ x: 100, y: 100, vx: 1.5, vy: 1.2 });
@@ -43,13 +45,14 @@ const FloatingLogo = ({ onBookingClick }: { onBookingClick: () => void }) => {
   const handleClick = () => {
     setHidden(true);
     cancelAnimationFrame(rafRef.current);
-    onBookingClick();
+    setIsBookingOpen(true);
   };
 
-  if (hidden) return null;
+  if (hidden && !isBookingOpen) return null;
 
   return (
-    <img
+    <>
+    {!hidden && <img
       ref={logoRef}
       src={floatingLogo}
       alt="Roadlink Logo"
@@ -66,7 +69,9 @@ const FloatingLogo = ({ onBookingClick }: { onBookingClick: () => void }) => {
         pointerEvents: "auto",
         willChange: "transform",
       }}
-    />
+    />}
+    <BookingModal open={isBookingOpen} onOpenChange={setIsBookingOpen} />
+    </>
   );
 };
 
