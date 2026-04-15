@@ -255,6 +255,54 @@ const Header = () => {
                 </Link>
               ))}
 
+              {/* Mobile Tariff Accordion */}
+              <div>
+                <button
+                  onClick={() => setIsTariffOpen(!isTariffOpen)}
+                  className={cn(
+                    "w-full flex items-center justify-between px-4 py-2.5 rounded-md transition-colors font-medium text-sm cursor-pointer",
+                    isTariffActive
+                      ? "text-primary bg-primary/5"
+                      : "text-foreground/80 hover:text-primary hover:bg-muted"
+                  )}
+                >
+                  Tariff
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-300",
+                      isTariffOpen && "rotate-180"
+                    )}
+                  />
+                </button>
+                <div
+                  className={cn(
+                    "overflow-hidden transition-all duration-300 ease-in-out",
+                    isTariffOpen ? "max-h-[200px] opacity-100" : "max-h-0 opacity-0"
+                  )}
+                >
+                  <div className="ml-4 border-l-2 border-border pl-3 py-1">
+                    {tariffItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        className={cn(
+                          "block px-3 py-2 rounded-md text-sm transition-all duration-200",
+                          isActive(item.href)
+                            ? "text-[hsl(152,73%,18%)] font-semibold bg-[hsl(152,73%,18%)]/10"
+                            : "text-foreground/70 hover:text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)]/5 hover:font-semibold"
+                        )}
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          setIsTariffOpen(false);
+                        }}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               {/* Mobile Tour Packages Accordion */}
               <div>
                 <button
