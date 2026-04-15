@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Phone, Menu, X, Download, ChevronDown } from "lucide-react";
+import { Phone, Menu, X, Download, ChevronDown, CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import BookingModal from "./BookingModal";
 
 const tourPackages = [
   { href: "/tour-packages/1-day", label: "One Day Tour Packages" },
@@ -21,6 +22,7 @@ const tourPackages = [
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTourOpen, setIsTourOpen] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const location = useLocation();
   const { canInstall, installApp, isInstalled } = usePWAInstall();
   const { toast } = useToast();
@@ -136,6 +138,10 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
+            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => setIsBookingOpen(true)}>
+              <CalendarCheck className="w-4 h-4 mr-1" />
+              Book Online
+            </Button>
             {!isInstalled && (
               <Button variant="outline" size="sm" onClick={async () => {
                 const prompted = await installApp();
@@ -258,6 +264,10 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 pt-4 border-t border-border mt-2">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2" onClick={() => { setIsMenuOpen(false); setIsBookingOpen(true); }}>
+                  <CalendarCheck className="w-4 h-4" />
+                  Book Online
+                </Button>
                 {!isInstalled && (
                   <Button variant="outline" onClick={async () => {
                     const prompted = await installApp();
@@ -289,6 +299,7 @@ const Header = () => {
           </div>
         )}
       </div>
+      <BookingModal open={isBookingOpen} onOpenChange={setIsBookingOpen} />
     </header>
   );
 };
