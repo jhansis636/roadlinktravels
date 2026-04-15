@@ -31,8 +31,14 @@ const Header = () => {
     { href: "/", label: "Home" },
     { href: "/about", label: "About Us" },
     { href: "/services", label: "Services" },
-    { href: "/tariff", label: "Tariff" },
   ];
+
+  const tariffItems = [
+    { href: "/tariff/day-basis", label: "Outstation Tariff Day Basis" },
+    { href: "/tariff/km-basis", label: "Outstation Tariff Kilometre Basis" },
+  ];
+
+  const isTariffActive = location.pathname.startsWith("/tariff");
 
   const navLinksAfterTour = [
     { href: "/why-us", label: "Why Us" },
