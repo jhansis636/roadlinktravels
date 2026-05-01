@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useScrollAnimations } from "@/hooks/useScrollAnimations";
 import Tilt3DCard from "@/components/Tilt3DCard";
 import FloatingLogo from "@/components/FloatingLogo";
+import RadialLogoMenu from "@/components/RadialLogoMenu";
 
 const features = [
   {
@@ -86,6 +87,7 @@ const Home = () => {
       </div>
       
       {/* Vehicle Booking Section */}
+      <RadialLogoMenu />
       <div data-anim="section" style={{ willChange: "transform" }}>
         <VehicleBookingSection />
       </div>
