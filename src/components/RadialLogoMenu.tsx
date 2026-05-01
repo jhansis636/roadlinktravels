@@ -237,20 +237,20 @@ const RadialLogoMenu = () => {
                 return !v;
               });
             }}
-            className="relative z-10 rounded-full p-3 transition-transform duration-300 hover:scale-105 active:scale-95"
+            className="relative z-10 rounded-full p-4 transition-transform duration-300 hover:scale-105 active:scale-95 flex items-center justify-center"
             style={{
               background: "radial-gradient(circle at 30% 30%, hsl(var(--background)), hsl(var(--muted)))",
               boxShadow:
                 "0 0 0 6px hsl(var(--primary) / 0.08), 0 0 40px hsl(var(--primary) / 0.35), 0 20px 50px -10px hsl(var(--primary) / 0.4)",
+              width: isMobile ? 170 : 230,
+              height: isMobile ? 170 : 230,
             }}
           >
             <img
               src={logo}
               alt="Roadlink Tours and Travels"
-              className="object-contain"
+              className="object-contain w-full h-full"
               style={{
-                width: isMobile ? 110 : 150,
-                height: isMobile ? 110 : 150,
                 filter: "drop-shadow(0 4px 12px hsl(var(--primary) / 0.4))",
               }}
             />
