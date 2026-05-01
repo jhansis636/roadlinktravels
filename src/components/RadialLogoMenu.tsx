@@ -4,11 +4,39 @@ import { Info, Briefcase, Wallet, MapPinned, Sparkles, MessageSquareQuote, Phone
 import logo from "@/assets/logo.png";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const items = [
+type SubItem = { label: string; to: string };
+type RadialItem = {
+  label: string;
+  to?: string;
+  Icon: typeof Info;
+  submenu?: SubItem[];
+};
+
+const items: RadialItem[] = [
   { label: "About Us", to: "/about", Icon: Info },
   { label: "Services", to: "/services", Icon: Briefcase },
-  { label: "Tariff", to: "/tariff/day-basis", Icon: Wallet },
-  { label: "Tour Packages", to: "/tour-packages", Icon: MapPinned },
+  {
+    label: "Tariff",
+    Icon: Wallet,
+    submenu: [
+      { label: "Outstation Tariff Day Basis", to: "/tariff/day-basis" },
+      { label: "Outstation Tariff Kilometre Basis", to: "/tariff/km-basis" },
+    ],
+  },
+  {
+    label: "Tour Packages",
+    Icon: MapPinned,
+    submenu: [
+      { label: "One Day Tour Packages", to: "/tour-packages?days=1" },
+      { label: "Two Days Tour Packages", to: "/tour-packages?days=2" },
+      { label: "Three Days Tour Packages", to: "/tour-packages?days=3" },
+      { label: "Four Days Tour Packages", to: "/tour-packages?days=4" },
+      { label: "Five Days Tour Packages", to: "/tour-packages?days=5" },
+      { label: "Six Days Tour Packages", to: "/tour-packages?days=6" },
+      { label: "Seven Days Tour Packages", to: "/tour-packages?days=7" },
+      { label: "Eight Days Tour Packages", to: "/tour-packages?days=8" },
+    ],
+  },
   { label: "Why Us", to: "/why-us", Icon: Sparkles },
   { label: "Testimonials", to: "/testimonials", Icon: MessageSquareQuote },
   { label: "Contact Us", to: "/contact", Icon: Phone },
@@ -16,6 +44,7 @@ const items = [
 
 const RadialLogoMenu = () => {
   const [open, setOpen] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const isMobile = useIsMobile();
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -25,6 +54,7 @@ const RadialLogoMenu = () => {
     const onDocClick = (e: MouseEvent) => {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
         setOpen(false);
+        setOpenSubmenu(null);
       }
     };
     document.addEventListener("mousedown", onDocClick);
@@ -61,7 +91,12 @@ const RadialLogoMenu = () => {
           className="relative mx-auto flex items-center justify-center"
           style={{ height: isMobile ? 360 : 460, width: "100%" }}
           onMouseEnter={() => !isMobile && setOpen(true)}
-          onMouseLeave={() => !isMobile && setOpen(false)}
+          onMouseLeave={() => {
+            if (!isMobile) {
+              setOpen(false);
+              setOpenSubmenu(null);
+            }
+          }}
         >
           {/* Rotating ring */}
           <div
@@ -89,12 +124,32 @@ const RadialLogoMenu = () => {
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
             const delay = open ? i * 0.05 : (count - i) * 0.03;
+            const hasSub = !!item.submenu;
+            const isSubOpen = openSubmenu === item.label;
+
+            const buttonInner = (
+              <div
+                className="flex flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 text-center backdrop-blur-md border border-white/30 shadow-lg hover:scale-110 hover:shadow-2xl hover:border-primary/60 transition-all duration-300"
+                style={{
+                  background: "linear-gradient(135deg, hsl(var(--background) / 0.85), hsl(var(--card) / 0.7))",
+                  minWidth: isMobile ? 78 : 96,
+                }}
+              >
+                <item.Icon className="w-5 h-5 text-primary" />
+                <span className="text-[11px] md:text-xs font-semibold text-foreground whitespace-nowrap">
+                  {item.label}
+                </span>
+              </div>
+            );
+
+            // Direction the submenu fans out (away from the center)
+            const dirX = Math.cos(angle);
+            const dirY = Math.sin(angle);
+
             return (
-              <Link
+              <div
                 key={item.label}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className="absolute group"
+                className="absolute"
                 style={{
                   transform: open
                     ? `translate(${x}px, ${y}px) scale(1)`
@@ -105,19 +160,70 @@ const RadialLogoMenu = () => {
                   willChange: "transform, opacity",
                 }}
               >
-                <div
-                  className="flex flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 text-center backdrop-blur-md border border-white/30 shadow-lg hover:scale-110 hover:shadow-2xl hover:border-primary/60 transition-all duration-300"
-                  style={{
-                    background: "linear-gradient(135deg, hsl(var(--background) / 0.85), hsl(var(--card) / 0.7))",
-                    minWidth: isMobile ? 78 : 96,
-                  }}
-                >
-                  <item.Icon className="w-5 h-5 text-primary" />
-                  <span className="text-[11px] md:text-xs font-semibold text-foreground whitespace-nowrap">
-                    {item.label}
-                  </span>
-                </div>
-              </Link>
+                {hasSub ? (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenSubmenu(isSubOpen ? null : item.label);
+                    }}
+                    aria-expanded={isSubOpen}
+                    className="group"
+                  >
+                    {buttonInner}
+                  </button>
+                ) : (
+                  <Link
+                    to={item.to!}
+                    onClick={() => {
+                      setOpen(false);
+                      setOpenSubmenu(null);
+                    }}
+                    className="group"
+                  >
+                    {buttonInner}
+                  </Link>
+                )}
+
+                {/* Submenu */}
+                {hasSub && (
+                  <div
+                    className="absolute z-20"
+                    style={{
+                      // anchor submenu just outward from the item
+                      left: "50%",
+                      top: "50%",
+                      transform: `translate(calc(-50% + ${dirX * 70}px), calc(-50% + ${dirY * 70}px))`,
+                      pointerEvents: isSubOpen ? "auto" : "none",
+                    }}
+                  >
+                    <div
+                      className="rounded-xl border border-white/30 backdrop-blur-md shadow-2xl p-2 flex flex-col gap-1 min-w-[200px] origin-center"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, hsl(var(--background) / 0.95), hsl(var(--card) / 0.9))",
+                        opacity: isSubOpen ? 1 : 0,
+                        transform: isSubOpen ? "scale(1)" : "scale(0.85)",
+                        transition: "opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                      }}
+                    >
+                      {item.submenu!.map((sub) => (
+                        <Link
+                          key={sub.label}
+                          to={sub.to}
+                          onClick={() => {
+                            setOpen(false);
+                            setOpenSubmenu(null);
+                          }}
+                          className="text-xs md:text-sm font-medium text-foreground/90 hover:text-primary hover:bg-primary/10 rounded-md px-3 py-1.5 transition-colors text-left whitespace-nowrap"
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             );
           })}
 
@@ -125,7 +231,12 @@ const RadialLogoMenu = () => {
           <button
             type="button"
             aria-label="Toggle menu"
-            onClick={() => setOpen((v) => !v)}
+            onClick={() => {
+              setOpen((v) => {
+                if (v) setOpenSubmenu(null);
+                return !v;
+              });
+            }}
             className="relative z-10 rounded-full p-3 transition-transform duration-300 hover:scale-105 active:scale-95"
             style={{
               background: "radial-gradient(circle at 30% 30%, hsl(var(--background)), hsl(var(--muted)))",
