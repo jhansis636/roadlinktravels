@@ -257,8 +257,8 @@ const RadialLogoMenu = () => {
           </button>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground mt-2">
-          {isMobile ? "Tap the logo to explore" : "Hover the logo to explore"}
+        <p className="text-center text-sm font-bold text-black mt-2">
+          CLICK THE LOGO TO EXPLORE
         </p>
       </div>
 
