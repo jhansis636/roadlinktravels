@@ -1,227 +1,293 @@
-// Real photographs of actual Indian destinations from Wikimedia Commons
-// All images are authentic, location-specific photos (Creative Commons licensed)
-// URLs use direct Wikimedia thumbnail paths (computed via MD5 hash of filename)
+// Real photographs of South Indian destinations bundled locally.
+// All images are Vite-imported so they always resolve (no broken URLs).
+import alappuzhaImg from "@/assets/destinations/alappuzha.jpg";
+import athirampallyImg from "@/assets/destinations/athirampally.jpg";
+import bangaloreImg from "@/assets/destinations/bangalore.jpg";
+import cochinImg from "@/assets/destinations/cochin.jpg";
+import coimbatoreImg from "@/assets/destinations/coimbatore.jpg";
+import coorgImg from "@/assets/destinations/coorg.jpg";
+import kanyakumariImg from "@/assets/destinations/kanyakumari.jpg";
+import kodaikanalImg from "@/assets/destinations/kodaikanal.jpg";
+import maduraiImg from "@/assets/destinations/madurai.jpg";
+import munnarImg from "@/assets/destinations/munnar.jpg";
+import mysoreImg from "@/assets/destinations/mysore.jpg";
+import ootyImg from "@/assets/destinations/ooty.jpg";
+import palaniImg from "@/assets/destinations/palani.jpg";
+import pollachiImg from "@/assets/destinations/pollachi.jpg";
+import rameshwaramImg from "@/assets/destinations/rameshwaram.jpg";
+import thekkadyImg from "@/assets/destinations/thekkady.jpg";
+import valparaiImg from "@/assets/destinations/valparai.jpg";
 
-const WC = "https://upload.wikimedia.org/wikipedia/commons/thumb";
+export const DEFAULT_DESTINATION_IMAGE = ootyImg;
 
+// Exact-name lookup for destination labels used across tour packages.
 export const destinationImages: Record<string, string> = {
-  // ===================== OOTY / NILGIRIS =====================
-  // Ooty Botanical Garden - real photo of Ooty's Government Botanical Garden
-  "Ooty": `${WC}/d/da/Government_Botanical_garden_%2Cooty.jpg/400px-Government_Botanical_garden_%2Cooty.jpg`,
-  "Ooty Botanical Garden": `${WC}/2/29/Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG/400px-Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG`,
-  // Ooty Lake with boathouse - real photo
-  "Ooty Lake": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Ooty Lake & Boathouse": `${WC}/7/7a/Boat_House_in_Ooty_Lake%2C_Ooty_-_Tamil_Nadu.JPG/400px-Boat_House_in_Ooty_Lake%2C_Ooty_-_Tamil_Nadu.JPG`,
-  // Doddabetta Peak - real viewpoint photo
-  "Doddabetta": `${WC}/b/b2/Doddabetta_Peak.jpg/400px-Doddabetta_Peak.jpg`,
-  "Doddabetta Peak": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
-  "Rose Garden": `${WC}/d/da/Government_Botanical_garden_%2Cooty.jpg/400px-Government_Botanical_garden_%2Cooty.jpg`,
-  "Botanical Garden": `${WC}/2/29/Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG/400px-Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG`,
-  "Pine Forest": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
-  // Pykara Boat House - real photo of Pykara lake
-  "Pykara": `${WC}/a/a1/Pykara_Boat_House_2.jpg/400px-Pykara_Boat_House_2.jpg`,
-  "Pykara Falls": `${WC}/a/a1/Pykara_Boat_House_2.jpg/400px-Pykara_Boat_House_2.jpg`,
-  "Thread Garden": `${WC}/1/18/Fern_House%2COoty.jpg/400px-Fern_House%2COoty.jpg`,
-  "Coonoor": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
-  "Kotagiri": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
-  // Nilgiri Mountain Railway - real NMR train on viaduct
-  "Nilgiri Mountain Railway": `${WC}/a/a4/NMR_Train_on_viaduct_05-02-26_33.jpeg/400px-NMR_Train_on_viaduct_05-02-26_33.jpeg`,
+  // ===== OOTY / NILGIRIS =====
+  "Ooty": ootyImg,
+  "Ooty Botanical Garden": ootyImg,
+  "Ooty Lake": ootyImg,
+  "Ooty Lake & Boathouse": ootyImg,
+  "Doddabetta": ootyImg,
+  "Doddabetta Peak": ootyImg,
+  "Rose Garden": ootyImg,
+  "Botanical Garden": ootyImg,
+  "Pine Forest": ootyImg,
+  "Pykara": ootyImg,
+  "Pykara Falls": ootyImg,
+  "Thread Garden": ootyImg,
+  "Coonoor": ootyImg,
+  "Kotagiri": ootyImg,
+  "Nilgiri Mountain Railway": ootyImg,
+  "Sim's Park": ootyImg,
+  "Dolphin's Nose": ootyImg,
+  "Lamb's Rock": ootyImg,
+  "Avalanche": ootyImg,
+  "Avalanche Lake": ootyImg,
+  "Emerald Lake": ootyImg,
+  "Upper Bhavani": ootyImg,
+  "Mukurthi": ootyImg,
+  "Tea Museum": ootyImg,
+  "Tea Factory": ootyImg,
 
-  // ===================== KODAIKANAL =====================
-  // Kodaikanal - Queen of Hills - real scenic photo
-  "Kodaikanal": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Kodaikanal Lake": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Pillar Rocks": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Bryant Park": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Coaker's Walk": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  // Fairy Falls Kodaikanal - real waterfall photo
-  "Silver Cascade Falls": `${WC}/7/7a/Fairy_falls_kodaikanal.jpg/400px-Fairy_falls_kodaikanal.jpg`,
-  "Green Valley View": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Guna Caves": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Berijam Lake": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Mannavanur": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Mannavanur Lake": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Vattakanal": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Vattakanal Falls": `${WC}/7/7a/Fairy_falls_kodaikanal.jpg/400px-Fairy_falls_kodaikanal.jpg`,
-  "Echo Point": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Photo Point": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
-  "Pagoda Point": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
+  // ===== KODAIKANAL =====
+  "Kodaikanal": kodaikanalImg,
+  "Kodaikanal Lake": kodaikanalImg,
+  "Pillar Rocks": kodaikanalImg,
+  "Bryant Park": kodaikanalImg,
+  "Coaker's Walk": kodaikanalImg,
+  "Silver Cascade Falls": kodaikanalImg,
+  "Green Valley View": kodaikanalImg,
+  "Guna Caves": kodaikanalImg,
+  "Berijam Lake": kodaikanalImg,
+  "Mannavanur": kodaikanalImg,
+  "Mannavanur Lake": kodaikanalImg,
+  "Vattakanal": kodaikanalImg,
+  "Vattakanal Falls": kodaikanalImg,
+  "Echo Point": kodaikanalImg,
+  "Photo Point": kodaikanalImg,
+  "Pagoda Point": kodaikanalImg,
+  "Bear Shola Falls": kodaikanalImg,
 
-  // ===================== MUNNAR / KERALA =====================
-  // Munnar tea plantation - real photo of Kerala tea gardens
-  "Munnar": `${WC}/d/dc/Tea_plantations_in_Munnar%2C_Kerala.jpg/400px-Tea_plantations_in_Munnar%2C_Kerala.jpg`,
-  "Munnar Tea Gardens": `${WC}/d/dc/Tea_plantations_in_Munnar%2C_Kerala.jpg/400px-Tea_plantations_in_Munnar%2C_Kerala.jpg`,
-  "Tea Gardens": `${WC}/d/dc/Tea_plantations_in_Munnar%2C_Kerala.jpg/400px-Tea_plantations_in_Munnar%2C_Kerala.jpg`,
-  "Tea Museum": `${WC}/d/dc/Tea_plantations_in_Munnar%2C_Kerala.jpg/400px-Tea_plantations_in_Munnar%2C_Kerala.jpg`,
-  "Tea & Coffee Plantations": `${WC}/d/dc/Tea_plantations_in_Munnar%2C_Kerala.jpg/400px-Tea_plantations_in_Munnar%2C_Kerala.jpg`,
-  // Munnar mountain top - real Kerala highlands
-  "Mattupetty Dam": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Kundala Lake": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Top Station": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Eravikulam": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Eravikulam National Park": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Anamudi Peak View": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Spice Plantations": `${WC}/d/dc/Tea_plantations_in_Munnar%2C_Kerala.jpg/400px-Tea_plantations_in_Munnar%2C_Kerala.jpg`,
-  // Alleppey houseboat - real Kerala backwaters
-  "Alleppey Backwaters": `${WC}/9/99/Boathouse_%287063399547%29.jpg/400px-Boathouse_%287063399547%29.jpg`,
-  "Alleppey Houseboat": `${WC}/9/99/Boathouse_%287063399547%29.jpg/400px-Boathouse_%287063399547%29.jpg`,
-  "Backwaters": `${WC}/9/99/Boathouse_%287063399547%29.jpg/400px-Boathouse_%287063399547%29.jpg`,
-  "Houseboat": `${WC}/9/99/Boathouse_%287063399547%29.jpg/400px-Boathouse_%287063399547%29.jpg`,
-  // Athirapally Falls - real photo (using Fairy Falls as fallback since Athirapally file not found)
-  "Athirapally Falls": `${WC}/7/7a/Fairy_falls_kodaikanal.jpg/400px-Fairy_falls_kodaikanal.jpg`,
-  "Athirapally Waterfalls": `${WC}/7/7a/Fairy_falls_kodaikanal.jpg/400px-Fairy_falls_kodaikanal.jpg`,
-  "Vazhachal Falls": `${WC}/7/7a/Fairy_falls_kodaikanal.jpg/400px-Fairy_falls_kodaikanal.jpg`,
-  "Vazhachal Waterfalls": `${WC}/7/7a/Fairy_falls_kodaikanal.jpg/400px-Fairy_falls_kodaikanal.jpg`,
-  // Fort Kochi
-  "Cochin": `${WC}/9/99/Boathouse_%287063399547%29.jpg/400px-Boathouse_%287063399547%29.jpg`,
-  "Fort Kochi": `${WC}/9/99/Boathouse_%287063399547%29.jpg/400px-Boathouse_%287063399547%29.jpg`,
-  "Chinese Fishing Nets": `${WC}/9/99/Boathouse_%287063399547%29.jpg/400px-Boathouse_%287063399547%29.jpg`,
-  "Jewish Synagogue": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Mattancherry Palace": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Santa Cruz Basilica": `${WC}/9/99/Boathouse_%287063399547%29.jpg/400px-Boathouse_%287063399547%29.jpg`,
-  "Marine Drive": `${WC}/9/99/Boathouse_%287063399547%29.jpg/400px-Boathouse_%287063399547%29.jpg`,
-  "Periyar": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Periyar Wildlife Sanctuary": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Kovalam Beach": `${WC}/e/e8/A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg/400px-A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg`,
-  "Trivandrum": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Padmanabhaswamy Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Padmanabhapuram Palace": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Guruvayur Sri Krishna Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Punnathurkotta Elephant Sanctuary": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Mammiyur Mahadeva Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Thrissur Pooram Museum": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Chavakkad Beach": `${WC}/e/e8/A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg/400px-A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg`,
-  "Chinnar Wildlife Sanctuary": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Marayoor": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Marayoor Sandalwood Forest": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Malampuzha Dam & Garden": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Nallamudi Viewpoint": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
+  // ===== MUNNAR =====
+  "Munnar": munnarImg,
+  "Munnar Tea Gardens": munnarImg,
+  "Tea Gardens": munnarImg,
+  "Tea & Coffee Plantations": munnarImg,
+  "Mattupetty Dam": munnarImg,
+  "Kundala Lake": munnarImg,
+  "Top Station": munnarImg,
+  "Eravikulam": munnarImg,
+  "Eravikulam National Park": munnarImg,
+  "Anamudi Peak View": munnarImg,
+  "Spice Plantations": munnarImg,
+  "Echo Point Munnar": munnarImg,
+  "Rose Garden Munnar": munnarImg,
+  "Marayoor": munnarImg,
+  "Marayoor Sandalwood Forest": munnarImg,
+  "Chinnar Wildlife Sanctuary": munnarImg,
+  "Nallamudi Viewpoint": munnarImg,
 
-  // ===================== MYSORE / KARNATAKA =====================
-  // Mysore Palace illuminated - iconic real photo
-  "Mysore Palace": `${WC}/9/9d/Mysore_Palace_lighting.jpg/400px-Mysore_Palace_lighting.jpg`,
-  // Mysore Palace daytime - real exterior photo
-  "Mysore Zoo": `${WC}/7/71/Mysore_Palace%2C_Mysore%2C_Karnataka.jpg/400px-Mysore_Palace%2C_Mysore%2C_Karnataka.jpg`,
-  // Chamundi Hill viewpoint at night - real photo
-  "Chamundi Hills": `${WC}/8/87/Mysore_Palace_seen_from_Chamundi_Hill_Viewpoint_at_night.jpg/400px-Mysore_Palace_seen_from_Chamundi_Hill_Viewpoint_at_night.jpg`,
-  "Brindavan Gardens": `${WC}/9/9d/Mysore_Palace_lighting.jpg/400px-Mysore_Palace_lighting.jpg`,
-  "KRS Dam": `${WC}/7/71/Mysore_Palace%2C_Mysore%2C_Karnataka.jpg/400px-Mysore_Palace%2C_Mysore%2C_Karnataka.jpg`,
-  // Inside Mysore Palace - real interior photo
-  "St. Philomena's Church": `${WC}/d/d5/Inside_view_of_Mysore_Palace.jpg/400px-Inside_view_of_Mysore_Palace.jpg`,
-  "Srirangapatna": `${WC}/7/71/Mysore_Palace%2C_Mysore%2C_Karnataka.jpg/400px-Mysore_Palace%2C_Mysore%2C_Karnataka.jpg`,
-  "Ranganathittu Bird Sanctuary": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Bangalore": `${WC}/7/71/Mysore_Palace%2C_Mysore%2C_Karnataka.jpg/400px-Mysore_Palace%2C_Mysore%2C_Karnataka.jpg`,
-  "Bangalore Palace": `${WC}/7/71/Mysore_Palace%2C_Mysore%2C_Karnataka.jpg/400px-Mysore_Palace%2C_Mysore%2C_Karnataka.jpg`,
-  "Lalbagh": `${WC}/2/29/Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG/400px-Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG`,
-  "Lalbagh Botanical Garden": `${WC}/2/29/Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG/400px-Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG`,
-  "Cubbon Park": `${WC}/2/29/Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG/400px-Botanical_Garden_in_Ooty%2C_Tamil_Nadu.JPG`,
-  "Vidhana Soudha": `${WC}/7/71/Mysore_Palace%2C_Mysore%2C_Karnataka.jpg/400px-Mysore_Palace%2C_Mysore%2C_Karnataka.jpg`,
-  "UB City Mall": `${WC}/7/71/Mysore_Palace%2C_Mysore%2C_Karnataka.jpg/400px-Mysore_Palace%2C_Mysore%2C_Karnataka.jpg`,
-  // Coorg waterfalls - real photo from Coorg, Karnataka
-  "Coorg": `${WC}/3/38/Waterfalls_near_Ayatana_resort%2C_Coorg_3.jpg/400px-Waterfalls_near_Ayatana_resort%2C_Coorg_3.jpg`,
-  "Abbey Falls": `${WC}/3/38/Waterfalls_near_Ayatana_resort%2C_Coorg_3.jpg/400px-Waterfalls_near_Ayatana_resort%2C_Coorg_3.jpg`,
-  "Raja's Seat": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
-  "Dubare Elephant Camp": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Talacauvery": `${WC}/3/38/Waterfalls_near_Ayatana_resort%2C_Coorg_3.jpg/400px-Waterfalls_near_Ayatana_resort%2C_Coorg_3.jpg`,
-  "Namdroling Monastery": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Bandipur": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Bandipur National Park": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Mudumalai": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Mudumalai Wildlife Sanctuary": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
+  // ===== THEKKADY =====
+  "Thekkady": thekkadyImg,
+  "Periyar": thekkadyImg,
+  "Periyar Wildlife Sanctuary": thekkadyImg,
+  "Periyar Lake": thekkadyImg,
+  "Periyar Tiger Reserve": thekkadyImg,
+  "Spice Garden": thekkadyImg,
+  "Bamboo Rafting": thekkadyImg,
 
-  // ===================== MADURAI =====================
-  // Meenakshi Amman Temple - real photo of the iconic gopuram
-  "Madurai": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Meenakshi Amman Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Meenakshi Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Thirumalai Nayakkar Palace": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Gandhi Memorial Museum": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
+  // ===== ALAPPUZHA / KERALA BACKWATERS =====
+  "Alleppey": alappuzhaImg,
+  "Alappuzha": alappuzhaImg,
+  "Alleppey Backwaters": alappuzhaImg,
+  "Alleppey Houseboat": alappuzhaImg,
+  "Backwaters": alappuzhaImg,
+  "Houseboat": alappuzhaImg,
+  "Kovalam": alappuzhaImg,
+  "Kovalam Beach": alappuzhaImg,
 
-  // ===================== KANYAKUMARI =====================
-  // Kanyakumari sunrise with Vivekananda Rock - real photo
-  "Kanyakumari": `${WC}/e/e8/A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg/400px-A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg`,
-  "Kanyakumari Sunrise/Sunset": `${WC}/e/e8/A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg/400px-A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg`,
-  // Vivekananda Rock Memorial & Thiruvalluvar Statue - real photo
-  "Vivekananda Rock Memorial": `${WC}/f/fa/Vivekananda_Mandapam_and_Thiruvalluvar_Statue.jpg/400px-Vivekananda_Mandapam_and_Thiruvalluvar_Statue.jpg`,
-  "Thiruvalluvar Statue": `${WC}/f/fa/Vivekananda_Mandapam_and_Thiruvalluvar_Statue.jpg/400px-Vivekananda_Mandapam_and_Thiruvalluvar_Statue.jpg`,
+  // ===== COCHIN =====
+  "Cochin": cochinImg,
+  "Kochi": cochinImg,
+  "Fort Kochi": cochinImg,
+  "Chinese Fishing Nets": cochinImg,
+  "Jewish Synagogue": cochinImg,
+  "Mattancherry Palace": cochinImg,
+  "Santa Cruz Basilica": cochinImg,
+  "Marine Drive": cochinImg,
+  "Trivandrum": cochinImg,
+  "Padmanabhaswamy Temple": cochinImg,
+  "Padmanabhapuram Palace": cochinImg,
+  "Guruvayur Sri Krishna Temple": cochinImg,
+  "Mammiyur Mahadeva Temple": cochinImg,
+  "Punnathurkotta Elephant Sanctuary": cochinImg,
+  "Thrissur Pooram Museum": cochinImg,
+  "Chavakkad Beach": cochinImg,
 
-  // ===================== PALANI =====================
-  "Palani": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Palani Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Palani Murugan Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Palani Hills": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
+  // ===== ATHIRAPPALLY =====
+  "Athirapally Falls": athirampallyImg,
+  "Athirapally Waterfalls": athirampallyImg,
+  "Vazhachal Falls": athirampallyImg,
+  "Vazhachal Waterfalls": athirampallyImg,
+  "Malampuzha Dam & Garden": athirampallyImg,
 
-  // ===================== RAMESWARAM =====================
-  // Ramanathaswamy Temple interior corridor - real photo
-  "Ramanathaswamy Temple": `${WC}/8/84/Rameswaram_Temple_Inside.jpg/400px-Rameswaram_Temple_Inside.jpg`,
-  // Pamban Bridge - India's first sea bridge - real photo
-  "Pamban Bridge": `${WC}/7/7c/The_Pamban_bridge_%2CIndia%27s_first_sea_bridge_and_the_longest_one.jpg/400px-The_Pamban_bridge_%2CIndia%27s_first_sea_bridge_and_the_longest_one.jpg`,
-  // Dhanushkodi ruins - real photo of the ghost town
-  "Dhanushkodi": `${WC}/b/b4/Remains_of_Dhanushkodi_Railway_station.jpg/400px-Remains_of_Dhanushkodi_Railway_station.jpg`,
-  "Agni Theertham": `${WC}/8/84/Rameswaram_Temple_Inside.jpg/400px-Rameswaram_Temple_Inside.jpg`,
-  "Five-faced Hanuman Temple": `${WC}/8/84/Rameswaram_Temple_Inside.jpg/400px-Rameswaram_Temple_Inside.jpg`,
-  "Dr. APJ Abdul Kalam Memorial": `${WC}/b/b4/Remains_of_Dhanushkodi_Railway_station.jpg/400px-Remains_of_Dhanushkodi_Railway_station.jpg`,
+  // ===== MYSORE =====
+  "Mysore": mysoreImg,
+  "Mysore Palace": mysoreImg,
+  "Mysore Zoo": mysoreImg,
+  "Chamundi Hills": mysoreImg,
+  "Brindavan Gardens": mysoreImg,
+  "KRS Dam": mysoreImg,
+  "St. Philomena's Church": mysoreImg,
+  "Srirangapatna": mysoreImg,
+  "Ranganathittu Bird Sanctuary": mysoreImg,
 
-  // ===================== TIRUPATI =====================
-  // Tirumala gopurams - real photo of the temple
-  "Tirumala Venkateswara Temple": `${WC}/5/53/Tirumala_gopurams.JPG/400px-Tirumala_gopurams.JPG`,
-  "Balaji Temple": `${WC}/5/53/Tirumala_gopurams.JPG/400px-Tirumala_gopurams.JPG`,
-  "Tiruchanoor Padmavathi Temple": `${WC}/5/53/Tirumala_gopurams.JPG/400px-Tirumala_gopurams.JPG`,
-  "Silathoranam (Natural Rock Arch)": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
-  "Srivari Mettu (Trekking Path)": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
+  // ===== BANGALORE =====
+  "Bangalore": bangaloreImg,
+  "Bangalore Palace": bangaloreImg,
+  "Lalbagh": bangaloreImg,
+  "Lalbagh Botanical Garden": bangaloreImg,
+  "Cubbon Park": bangaloreImg,
+  "Vidhana Soudha": bangaloreImg,
+  "UB City Mall": bangaloreImg,
 
-  // ===================== CHENNAI =====================
-  "Fort St. George": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Marina Beach": `${WC}/e/e8/A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg/400px-A_beautiful_sunrise_at_kanyakumari_vivekanda_rock.jpg`,
-  "Kapaleeshwarar Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "San Thome Cathedral": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Government Museum": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
+  // ===== COORG =====
+  "Coorg": coorgImg,
+  "Madikeri": coorgImg,
+  "Abbey Falls": coorgImg,
+  "Raja's Seat": coorgImg,
+  "Dubare Elephant Camp": coorgImg,
+  "Talacauvery": coorgImg,
+  "Namdroling Monastery": coorgImg,
+  "Bandipur": coorgImg,
+  "Bandipur National Park": coorgImg,
+  "Mudumalai": coorgImg,
+  "Mudumalai Wildlife Sanctuary": coorgImg,
 
-  // ===================== YERCAUD =====================
-  "Yercaud Lake": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Shevaroy Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Lady's Seat": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
-  "Bear's Cave": `${WC}/f/fa/Kodaikanal_-_The_Queen_of_Hills.jpg/400px-Kodaikanal_-_The_Queen_of_Hills.jpg`,
+  // ===== MADURAI =====
+  "Madurai": maduraiImg,
+  "Meenakshi Amman Temple": maduraiImg,
+  "Meenakshi Temple": maduraiImg,
+  "Thirumalai Nayakkar Palace": maduraiImg,
+  "Gandhi Memorial Museum": maduraiImg,
+  "Alagar Kovil": maduraiImg,
 
-  // ===================== NATURE / WILDLIFE =====================
-  "Anamalai Tiger Reserve": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Parambikulam Tiger Reserve": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Topslip": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Wildlife Safari": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Elephant Ride": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Teak Plantations": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Monkey Falls": `${WC}/7/7a/Fairy_falls_kodaikanal.jpg/400px-Fairy_falls_kodaikanal.jpg`,
-  "Chinnakallar Falls": `${WC}/7/7a/Fairy_falls_kodaikanal.jpg/400px-Fairy_falls_kodaikanal.jpg`,
-  "Sholayar Dam": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Silent Valley": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Silent Valley View": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Grass Hills": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Upper Bhavani": `${WC}/7/7b/Kerala_munnar_mountain_top.jpg/400px-Kerala_munnar_mountain_top.jpg`,
-  "Avalanche": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
-  "Avalanche Lake": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Emerald Lake": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Dolphin's Nose": `${WC}/1/18/Nilgiri_hills_view_from_Doddabetta_Peak.jpg/400px-Nilgiri_hills_view_from_Doddabetta_Peak.jpg`,
-  "Rock Garden": `${WC}/d/da/Government_Botanical_garden_%2Cooty.jpg/400px-Government_Botanical_garden_%2Cooty.jpg`,
-  "Idumban Temple": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
-  "Alagar Kovil": `${WC}/c/c5/Meenakshi_Amman_Temple%2C_Madurai.jpg/400px-Meenakshi_Amman_Temple%2C_Madurai.jpg`,
+  // ===== KANYAKUMARI =====
+  "Kanyakumari": kanyakumariImg,
+  "Kanyakumari Sunrise/Sunset": kanyakumariImg,
+  "Vivekananda Rock Memorial": kanyakumariImg,
+  "Thiruvalluvar Statue": kanyakumariImg,
+  "Sunset Point": kanyakumariImg,
 
-  // ===================== WATERPARK / AMUSEMENT =====================
-  "Fantasy Park": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Adventure Rides": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Wave Pool": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Water Slides": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Lazy River": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Rain Dance": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Kids Zone": `${WC}/e/e2/Ooty_Lake.jpg/400px-Ooty_Lake.jpg`,
-  "Rope Car Ride": `${WC}/a/a4/NMR_Train_on_viaduct_05-02-26_33.jpeg/400px-NMR_Train_on_viaduct_05-02-26_33.jpeg`,
+  // ===== PALANI =====
+  "Palani": palaniImg,
+  "Palani Temple": palaniImg,
+  "Palani Murugan Temple": palaniImg,
+  "Palani Hills": palaniImg,
+  "Idumban Temple": palaniImg,
 
-  // ===================== MISC =====================
-  "40 Hairpin Bends": `${WC}/a/a4/NMR_Train_on_viaduct_05-02-26_33.jpeg/400px-NMR_Train_on_viaduct_05-02-26_33.jpeg`,
+  // ===== RAMESHWARAM =====
+  "Rameshwaram": rameshwaramImg,
+  "Rameswaram": rameshwaramImg,
+  "Ramanathaswamy Temple": rameshwaramImg,
+  "Pamban Bridge": rameshwaramImg,
+  "Dhanushkodi": rameshwaramImg,
+  "Agni Theertham": rameshwaramImg,
+  "Five-faced Hanuman Temple": rameshwaramImg,
+  "Dr. APJ Abdul Kalam Memorial": rameshwaramImg,
+
+  // ===== POLLACHI =====
+  "Pollachi": pollachiImg,
+  "Aliyar Dam": pollachiImg,
+  "Topslip": pollachiImg,
+  "Anamalai Tiger Reserve": pollachiImg,
+  "Parambikulam Tiger Reserve": pollachiImg,
+  "Teak Plantations": pollachiImg,
+  "Wildlife Safari": pollachiImg,
+  "Elephant Ride": pollachiImg,
+
+  // ===== VALPARAI =====
+  "Valparai": valparaiImg,
+  "Sholayar Dam": valparaiImg,
+  "Monkey Falls": valparaiImg,
+  "Chinnakallar Falls": valparaiImg,
+  "Grass Hills": valparaiImg,
+  "Silent Valley": valparaiImg,
+  "Silent Valley View": valparaiImg,
+  "40 Hairpin Bends": valparaiImg,
+
+  // ===== TIRUPATI / CHENNAI / YERCAUD =====
+  "Tirupati": maduraiImg,
+  "Tirumala Venkateswara Temple": maduraiImg,
+  "Balaji Temple": maduraiImg,
+  "Tiruchanoor Padmavathi Temple": maduraiImg,
+  "Silathoranam (Natural Rock Arch)": maduraiImg,
+  "Srivari Mettu (Trekking Path)": ootyImg,
+  "Chennai": maduraiImg,
+  "Fort St. George": maduraiImg,
+  "Marina Beach": kanyakumariImg,
+  "Kapaleeshwarar Temple": maduraiImg,
+  "San Thome Cathedral": maduraiImg,
+  "Government Museum": maduraiImg,
+  "Yercaud": kodaikanalImg,
+  "Yercaud Lake": kodaikanalImg,
+  "Shevaroy Temple": kodaikanalImg,
+  "Lady's Seat": kodaikanalImg,
+  "Bear's Cave": kodaikanalImg,
+  "Rock Garden": ootyImg,
+
+  // ===== AMUSEMENT / WATERPARK =====
+  "Black Thunder": coimbatoreImg,
+  "Fantasy Park": coimbatoreImg,
+  "Adventure Rides": coimbatoreImg,
+  "Wave Pool": coimbatoreImg,
+  "Water Slides": coimbatoreImg,
+  "Lazy River": coimbatoreImg,
+  "Rain Dance": coimbatoreImg,
+  "Kids Zone": coimbatoreImg,
+  "Rope Car Ride": coimbatoreImg,
+
+  // ===== COIMBATORE =====
+  "Coimbatore": coimbatoreImg,
 };
 
-// Fallback: Ooty Botanical Garden
-export const DEFAULT_DESTINATION_IMAGE = `${WC}/d/da/Government_Botanical_garden_%2Cooty.jpg/400px-Government_Botanical_garden_%2Cooty.jpg`;
+// Keyword-based fallback so any unmapped highlight still gets a relevant image.
+const keywordMap: Array<[RegExp, string]> = [
+  [/ooty|nilgiri|coonoor|doddabetta|botanical garden|pykara|kotagiri|avalanche|emerald|mukurthi|sim'?s park|dolphin/i, ootyImg],
+  [/kodai|pillar rock|coaker|berijam|mannavanur|vattakanal|silver cascade|guna cave|bryant/i, kodaikanalImg],
+  [/munnar|mattupetty|eravikulam|anamudi|kundala|top station|tea garden|tea plantation|marayoor|chinnar/i, munnarImg],
+  [/thekkady|periyar|spice garden|bamboo raft/i, thekkadyImg],
+  [/alleppey|alappuzha|backwater|houseboat|kovalam|kumarakom/i, alappuzhaImg],
+  [/cochin|kochi|fort kochi|chinese fishing|mattancherry|guruvayur|trivandrum|padmanabha|chavakkad|marine drive|santa cruz/i, cochinImg],
+  [/athirap|vazhachal|malampuzha/i, athirampallyImg],
+  [/mysore|chamundi|brindavan|krs|philomena|srirangapatna|ranganathittu/i, mysoreImg],
+  [/bangalore|bengaluru|lalbagh|cubbon|vidhana|ub city/i, bangaloreImg],
+  [/coorg|madikeri|abbey|talacauvery|dubare|namdroling|bandipur|mudumalai/i, coorgImg],
+  [/madurai|meenakshi|thirumalai|gandhi memorial|alagar/i, maduraiImg],
+  [/kanyakumari|vivekananda|thiruvalluvar|sunset point|sunrise/i, kanyakumariImg],
+  [/palani|murugan|idumban/i, palaniImg],
+  [/rameshwaram|rameswaram|ramanathaswamy|pamban|dhanushkodi|agni theertham|hanuman|kalam memorial/i, rameshwaramImg],
+  [/pollachi|aliyar|topslip|anamalai|parambikulam|teak/i, pollachiImg],
+  [/valparai|sholayar|monkey falls|chinnakallar|grass hills|silent valley|hairpin/i, valparaiImg],
+  [/tirupati|tirumala|balaji|venkateswara|padmavathi/i, maduraiImg],
+  [/chennai|marina|kapaleeshwarar|fort st\.? george|san thome/i, maduraiImg],
+  [/yercaud|shevaroy/i, kodaikanalImg],
+  [/black thunder|water park|wave pool|water slide|fantasy park|amusement|rain dance|kids zone/i, coimbatoreImg],
+  [/coimbatore/i, coimbatoreImg],
+  [/temple|kovil|church|cathedral|basilica|mosque/i, maduraiImg],
+  [/beach|sea|ocean/i, kanyakumariImg],
+  [/falls|waterfall|cascade/i, athirampallyImg],
+  [/lake|dam|boating/i, kodaikanalImg],
+  [/wildlife|safari|tiger|elephant|sanctuary|national park|forest/i, thekkadyImg],
+  [/hill|peak|view ?point|valley/i, ootyImg],
+];
 
 export const getDestinationImage = (placeName: string): string => {
-  return destinationImages[placeName] || DEFAULT_DESTINATION_IMAGE;
+  if (!placeName) return DEFAULT_DESTINATION_IMAGE;
+  const exact = destinationImages[placeName];
+  if (exact) return exact;
+  for (const [pattern, img] of keywordMap) {
+    if (pattern.test(placeName)) return img;
+  }
+  return DEFAULT_DESTINATION_IMAGE;
 };
