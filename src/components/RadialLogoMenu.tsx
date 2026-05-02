@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Info, Briefcase, Wallet, MapPinned, Sparkles, MessageSquareQuote, Phone } from "lucide-react";
 import logo from "@/assets/logo.png";
+import msmeCertificate from "@/assets/msme-certificate.png";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type SubItem = { label: string; to: string };
@@ -260,6 +261,15 @@ const RadialLogoMenu = () => {
         <p className="text-center text-sm font-bold text-black mt-2">
           CLICK THE LOGO TO EXPLORE
         </p>
+
+        <div className="flex justify-center mt-6 mb-2">
+          <img
+            src={msmeCertificate}
+            alt="MSME Certificate - Ministry of MSME, Govt. of India - UDYAM TN-03-0046434"
+            className="w-full max-w-[260px] sm:max-w-[320px] md:max-w-[380px] h-auto object-contain"
+            loading="lazy"
+          />
+        </div>
       </div>
 
       <style>{`
