@@ -1,12 +1,22 @@
+import { useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
-import { MapPin, Clock, Navigation, ChevronRight, Phone, Star, Route } from "lucide-react";
+import { MapPin, Clock, Navigation, ChevronRight, Phone, Star, Route, ImageOff } from "lucide-react";
 import { tourPackagesData } from "@/data/tourPackagesData";
-import { getDestinationImage } from "@/data/destinationImages";
 import { Button } from "@/components/ui/button";
+import { useTourPlaceImagesByPage } from "@/hooks/useTourPlaceImages";
 
 const TourPackages = () => {
   const { duration } = useParams();
   const packageData = duration ? tourPackagesData[duration] : null;
+  const { data: placeImages } = useTourPlaceImagesByPage(duration || "");
+
+  const imageMap = useMemo(() => {
+    const m: Record<string, string> = {};
+    placeImages?.forEach((p) => {
+      if (p.image_url?.trim()) m[p.place_name] = p.image_url.trim();
+    });
+    return m;
+  }, [placeImages]);
 
   if (!packageData) {
     return (
@@ -117,12 +127,21 @@ const TourPackages = () => {
                         key={hIdx}
                         className="group relative rounded-lg overflow-hidden border border-border shadow-sm aspect-[3/2]"
                       >
-                        <img
-                          src={getDestinationImage(highlight)}
-                          alt={highlight}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                          loading="lazy"
-                        />
+                        {imageMap[highlight] ? (
+                          <img
+                            src={imageMap[highlight]}
+                            alt={highlight}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                            loading="lazy"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/placeholder.svg";
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
+                            <ImageOff className="w-6 h-6 opacity-60" />
+                          </div>
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                         <div className="absolute bottom-0 left-0 right-0 p-2">
                           <span className="inline-flex items-center gap-1 text-xs font-medium text-white drop-shadow-md">
