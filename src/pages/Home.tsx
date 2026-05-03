@@ -88,6 +88,12 @@ const Home = () => {
       
       {/* Vehicle Booking Section */}
       <RadialLogoMenu />
+
+      {/* Banner above Our Fleet (moved from above Our Services) */}
+      <div data-anim="banner">
+        <PageSlider pageName="services" className="container mx-auto px-4 py-8" />
+      </div>
+
       <div data-anim="section" style={{ willChange: "transform" }}>
         <VehicleBookingSection />
       </div>
@@ -135,11 +141,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* Services Page Slider */}
-      <div data-anim="banner">
-        <PageSlider pageName="services" className="container mx-auto px-4 py-8" />
-      </div>
 
       {/* Services Preview Section */}
       <section className="py-12 bg-muted overflow-hidden">
