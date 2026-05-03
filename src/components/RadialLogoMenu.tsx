@@ -4,6 +4,7 @@ import { Info, Briefcase, Wallet, MapPinned, Sparkles, MessageSquareQuote, Phone
 import logo from "@/assets/logo.png";
 import msmeCertificate from "@/assets/msme-certificate.png";
 import { useIsMobile } from "@/hooks/use-mobile";
+import AnimatedRoadScene from "@/components/AnimatedRoadScene";
 
 type SubItem = { label: string; to: string };
 type RadialItem = {
@@ -261,6 +262,10 @@ const RadialLogoMenu = () => {
         <p className="text-center text-sm font-bold text-black mt-2">
           CLICK THE LOGO TO EXPLORE
         </p>
+
+        <div className="mt-6">
+          <AnimatedRoadScene />
+        </div>
 
         <div className="flex justify-center mt-6 mb-2">
           <img
