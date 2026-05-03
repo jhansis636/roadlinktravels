@@ -180,8 +180,16 @@ const RadialLogoMenu = () => {
                   minWidth: isMobile ? 78 : 96,
                 }}
               >
-                <item.Icon className="w-5 h-5 text-primary" />
-                <span className="text-[11px] md:text-xs font-semibold text-foreground whitespace-nowrap">
+                <item.Icon className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                <span
+                  className="text-[12px] md:text-sm font-extrabold text-foreground whitespace-nowrap"
+                  style={{
+                    letterSpacing: "0.03em",
+                    textShadow:
+                      "0 1px 2px hsl(var(--background) / 0.9), 0 0 6px hsl(var(--background) / 0.6)",
+                    WebkitFontSmoothing: "antialiased",
+                  }}
+                >
                   {item.label}
                 </span>
               </div>
@@ -260,7 +268,11 @@ const RadialLogoMenu = () => {
                             setOpen(false);
                             setOpenSubmenu(null);
                           }}
-                          className="text-xs md:text-sm font-medium text-foreground/90 hover:text-primary hover:bg-primary/10 rounded-md px-3 py-1.5 transition-colors text-left whitespace-nowrap"
+                          className="text-xs md:text-sm font-bold text-foreground hover:text-primary hover:bg-primary/10 rounded-md px-3 py-1.5 transition-colors text-left whitespace-nowrap"
+                          style={{
+                            letterSpacing: "0.02em",
+                            textShadow: "0 1px 2px hsl(var(--background) / 0.8)",
+                          }}
                         >
                           {sub.label}
                         </Link>
@@ -302,7 +314,13 @@ const RadialLogoMenu = () => {
           </button>
         </div>
 
-        <p className="text-center text-sm font-bold text-black mt-2">
+        <p
+          className="text-center text-sm md:text-base font-extrabold text-black mt-2"
+          style={{
+            letterSpacing: "0.08em",
+            textShadow: "0 1px 2px hsl(0 0% 100% / 0.9), 0 0 8px hsl(0 0% 100% / 0.7)",
+          }}
+        >
           CLICK THE LOGO TO EXPLORE
         </p>
 
