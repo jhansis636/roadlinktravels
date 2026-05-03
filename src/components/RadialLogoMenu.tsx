@@ -85,8 +85,41 @@ const RadialLogoMenu = () => {
   const count = items.length;
 
   return (
-    <section className="py-12 bg-gradient-to-b from-background via-muted/40 to-background overflow-hidden">
-      <div className="container mx-auto px-4">
+    <section className="relative py-12 overflow-hidden bg-gradient-to-br from-sky-50 via-white to-amber-50">
+      {/* Animated taxi background */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+        {[
+          { top: "12%", dur: 26, delay: 0, dir: "ltr", scale: 1, color: "#f5b800" },
+          { top: "32%", dur: 34, delay: 6, dir: "rtl", scale: 0.85, color: "#0f5132" },
+          { top: "58%", dur: 30, delay: 2, dir: "ltr", scale: 0.9, color: "#222" },
+          { top: "78%", dur: 38, delay: 10, dir: "rtl", scale: 1.1, color: "#f5b800" },
+          { top: "46%", dur: 42, delay: 14, dir: "ltr", scale: 0.75, color: "#0f5132", mobileHide: true },
+          { top: "22%", dur: 36, delay: 18, dir: "rtl", scale: 0.8, color: "#222", mobileHide: true },
+        ].map((c, i) => (
+          <div
+            key={i}
+            className={`absolute rl-car ${c.dir === "ltr" ? "rl-ltr" : "rl-rtl"} ${c.mobileHide ? "hidden md:block" : ""}`}
+            style={{
+              top: c.top,
+              animationDuration: `${c.dur}s`,
+              animationDelay: `${c.delay}s`,
+              transform: `scale(${c.scale})`,
+              opacity: 0.18,
+            }}
+          >
+            <svg width="56" height="28" viewBox="0 0 56 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 18 L8 10 Q10 6 14 6 L34 6 Q38 6 42 10 L48 16 L52 17 Q54 17 54 19 L54 22 Q54 24 52 24 L46 24 A4 4 0 0 1 38 24 L18 24 A4 4 0 0 1 10 24 L4 24 Q2 24 2 22 L2 20 Q2 18 4 18 Z" fill={c.color} />
+              <rect x="14" y="9" width="8" height="6" rx="1" fill="#cfe8ff" />
+              <rect x="24" y="9" width="10" height="6" rx="1" fill="#cfe8ff" />
+              <circle cx="14" cy="24" r="3" fill="#1a1a1a" />
+              <circle cx="42" cy="24" r="3" fill="#1a1a1a" />
+              <rect x="22" y="2" width="12" height="4" rx="1" fill="#fff" stroke="#222" strokeWidth="0.5" />
+            </svg>
+          </div>
+        ))}
+      </div>
+
+      <div className="container relative z-10 mx-auto px-4">
         <div
           ref={wrapRef}
           className="relative mx-auto flex items-center justify-center"
@@ -276,6 +309,21 @@ const RadialLogoMenu = () => {
         @keyframes pulse-soft {
           0%, 100% { transform: scale(1); opacity: 0.35; }
           50% { transform: scale(1.15); opacity: 0.15; }
+        }
+        @keyframes rl-drive-ltr {
+          0%   { left: -80px; }
+          100% { left: calc(100% + 80px); }
+        }
+        @keyframes rl-drive-rtl {
+          0%   { right: -80px; }
+          100% { right: calc(100% + 80px); }
+        }
+        .rl-car { will-change: transform, left, right; }
+        .rl-ltr { animation: rl-drive-ltr linear infinite; }
+        .rl-rtl { animation: rl-drive-rtl linear infinite; transform-origin: center; }
+        .rl-rtl svg { transform: scaleX(-1); }
+        @media (prefers-reduced-motion: reduce) {
+          .rl-car { animation: none !important; }
         }
       `}</style>
     </section>
