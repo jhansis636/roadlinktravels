@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Info, Briefcase, Wallet, MapPinned, Sparkles, MessageSquareQuote, Phone } from "lucide-react";
 import logo from "@/assets/logo.png";
 import msmeCertificate from "@/assets/msme-certificate.png";
+import radialSectionBg from "@/assets/radial-section-bg.jpg";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type SubItem = { label: string; to: string };
@@ -85,9 +86,19 @@ const RadialLogoMenu = () => {
   const count = items.length;
 
   return (
-    <section className="relative py-12 overflow-hidden bg-gradient-to-br from-sky-50 via-white to-amber-50">
+    <section
+      className="relative py-12 overflow-hidden"
+      style={{
+        backgroundImage: `url(${radialSectionBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      {/* White overlay */}
+      <div className="pointer-events-none absolute inset-0 z-0 bg-white/75" aria-hidden="true" />
       {/* Animated taxi background */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+      <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden" aria-hidden="true">
         {[
           { top: "12%", dur: 26, delay: 0, dir: "ltr", scale: 1, color: "#f5b800" },
           { top: "32%", dur: 34, delay: 6, dir: "rtl", scale: 0.85, color: "#0f5132" },
