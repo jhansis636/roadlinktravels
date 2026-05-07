@@ -205,6 +205,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Sitemap */}
+      <Sitemap />
     </div>
   );
 };
