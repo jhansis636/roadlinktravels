@@ -4,6 +4,7 @@ import CabBookingForm from "@/components/CabBookingForm";
 import VehicleBookingSection from "@/components/VehicleBookingSection";
 import PageSlider from "@/components/PageSlider";
 import PageVideos from "@/components/PageVideos";
+import Sitemap from "@/components/Sitemap";
 import { Link } from "react-router-dom";
 import { Shield, Users, Car, Headphones, MapPin, Plane, Building2, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -204,6 +205,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Sitemap */}
+      <Sitemap />
     </div>
   );
 };
