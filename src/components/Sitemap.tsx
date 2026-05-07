@@ -1,5 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Map, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface SitemapLink {
   label: string;
@@ -46,37 +56,53 @@ const columns: SitemapColumn[] = [
 ];
 
 const Sitemap = () => {
-  return (
-    <section className="py-16 bg-background border-t border-border" data-anim="section">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center gap-2 mb-8">
-          <Map className="w-5 h-5 text-primary" />
-          <h2 className="text-xl md:text-2xl font-bold text-foreground">Sitemap</h2>
-        </div>
+  const [open, setOpen] = useState(false);
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {columns.map((column) => (
-            <div key={column.title}>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-primary mb-4">
-                {column.title}
-              </h3>
-              <ul className="space-y-2.5">
-                {column.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      to={link.href}
-                      className="group flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors text-sm"
-                    >
-                      <ChevronRight className="w-3.5 h-3.5 text-primary/60 group-hover:text-primary transition-colors" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
+  return (
+    <section className="py-10 bg-background border-t border-border flex justify-center">
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button size="lg" variant="outline" className="gap-2">
+            <Map className="w-4 h-4" />
+            Site Map
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Map className="w-6 h-6 text-primary" />
+              Site Map
+            </DialogTitle>
+            <DialogDescription>
+              Click any page below to navigate.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            {columns.map((column) => (
+              <div key={column.title}>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-primary mb-3 pb-2 border-b border-border">
+                  {column.title}
+                </h3>
+                <ul className="space-y-2">
+                  {column.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        to={link.href}
+                        onClick={() => setOpen(false)}
+                        className="group flex items-center gap-1.5 text-foreground hover:text-primary transition-colors text-sm font-medium"
+                      >
+                        <ChevronRight className="w-3.5 h-3.5 text-primary/60 group-hover:translate-x-0.5 transition-transform" />
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
