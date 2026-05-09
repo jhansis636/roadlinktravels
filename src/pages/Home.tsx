@@ -78,7 +78,7 @@ const Home = () => {
       <FloatingLogo />
 
       {/* Top looping video banner */}
-      <div className="w-full">
+      <div className="w-full bg-black overflow-hidden">
         <video
           src="/videos/roban.mp4"
           autoPlay
@@ -86,7 +86,7 @@ const Home = () => {
           muted
           playsInline
           preload="auto"
-          className="w-screen h-[40vh] sm:h-[55vh] md:h-[70vh] lg:h-[85vh] object-fill block"
+          className="w-full h-auto max-h-[80vh] object-contain block mx-auto"
         />
       </div>
 
