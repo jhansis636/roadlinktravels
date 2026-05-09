@@ -12,7 +12,6 @@ import { useScrollAnimations } from "@/hooks/useScrollAnimations";
 import Tilt3DCard from "@/components/Tilt3DCard";
 import FloatingLogo from "@/components/FloatingLogo";
 import RadialLogoMenu from "@/components/RadialLogoMenu";
-import robanVideo from "@/assets/roban.mp4";
 
 const features = [
   {
@@ -81,12 +80,13 @@ const Home = () => {
       {/* Top looping video banner */}
       <div className="w-full">
         <video
-          src={robanVideo}
+          src="/videos/roban.mp4"
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-[40vh] sm:h-[55vh] md:h-[70vh] lg:h-[85vh] object-fill block"
+          preload="auto"
+          className="w-screen h-[40vh] sm:h-[55vh] md:h-[70vh] lg:h-[85vh] object-fill block"
         />
       </div>
 
