@@ -12,6 +12,7 @@ import { useScrollAnimations } from "@/hooks/useScrollAnimations";
 import Tilt3DCard from "@/components/Tilt3DCard";
 import FloatingLogo from "@/components/FloatingLogo";
 import RadialLogoMenu from "@/components/RadialLogoMenu";
+import robanVideo from "@/assets/roban.mp4";
 
 const features = [
   {
@@ -76,7 +77,19 @@ const Home = () => {
   return (
     <div ref={containerRef} style={{ perspective: "1200px" }}>
       <FloatingLogo />
-      
+
+      {/* Top looping video banner */}
+      <div className="w-full">
+        <video
+          src={robanVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-[40vh] sm:h-[55vh] md:h-[70vh] lg:h-[85vh] object-fill block"
+        />
+      </div>
+
       {/* Home Page Slider */}
       <div data-anim="banner">
         <PageSlider pageName="home" className="container mx-auto px-4 py-8" />
