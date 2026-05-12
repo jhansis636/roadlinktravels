@@ -64,6 +64,7 @@ const TariffKmBasis = () => {
             </TableBody>
           </Table>
         </div>
+        <TermsSection />
       </div>
     </div>
   );

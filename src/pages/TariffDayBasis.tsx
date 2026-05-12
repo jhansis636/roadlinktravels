@@ -66,6 +66,7 @@ const TariffDayBasis = () => {
             </TableBody>
           </Table>
         </div>
+        <TermsSection />
       </div>
     </div>
   );
