@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { TermsSection } from "@/components/TermsSection";
 
 const tariffData = [
   { vehicle: "Swift", rentPerDay: 2600, freeKmPerDay: "100 km", fareAfterFree: 12, driverBata: 400, total: 3000 },
@@ -65,6 +66,7 @@ const TariffDayBasis = () => {
             </TableBody>
           </Table>
         </div>
+        <TermsSection />
       </div>
     </div>
   );
