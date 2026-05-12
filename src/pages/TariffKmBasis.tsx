@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { TermsSection } from "@/components/TermsSection";
 
 const tariffData = [
   { vehicle: "Swift", minKmPerDay: 300, farePerKm: 13, driverBata: 400, amount: 4300 },
