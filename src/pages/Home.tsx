@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
-import CabBookingForm from "@/components/CabBookingForm";
-import VehicleBookingSection from "@/components/VehicleBookingSection";
-import PageSlider from "@/components/PageSlider";
-import PageVideos from "@/components/PageVideos";
-import Sitemap from "@/components/Sitemap";
+const CabBookingForm = lazy(() => import("@/components/CabBookingForm"));
+const VehicleBookingSection = lazy(() => import("@/components/VehicleBookingSection"));
+const PageSlider = lazy(() => import("@/components/PageSlider"));
+const PageVideos = lazy(() => import("@/components/PageVideos"));
+const Sitemap = lazy(() => import("@/components/Sitemap"));
+const RadialLogoMenu = lazy(() => import("@/components/RadialLogoMenu"));
 import { Link } from "react-router-dom";
 import { Shield, Users, Car, Headphones, MapPin, Plane, Building2, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useScrollAnimations } from "@/hooks/useScrollAnimations";
 import Tilt3DCard from "@/components/Tilt3DCard";
 import FloatingLogo from "@/components/FloatingLogo";
-import RadialLogoMenu from "@/components/RadialLogoMenu";
 
 const features = [
   {
@@ -85,36 +85,36 @@ const Home = () => {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           className="w-full h-auto max-h-[80vh] object-contain block mx-auto"
         />
       </div>
 
       {/* Home Page Slider */}
       <div data-anim="banner">
-        <PageSlider pageName="home" className="container mx-auto px-4 py-8" />
+        <Suspense fallback={null}><PageSlider pageName="home" className="container mx-auto px-4 py-8" /></Suspense>
       </div>
       
       {/* Home Page Videos */}
       <div data-anim="section">
-        <PageVideos pageName="home" title="Watch Our Videos" />
+        <Suspense fallback={null}><PageVideos pageName="home" title="Watch Our Videos" /></Suspense>
       </div>
       
       {/* Vehicle Booking Section */}
-      <RadialLogoMenu />
+      <Suspense fallback={null}><RadialLogoMenu /></Suspense>
 
       {/* Banner above Our Fleet (moved from above Our Services) */}
       <div data-anim="banner">
-        <PageSlider pageName="services" className="container mx-auto px-4 py-8" />
+        <Suspense fallback={null}><PageSlider pageName="services" className="container mx-auto px-4 py-8" /></Suspense>
       </div>
 
       <div data-anim="section" style={{ willChange: "transform" }}>
-        <VehicleBookingSection />
+        <Suspense fallback={null}><VehicleBookingSection /></Suspense>
       </div>
 
       {/* Cab Booking Form below fleet */}
       <div className="-mt-10 pb-8 bg-muted" data-anim="section">
-        <CabBookingForm />
+        <Suspense fallback={null}><CabBookingForm /></Suspense>
       </div>
 
       {/* About Preview Section */}
@@ -220,7 +220,7 @@ const Home = () => {
       </section>
 
       {/* Sitemap */}
-      <Sitemap />
+      <Suspense fallback={null}><Sitemap /></Suspense>
     </div>
   );
 };

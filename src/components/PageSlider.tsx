@@ -74,6 +74,8 @@ const PageSlider = ({ pageName, aspectRatio = 16 / 6, className = "", showOverla
                     src={image.image_url}
                     alt={image.title || "Slider image"}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/placeholder.svg";
                     }}

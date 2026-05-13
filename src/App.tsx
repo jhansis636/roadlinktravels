@@ -3,20 +3,21 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Layout from "@/components/Layout";
 import Home from "./pages/Home";
-import About from "./pages/About";
-import Services from "./pages/Services";
-import WhyUs from "./pages/WhyUs";
-import Testimonials from "./pages/Testimonials";
-import Contact from "./pages/Contact";
-import TariffDayBasis from "./pages/TariffDayBasis";
-import TariffKmBasis from "./pages/TariffKmBasis";
-import TourPackages from "./pages/TourPackages";
-import NotFound from "./pages/NotFound";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
+const About = lazy(() => import("./pages/About"));
+const Services = lazy(() => import("./pages/Services"));
+const WhyUs = lazy(() => import("./pages/WhyUs"));
+const Testimonials = lazy(() => import("./pages/Testimonials"));
+const Contact = lazy(() => import("./pages/Contact"));
+const TariffDayBasis = lazy(() => import("./pages/TariffDayBasis"));
+const TariffKmBasis = lazy(() => import("./pages/TariffKmBasis"));
+const TourPackages = lazy(() => import("./pages/TourPackages"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,6 +36,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <Suspense fallback={null}>
           <Routes>
             {/* Public pages with shared layout */}
             <Route element={<Layout />}>
@@ -56,6 +58,7 @@ const App = () => (
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
