@@ -360,10 +360,12 @@ export type Database = {
         Row: {
           capacity: string
           created_at: string
+          description: string | null
           display_order: number
           id: string
           image_url: string | null
           is_active: boolean
+          is_luxury: boolean
           name: string
           rating: number
           updated_at: string
@@ -371,10 +373,12 @@ export type Database = {
         Insert: {
           capacity: string
           created_at?: string
+          description?: string | null
           display_order?: number
           id?: string
           image_url?: string | null
           is_active?: boolean
+          is_luxury?: boolean
           name: string
           rating?: number
           updated_at?: string
@@ -382,10 +386,12 @@ export type Database = {
         Update: {
           capacity?: string
           created_at?: string
+          description?: string | null
           display_order?: number
           id?: string
           image_url?: string | null
           is_active?: boolean
+          is_luxury?: boolean
           name?: string
           rating?: number
           updated_at?: string
