@@ -10,6 +10,8 @@ export interface Vehicle {
   rating: number;
   display_order: number;
   is_active: boolean;
+  is_luxury: boolean;
+  description: string | null;
   created_at: string;
   updated_at: string;
 }
