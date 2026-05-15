@@ -1,6 +1,7 @@
 import { Clock, IndianRupee, Sparkles, UserCheck, Phone, MapPin, Shield, ThumbsUp, Car, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import SEO from "@/components/SEO";
 import PageSlider from "@/components/PageSlider";
 import PageVideos from "@/components/PageVideos";
 
@@ -63,6 +64,12 @@ const trustSignals = [
 const WhyUs = () => {
   return (
     <div className="pt-16 md:pt-20">
+      <SEO
+        title="Why Choose Roadlink — Best Taxi Service in Coimbatore | 24/7 Cabs"
+        description="Why Roadlink Tours & Travels is the best taxi service in Coimbatore — on-time pickup, affordable pricing, professional drivers, well-maintained fleet and 24/7 customer support."
+        path="/why-us"
+        keywords="best taxi service in Coimbatore, why choose Coimbatore taxi, affordable taxi service Coimbatore"
+      />
       {/* Hero Section */}
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">

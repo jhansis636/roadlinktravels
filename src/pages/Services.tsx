@@ -1,6 +1,7 @@
 import { MapPin, Plane, Building2, Users, Palmtree, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useServices } from "@/hooks/useServices";
+import SEO from "@/components/SEO";
 import PageSlider from "@/components/PageSlider";
 import PageVideos from "@/components/PageVideos";
 import type { LucideIcon } from "lucide-react";
@@ -97,6 +98,12 @@ const Services = () => {
 
   return (
     <div className="pt-16 md:pt-20">
+      <SEO
+        title="Coimbatore Taxi Services — Local, Outstation, Airport & Tour Packages"
+        description="Complete Coimbatore taxi services: local cab booking, outstation taxi, Coimbatore airport pickup & drop, corporate travel, family trips and tourist taxi packages to Ooty, Munnar, Kodaikanal & Mysore."
+        path="/services"
+        keywords="Coimbatore taxi services, Coimbatore cab service, Coimbatore airport taxi, outstation taxi Coimbatore, Coimbatore tourist taxi"
+      />
       {/* Hero Section */}
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">

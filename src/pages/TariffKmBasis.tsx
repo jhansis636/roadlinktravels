@@ -1,6 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { TermsSection } from "@/components/TermsSection";
+import SEO from "@/components/SEO";
 
 const tariffData = [
   { vehicle: "Swift", minKmPerDay: 300, farePerKm: 13, driverBata: 400, amount: 4300 },
@@ -28,6 +29,12 @@ const TariffKmBasis = () => {
 
   return (
     <div className="min-h-screen pt-20 pb-16">
+      <SEO
+        title="Outstation Taxi Tariff Km Basis Coimbatore | Per Kilometre Cab Rates"
+        description="Per-kilometre outstation taxi tariff from Coimbatore — Swift, Etios, Ertiga, Innova, Crysta, Hycross, Tempo Traveller, Urbania, Coach Van and luxury sedan rates with driver bata."
+        path="/tariff/km-basis"
+        keywords="Coimbatore taxi km basis, outstation taxi per km Coimbatore, Coimbatore car rental, Innova rental Coimbatore"
+      />
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Outstation Tariff — Kilometre Basis</h1>

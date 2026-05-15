@@ -1,4 +1,5 @@
 import { Shield, Users, Car, Headphones } from "lucide-react";
+import SEO from "@/components/SEO";
 import placesToVisitImg from "@/assets/places-to-visit.jpg";
 import PageSlider from "@/components/PageSlider";
 import PageVideos from "@/components/PageVideos";
@@ -21,6 +22,12 @@ const features = [{
 }];
 const About = () => {
   return <div className="pt-16 md:pt-20">
+      <SEO
+        title="About Roadlink Tours & Travels | Best Coimbatore Travels Company"
+        description="Learn about Roadlink Tours and Travels — Coimbatore's trusted taxi and travels company offering airport taxi, outstation cab, luxury car rentals and tour packages to Ooty, Munnar, Kodaikanal & Mysore."
+        path="/about"
+        keywords="about Coimbatore travels, best travels in Coimbatore, Coimbatore taxi service, Coimbatore tourist taxi"
+      />
       {/* Hero Section */}
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">

@@ -2,6 +2,7 @@ import { Star, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useTestimonials } from "@/hooks/useTestimonials";
+import SEO from "@/components/SEO";
 import PageSlider from "@/components/PageSlider";
 import PageVideos from "@/components/PageVideos";
 
@@ -94,6 +95,12 @@ const Testimonials = () => {
 
   return (
     <div className="pt-16 md:pt-20">
+      <SEO
+        title="Customer Reviews — Roadlink Coimbatore Taxi & Travels"
+        description="Read genuine customer reviews of Roadlink Tours and Travels — Coimbatore's most reviewed taxi service for airport pickup, outstation trips and tour packages."
+        path="/testimonials"
+        keywords="Coimbatore taxi reviews, best Coimbatore travels reviews"
+      />
       {/* Hero Section */}
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">

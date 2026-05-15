@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import SEO from "@/components/SEO";
 const Contact = () => {
   const {
     toast
@@ -39,6 +40,12 @@ const Contact = () => {
     });
   };
   return <div className="pt-16 md:pt-20">
+      <SEO
+        title="Contact Roadlink Tours & Travels Coimbatore | Book Taxi 24/7"
+        description="Contact Roadlink Tours and Travels for Coimbatore taxi booking, airport pickup, outstation cab and tour package enquiries. Call +91 82481 99154 or WhatsApp 24/7."
+        path="/contact"
+        keywords="Coimbatore taxi booking, contact Coimbatore travels, 24/7 taxi service Coimbatore"
+      />
       {/* Hero Section */}
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">

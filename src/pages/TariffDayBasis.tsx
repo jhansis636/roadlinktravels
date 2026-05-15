@@ -1,6 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { TermsSection } from "@/components/TermsSection";
+import SEO from "@/components/SEO";
 
 const tariffData = [
   { vehicle: "Swift", rentPerDay: 2600, freeKmPerDay: "100 km", fareAfterFree: 12, driverBata: 400, total: 3000 },
@@ -28,6 +29,12 @@ const TariffDayBasis = () => {
 
   return (
     <div className="min-h-screen pt-20 pb-16">
+      <SEO
+        title="Outstation Taxi Tariff Day Basis Coimbatore | Innova, Crysta, Tempo Traveller Fares"
+        description="Transparent day-basis outstation taxi tariff from Coimbatore for Swift, Etios, Ertiga, Innova, Crysta, Hycross, Tempo Traveller, Urbania and luxury sedans (Audi, Benz, BMW, Jaguar). 100 free km/day."
+        path="/tariff/day-basis"
+        keywords="outstation taxi Coimbatore, Coimbatore taxi tariff day basis, Innova rental Coimbatore, Tempo Traveller Coimbatore, luxury sedan rental Coimbatore"
+      />
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Outstation Tariff — Day Basis</h1>
