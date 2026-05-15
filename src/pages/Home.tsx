@@ -244,10 +244,11 @@ const Home = () => {
         </div>
       </section>
 
+      {/* SEO content + FAQ */}
+      <HomeSeoContent />
+
       {/* Sitemap */}
       <Suspense fallback={null}><Sitemap /></Suspense>
-
-      <HomeSeoContent />
     </div>
   );
 };
