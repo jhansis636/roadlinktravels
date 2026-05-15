@@ -144,6 +144,29 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
+      {/* SEO keyword block */}
+      <div className="border-t border-background/10 bg-foreground/95">
+        <div className="container mx-auto px-4 py-6 text-background/60 text-xs leading-relaxed">
+          <h3 className="text-sm font-semibold text-background/80 mb-2">
+            Coimbatore Taxi Service — Popular Routes &amp; Vehicles
+          </h3>
+          <p>
+            Roadlink Tours &amp; Travels offers the{" "}
+            <Link to="/" className="hover:text-secondary">best taxi service in Coimbatore</Link> with
+            24/7 cab booking, <Link to="/services" className="hover:text-secondary">Coimbatore airport taxi</Link>,
+            outstation cabs and customised{" "}
+            <Link to="/tour-packages/1-day" className="hover:text-secondary">tour packages</Link>.
+            Popular outstation routes from Coimbatore: Coimbatore to Ooty taxi, Coimbatore to
+            Munnar taxi, Coimbatore to Kodaikanal taxi, Coimbatore to Mysore taxi, Coimbatore to
+            Valparai taxi, Coimbatore to Wayanad and Coimbatore to Bangalore. Choose from Sedan,
+            SUV, <Link to="/tariff/day-basis" className="hover:text-secondary">Innova rental Coimbatore</Link>,
+            Innova Crysta, <Link to="/tariff/km-basis" className="hover:text-secondary">Tempo Traveller Coimbatore</Link>,
+            Urbania, Coach Van and luxury sedan rentals (Audi, Mercedes-Benz, BMW, Jaguar) for
+            airport transfers, weddings, corporate travel and family trips.
+          </p>
+        </div>
+      </div>
+
       <div className="border-t border-background/10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-background/60">
