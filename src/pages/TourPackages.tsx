@@ -30,6 +30,7 @@ const TourPackages = () => {
   if (!packageData) {
     return (
       <div className="min-h-screen pt-8">
+        <SEO title={seoTitle} description={seoDesc} path={`/tour-packages/${duration ?? ""}`} />
         <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-6">Tour Packages</h1>
           <p className="text-muted-foreground text-lg mb-8">
@@ -53,6 +54,12 @@ const TourPackages = () => {
 
   return (
     <div className="min-h-screen pt-8">
+      <SEO
+        title={seoTitle}
+        description={seoDesc}
+        path={`/tour-packages/${duration}`}
+        keywords={`Coimbatore tour packages, ${durationLabel} Coimbatore tour, Coimbatore to Ooty taxi, Coimbatore to Munnar taxi, Coimbatore tourist taxi`}
+      />
       {/* Hero Section */}
       <div className="bg-primary/5 border-b border-border">
         <div className="container mx-auto px-4 py-12 md:py-16">
