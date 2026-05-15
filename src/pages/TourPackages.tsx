@@ -4,11 +4,20 @@ import { MapPin, Clock, Navigation, ChevronRight, Phone, Star, Route, ImageOff }
 import { tourPackagesData } from "@/data/tourPackagesData";
 import { Button } from "@/components/ui/button";
 import { useTourPlaceImagesByPage } from "@/hooks/useTourPlaceImages";
+import SEO from "@/components/SEO";
 
 const TourPackages = () => {
   const { duration } = useParams();
   const packageData = duration ? tourPackagesData[duration] : null;
   const { data: placeImages } = useTourPlaceImagesByPage(duration || "");
+
+  const durationLabel = duration ? duration.replace("-", " ") : "";
+  const seoTitle = packageData
+    ? `${packageData.heading} | Coimbatore Tour Package`
+    : "Coimbatore Tour Packages — 1 to 8 Day Trips to Ooty, Munnar & More";
+  const seoDesc = packageData
+    ? `Explore our ${durationLabel} Coimbatore tour package — ${packageData.heading}. Includes vehicle, driver, popular sightseeing spots and customised itineraries.`
+    : "Best Coimbatore tour packages for 1 to 8 days covering Ooty, Munnar, Kodaikanal, Mysore, Valparai, Wayanad and more — with cab, driver and customised itinerary.";
 
   const imageMap = useMemo(() => {
     const m: Record<string, string> = {};
