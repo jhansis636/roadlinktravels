@@ -1,5 +1,7 @@
 import { useState, lazy, Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
+import SEO from "@/components/SEO";
+import HomeSeoContent from "@/components/HomeSeoContent";
 const CabBookingForm = lazy(() => import("@/components/CabBookingForm"));
 const VehicleBookingSection = lazy(() => import("@/components/VehicleBookingSection"));
 const PageSlider = lazy(() => import("@/components/PageSlider"));
@@ -75,6 +77,29 @@ const Home = () => {
 
   return (
     <div ref={containerRef} style={{ perspective: "1200px" }}>
+      <SEO
+        title="Best Taxi Service in Coimbatore | Roadlink Tours & Travels — 24/7 Cab Booking"
+        description="Roadlink Tours & Travels — best taxi service in Coimbatore. 24/7 cab booking, Coimbatore airport taxi, outstation trips to Ooty, Munnar, Kodaikanal, Mysore & Valparai, Innova & Tempo Traveller hire and luxury sedan rentals."
+        path="/"
+        keywords="best taxi service in Coimbatore, Coimbatore taxi booking, Coimbatore travels, Coimbatore cab service, Coimbatore airport taxi, outstation taxi Coimbatore, Coimbatore to Ooty taxi, luxury car rental Coimbatore, Innova rental Coimbatore, Tempo Traveller Coimbatore, Coimbatore tour packages, 24/7 taxi service Coimbatore"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "TaxiService",
+          name: "Roadlink Tours and Travels",
+          description: "Best taxi service in Coimbatore offering 24/7 cab booking, airport taxi, outstation trips and luxury car rentals.",
+          url: "https://roadlinktravels.lovable.app",
+          telephone: "+918248199154",
+          priceRange: "₹₹",
+          areaServed: ["Coimbatore", "Ooty", "Munnar", "Kodaikanal", "Mysore", "Valparai", "Tamil Nadu"],
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Coimbatore",
+            addressRegion: "Tamil Nadu",
+            addressCountry: "IN",
+          },
+          aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", reviewCount: "150" },
+        }}
+      />
       <FloatingLogo />
 
       {/* Top looping video banner */}
@@ -221,6 +246,8 @@ const Home = () => {
 
       {/* Sitemap */}
       <Suspense fallback={null}><Sitemap /></Suspense>
+
+      <HomeSeoContent />
     </div>
   );
 };
