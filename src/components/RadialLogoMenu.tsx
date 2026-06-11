@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Info, Briefcase, Wallet, MapPinned, Sparkles, MessageSquareQuote, Phone } from "lucide-react";
+import { Info, Briefcase, Wallet, MapPinned, Sparkles, MessageSquareQuote, CreditCard, Phone } from "lucide-react";
 import logo from "@/assets/logo.png";
 import msmeCertificate from "@/assets/msme-certificate.png";
 import radialSectionBg from "@/assets/radial-section-bg.jpg";
