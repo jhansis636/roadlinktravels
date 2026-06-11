@@ -44,6 +44,7 @@ const Header = () => {
   const navLinksAfterTour = [
     { href: "/why-us", label: "Why Us" },
     { href: "/testimonials", label: "Testimonials" },
+    { href: "/payment-review", label: "Payment / Review" },
     { href: "/contact", label: "Contact Us" },
   ];
 
