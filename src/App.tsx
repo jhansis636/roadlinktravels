@@ -15,6 +15,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const TariffDayBasis = lazy(() => import("./pages/TariffDayBasis"));
 const TariffKmBasis = lazy(() => import("./pages/TariffKmBasis"));
 const TourPackages = lazy(() => import("./pages/TourPackages"));
+const PaymentReview = lazy(() => import("./pages/PaymentReview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/tour-packages/:duration" element={<TourPackages />} />
               <Route path="/why-us" element={<WhyUs />} />
               <Route path="/testimonials" element={<Testimonials />} />
+              <Route path="/payment-review" element={<PaymentReview />} />
               <Route path="/contact" element={<Contact />} />
             </Route>
             

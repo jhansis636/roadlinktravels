@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Info, Briefcase, Wallet, MapPinned, Sparkles, MessageSquareQuote, Phone } from "lucide-react";
+import { Info, Briefcase, Wallet, MapPinned, Sparkles, MessageSquareQuote, CreditCard, Phone } from "lucide-react";
 import logo from "@/assets/logo.png";
 import msmeCertificate from "@/assets/msme-certificate.png";
 import radialSectionBg from "@/assets/radial-section-bg.jpg";
@@ -41,6 +41,7 @@ const items: RadialItem[] = [
   },
   { label: "Why Us", to: "/why-us", Icon: Sparkles },
   { label: "Testimonials", to: "/testimonials", Icon: MessageSquareQuote },
+  { label: "Payment / Review", to: "/payment-review", Icon: CreditCard },
   { label: "Contact Us", to: "/contact", Icon: Phone },
 ];
 
