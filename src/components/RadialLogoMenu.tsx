@@ -41,6 +41,7 @@ const items: RadialItem[] = [
   },
   { label: "Why Us", to: "/why-us", Icon: Sparkles },
   { label: "Testimonials", to: "/testimonials", Icon: MessageSquareQuote },
+  { label: "Payment / Review", to: "/payment-review", Icon: CreditCard },
   { label: "Contact Us", to: "/contact", Icon: Phone },
 ];
 
