@@ -70,6 +70,35 @@ const PaymentReview = () => {
       <section className="py-12 md:py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+            {/* Google Review Card */}
+            <Card className="group relative overflow-hidden border border-border bg-card p-8 md:p-10 rounded-2xl shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-500 flex flex-col items-center text-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors duration-300">
+                  <Star className="w-8 h-8 md:w-10 md:h-10 text-primary fill-primary" />
+                </div>
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+                  Google Review
+                </h2>
+                <p className="text-muted-foreground text-sm md:text-base mb-6 max-w-xs">
+                  Loved our service? Share your experience with others on Google.
+                </p>
+                <Button
+                  asChild
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 h-auto text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/btn"
+                >
+                  <a
+                    href={GOOGLE_REVIEW_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Leave a Google Review
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                  </a>
+                </Button>
+              </div>
+            </Card>
+
             {/* UPI Payment Card */}
             <Card className="group relative overflow-hidden border border-border bg-card p-8 md:p-10 rounded-2xl shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-500 flex flex-col items-center text-center">
               <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -116,35 +145,6 @@ const PaymentReview = () => {
                     </Button>
                   </div>
                 )}
-              </div>
-            </Card>
-
-            {/* Google Review Card */}
-            <Card className="group relative overflow-hidden border border-border bg-card p-8 md:p-10 rounded-2xl shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-500 flex flex-col items-center text-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors duration-300">
-                  <Star className="w-8 h-8 md:w-10 md:h-10 text-primary fill-primary" />
-                </div>
-                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
-                  Google Review
-                </h2>
-                <p className="text-muted-foreground text-sm md:text-base mb-6 max-w-xs">
-                  Loved our service? Share your experience with others on Google.
-                </p>
-                <Button
-                  asChild
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 h-auto text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/btn"
-                >
-                  <a
-                    href={GOOGLE_REVIEW_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Leave a Google Review
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                  </a>
-                </Button>
               </div>
             </Card>
           </div>
