@@ -15,6 +15,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const TariffDayBasis = lazy(() => import("./pages/TariffDayBasis"));
 const TariffKmBasis = lazy(() => import("./pages/TariffKmBasis"));
 const TourPackages = lazy(() => import("./pages/TourPackages"));
+const PaymentReview = lazy(() => import("./pages/PaymentReview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
