@@ -25,6 +25,9 @@ const Footer = () => {
     href: "/testimonials",
     label: "Testimonials"
   }, {
+    href: "/payment-review",
+    label: "Payment / Review"
+  }, {
     href: "/contact",
     label: "Contact"
   }, {
