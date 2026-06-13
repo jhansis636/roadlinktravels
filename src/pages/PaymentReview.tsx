@@ -3,11 +3,28 @@ import { Link } from "react-router-dom";
 import { CreditCard, Star, Copy, Check, ArrowRight, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import SEO from "@/components/SEO";
 import { toast } from "sonner";
 
-const UPI_ID = "dinesharputharaj-4@okicici";
-const UPI_LINK = "upi://pay?pa=dinesharputharaj-4@okicici&pn=Roadlink%20Tours%20and%20Travels";
+// Sanitize UPI ID: strip whitespace, line breaks, zero-width and other invisible chars
+const RAW_UPI_ID = "dinesharputharaj-4@okicici";
+const UPI_ID = RAW_UPI_ID.replace(/[\s\u200B-\u200D\uFEFF]/g, "").trim();
+const PAYEE_NAME = "Roadlink Tours and Travels";
+const buildUpiLink = () => {
+  const params = new URLSearchParams();
+  params.set("pa", UPI_ID);
+  params.set("pn", PAYEE_NAME);
+  params.set("cu", "INR");
+  // URLSearchParams encodes spaces as '+', but UPI expects %20 — normalize
+  return `upi://pay?${params.toString().replace(/\+/g, "%20")}`;
+};
 const GOOGLE_REVIEW_URL = "https://g.page/r/CWb9iblFoyItEBM/review";
 
 const isMobileDevice = () => {
@@ -19,6 +36,7 @@ const isMobileDevice = () => {
 
 const PaymentReview = () => {
   const [copied, setCopied] = useState(false);
+  const [fallbackOpen, setFallbackOpen] = useState(false);
   const isMobile = isMobileDevice();
 
   const handleCopyUpi = useCallback(async () => {
@@ -30,16 +48,52 @@ const PaymentReview = () => {
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Could not copy UPI ID automatically.");
+      toast.error("Could not copy UPI ID automatically.", {
+        description: `Please copy manually: ${UPI_ID}`,
+      });
     }
   }, []);
 
   const handleUpiClick = () => {
+    const upiUrl = buildUpiLink();
+    // Debug logging as requested
+    // eslint-disable-next-line no-console
+    console.log("[UPI] Generated payment URL:", upiUrl);
+    // eslint-disable-next-line no-console
+    console.log("[UPI] Payee VPA:", UPI_ID, "| Payee Name:", PAYEE_NAME);
+
     if (!isMobile) {
-      handleCopyUpi();
+      // Desktop: no UPI app — show fallback with copy option
+      setFallbackOpen(true);
       return;
     }
-    window.location.href = UPI_LINK;
+
+    // Mobile: try the deep link. If nothing handles it, the page stays visible —
+    // detect that and surface the fallback modal so the user can copy the VPA.
+    const start = Date.now();
+    const fallbackTimer = window.setTimeout(() => {
+      // If we're still here ~1.8s later, no UPI app picked up the intent
+      if (document.visibilityState === "visible" && Date.now() - start >= 1500) {
+        setFallbackOpen(true);
+      }
+    }, 1800);
+
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        window.clearTimeout(fallbackTimer);
+        document.removeEventListener("visibilitychange", onVisibility);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    try {
+      window.location.href = upiUrl;
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("[UPI] Failed to open deep link:", err);
+      window.clearTimeout(fallbackTimer);
+      setFallbackOpen(true);
+    }
   };
 
   return (
@@ -113,38 +167,41 @@ const PaymentReview = () => {
                   Pay securely using any UPI app on your mobile device.
                 </p>
 
-                {isMobile ? (
+                <div className="flex flex-col items-center gap-3 w-full">
+                  <div className="bg-muted rounded-lg px-4 py-3 font-mono text-xs sm:text-sm md:text-base text-foreground tracking-wide border border-border break-all w-full max-w-xs text-center">
+                    {UPI_ID}
+                  </div>
                   <Button
                     onClick={handleUpiClick}
-                    className="bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] px-6 py-3 h-auto text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/btn"
+                    className="w-full max-w-xs bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] px-6 py-3 h-auto text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/btn"
                   >
                     Pay via UPI
                     <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
-                ) : (
-                  <div className="flex flex-col items-center gap-3 w-full">
-                    <div className="bg-muted rounded-lg px-4 py-3 font-mono text-sm md:text-base text-foreground tracking-wide border border-border">
-                      {UPI_ID}
-                    </div>
-                    <Button
-                      onClick={handleCopyUpi}
-                      variant="outline"
-                      className="border-[hsl(152,73%,18%)] text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)] hover:text-white px-6 py-3 h-auto text-base font-semibold rounded-xl transition-all duration-300"
-                    >
-                      {copied ? (
-                        <>
-                          <Check className="w-4 h-4 mr-2" />
-                          Copied
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4 mr-2" />
-                          Copy UPI ID
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
+                  <Button
+                    onClick={handleCopyUpi}
+                    variant="outline"
+                    className="w-full max-w-xs border-[hsl(152,73%,18%)] text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)] hover:text-white px-6 py-3 h-auto text-base font-semibold rounded-xl transition-all duration-300"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4 mr-2" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy UPI ID
+                      </>
+                    )}
+                  </Button>
+                  {!isMobile && (
+                    <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+                      UPI apps open only on mobile. On desktop, copy the ID and
+                      pay from your phone.
+                    </p>
+                  )}
+                </div>
               </div>
             </Card>
           </div>
@@ -202,6 +259,38 @@ const PaymentReview = () => {
           </div>
         </div>
       </section>
+
+      {/* UPI Fallback Modal */}
+      <Dialog open={fallbackOpen} onOpenChange={setFallbackOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Use UPI ID Directly</DialogTitle>
+            <DialogDescription>
+              Please copy and use this UPI ID directly in your preferred UPI app
+              (Google Pay, PhonePe, Paytm, BHIM, etc.).
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 pt-2">
+            <div className="w-full bg-muted rounded-lg px-4 py-3 font-mono text-sm md:text-base text-foreground tracking-wide border border-border break-all text-center">
+              {UPI_ID}
+            </div>
+            <Button
+              onClick={handleCopyUpi}
+              className="w-full bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] rounded-xl"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" /> Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2" /> Copy UPI ID
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
