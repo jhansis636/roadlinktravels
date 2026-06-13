@@ -3,11 +3,28 @@ import { Link } from "react-router-dom";
 import { CreditCard, Star, Copy, Check, ArrowRight, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import SEO from "@/components/SEO";
 import { toast } from "sonner";
 
-const UPI_ID = "dinesharputharaj-4@okicici";
-const UPI_LINK = "upi://pay?pa=dinesharputharaj-4@okicici&pn=Roadlink%20Tours%20and%20Travels";
+// Sanitize UPI ID: strip whitespace, line breaks, zero-width and other invisible chars
+const RAW_UPI_ID = "dinesharputharaj-4@okicici";
+const UPI_ID = RAW_UPI_ID.replace(/[\s\u200B-\u200D\uFEFF]/g, "").trim();
+const PAYEE_NAME = "Roadlink Tours and Travels";
+const buildUpiLink = () => {
+  const params = new URLSearchParams();
+  params.set("pa", UPI_ID);
+  params.set("pn", PAYEE_NAME);
+  params.set("cu", "INR");
+  // URLSearchParams encodes spaces as '+', but UPI expects %20 — normalize
+  return `upi://pay?${params.toString().replace(/\+/g, "%20")}`;
+};
 const GOOGLE_REVIEW_URL = "https://g.page/r/CWb9iblFoyItEBM/review";
 
 const isMobileDevice = () => {
@@ -19,6 +36,7 @@ const isMobileDevice = () => {
 
 const PaymentReview = () => {
   const [copied, setCopied] = useState(false);
+  const [fallbackOpen, setFallbackOpen] = useState(false);
   const isMobile = isMobileDevice();
 
   const handleCopyUpi = useCallback(async () => {
@@ -30,16 +48,52 @@ const PaymentReview = () => {
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Could not copy UPI ID automatically.");
+      toast.error("Could not copy UPI ID automatically.", {
+        description: `Please copy manually: ${UPI_ID}`,
+      });
     }
   }, []);
 
   const handleUpiClick = () => {
+    const upiUrl = buildUpiLink();
+    // Debug logging as requested
+    // eslint-disable-next-line no-console
+    console.log("[UPI] Generated payment URL:", upiUrl);
+    // eslint-disable-next-line no-console
+    console.log("[UPI] Payee VPA:", UPI_ID, "| Payee Name:", PAYEE_NAME);
+
     if (!isMobile) {
-      handleCopyUpi();
+      // Desktop: no UPI app — show fallback with copy option
+      setFallbackOpen(true);
       return;
     }
-    window.location.href = UPI_LINK;
+
+    // Mobile: try the deep link. If nothing handles it, the page stays visible —
+    // detect that and surface the fallback modal so the user can copy the VPA.
+    const start = Date.now();
+    const fallbackTimer = window.setTimeout(() => {
+      // If we're still here ~1.8s later, no UPI app picked up the intent
+      if (document.visibilityState === "visible" && Date.now() - start >= 1500) {
+        setFallbackOpen(true);
+      }
+    }, 1800);
+
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        window.clearTimeout(fallbackTimer);
+        document.removeEventListener("visibilitychange", onVisibility);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    try {
+      window.location.href = upiUrl;
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("[UPI] Failed to open deep link:", err);
+      window.clearTimeout(fallbackTimer);
+      setFallbackOpen(true);
+    }
   };
 
   return (
