@@ -259,6 +259,38 @@ const PaymentReview = () => {
           </div>
         </div>
       </section>
+
+      {/* UPI Fallback Modal */}
+      <Dialog open={fallbackOpen} onOpenChange={setFallbackOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Use UPI ID Directly</DialogTitle>
+            <DialogDescription>
+              Please copy and use this UPI ID directly in your preferred UPI app
+              (Google Pay, PhonePe, Paytm, BHIM, etc.).
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 pt-2">
+            <div className="w-full bg-muted rounded-lg px-4 py-3 font-mono text-sm md:text-base text-foreground tracking-wide border border-border break-all text-center">
+              {UPI_ID}
+            </div>
+            <Button
+              onClick={handleCopyUpi}
+              className="w-full bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] rounded-xl"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" /> Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2" /> Copy UPI ID
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
