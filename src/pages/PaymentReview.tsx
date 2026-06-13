@@ -167,38 +167,41 @@ const PaymentReview = () => {
                   Pay securely using any UPI app on your mobile device.
                 </p>
 
-                {isMobile ? (
+                <div className="flex flex-col items-center gap-3 w-full">
+                  <div className="bg-muted rounded-lg px-4 py-3 font-mono text-xs sm:text-sm md:text-base text-foreground tracking-wide border border-border break-all w-full max-w-xs text-center">
+                    {UPI_ID}
+                  </div>
                   <Button
                     onClick={handleUpiClick}
-                    className="bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] px-6 py-3 h-auto text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/btn"
+                    className="w-full max-w-xs bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] px-6 py-3 h-auto text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/btn"
                   >
                     Pay via UPI
                     <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
-                ) : (
-                  <div className="flex flex-col items-center gap-3 w-full">
-                    <div className="bg-muted rounded-lg px-4 py-3 font-mono text-sm md:text-base text-foreground tracking-wide border border-border">
-                      {UPI_ID}
-                    </div>
-                    <Button
-                      onClick={handleCopyUpi}
-                      variant="outline"
-                      className="border-[hsl(152,73%,18%)] text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)] hover:text-white px-6 py-3 h-auto text-base font-semibold rounded-xl transition-all duration-300"
-                    >
-                      {copied ? (
-                        <>
-                          <Check className="w-4 h-4 mr-2" />
-                          Copied
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4 mr-2" />
-                          Copy UPI ID
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
+                  <Button
+                    onClick={handleCopyUpi}
+                    variant="outline"
+                    className="w-full max-w-xs border-[hsl(152,73%,18%)] text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)] hover:text-white px-6 py-3 h-auto text-base font-semibold rounded-xl transition-all duration-300"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4 mr-2" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy UPI ID
+                      </>
+                    )}
+                  </Button>
+                  {!isMobile && (
+                    <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+                      UPI apps open only on mobile. On desktop, copy the ID and
+                      pay from your phone.
+                    </p>
+                  )}
+                </div>
               </div>
             </Card>
           </div>
