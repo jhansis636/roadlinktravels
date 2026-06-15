@@ -3,6 +3,12 @@
   publish = "dist"
 
 [[redirects]]
+  from = "/e96398b9-8314-438c-a022-cf243d53d7a2.html"
+  to = "/e96398b9-8314-438c-a022-cf243d53d7a2.html"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
