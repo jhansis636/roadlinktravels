@@ -35,7 +35,7 @@ const AdminLogin = () => {
       if (error) {
         toast({
           title: "Sign Up Failed",
-          description: error.message,
+          description: "Sign-up failed. Please try again or contact your administrator.",
           variant: "destructive",
         });
         setIsLoading(false);
@@ -55,7 +55,7 @@ const AdminLogin = () => {
     if (error) {
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: "Invalid credentials. Please check your email and password.",
         variant: "destructive",
       });
       setIsLoading(false);
