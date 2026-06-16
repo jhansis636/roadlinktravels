@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
-import floatingLogo from "@/assets/floating-logo.png";
+import floatingLogo from "@/assets/floating-logo.webp";
 import BookingModal from "./BookingModal";
 
 const FloatingLogo = () => {
