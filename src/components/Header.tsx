@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Phone, Menu, X, Download, ChevronDown, CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
-import logo from "@/assets/logo.webp";
+import logo from "@/assets/logo.png";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";

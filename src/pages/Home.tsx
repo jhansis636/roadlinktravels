@@ -106,12 +106,11 @@ const Home = () => {
       <div className="w-full bg-black overflow-hidden">
         <video
           src="/videos/roban.mp4"
-          poster="/videos/roban-poster.jpg"
           autoPlay
           loop
           muted
           playsInline
-          preload="none"
+          preload="metadata"
           className="w-full h-auto max-h-[80vh] object-contain block mx-auto"
         />
       </div>

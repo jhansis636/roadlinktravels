@@ -16,7 +16,7 @@ import { FileText, Download, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import jsPDF from "jspdf";
 import signatureImg from "@/assets/signature.jpg";
-import logoImg from "@/assets/logo.webp";
+import logoImg from "@/assets/logo.png";
 
 const generateQuotationNumber = () => {
   const date = new Date();
