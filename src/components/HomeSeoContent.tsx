@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 
 const faqs = [
   {
-    q: "Which is the best taxi service in Coimbatore?",
-    a: "Roadlink Tours and Travels is one of the most trusted taxi services in Coimbatore, offering 24/7 cab booking, airport pickup and drop, outstation trips, luxury car rentals and customised tour packages with verified drivers and transparent pricing.",
+    q: "Who is Roadlink Tours and Travels?",
+    a: "Roadlink Tours and Travels is one of the trusted travel agencies in Coimbatore with 15+ years of experience. We offer reliable travel services across South India with transparent pricing and affordable rates. More than just transportation, we help you plan a safe and memorable trip by guiding you to the best destinations and accommodations. Starting from Coimbatore, we provide outstation travel services throughout South India. Check our Tariff Pages for pricing and send us an enquiry to plan your journey today.",
   },
   {
     q: "How do I book a Coimbatore taxi or cab online?",
