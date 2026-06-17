@@ -1,0 +1,1 @@
+ALTER POLICY "Admins can manage vehicles" ON public.vehicles TO authenticated;
