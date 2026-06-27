@@ -1,12 +1,15 @@
-import { useState, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { useState, useCallback, useMemo, useEffect } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { CreditCard, Star, Copy, Check, ArrowRight, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { QRCodeSVG } from "qrcode.react";
 import SEO from "@/components/SEO";
 import { toast } from "sonner";
 
-const PHONE_NUMBER = "9003305085";
+const UPI_ID = "jerryrobert.in@okicici";
 const PAYEE_NAME = "Roadlink Tours and Travels";
 const GOOGLE_REVIEW_URL = "https://g.page/r/CWb9iblFoyItEBM/review";
 
@@ -17,43 +20,87 @@ const isMobileDevice = () => {
   );
 };
 
+const buildUpiUrl = (amount: number) =>
+  `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${amount.toFixed(2)}&cu=INR&tn=${encodeURIComponent("Roadlink Tours Booking")}`;
+
 const PaymentReview = () => {
   const [copied, setCopied] = useState(false);
+  const [copiedUpi, setCopiedUpi] = useState(false);
   const isMobile = isMobileDevice();
+  const location = useLocation();
 
-  const handleCopyNumber = useCallback(async () => {
+  // Read booking total from navigation state or query string (?amount=)
+  const initialAmount = useMemo(() => {
+    const state = (location.state as { totalAmount?: number | string } | null) || null;
+    const params = new URLSearchParams(location.search);
+    const fromState = state?.totalAmount;
+    const fromQuery = params.get("amount");
+    const raw = fromState ?? fromQuery ?? "";
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  }, [location.state, location.search]);
+
+  const [amountInput, setAmountInput] = useState<string>(
+    initialAmount > 0 ? String(initialAmount) : ""
+  );
+
+  useEffect(() => {
+    if (initialAmount > 0) setAmountInput(String(initialAmount));
+  }, [initialAmount]);
+
+  const amount = useMemo(() => {
+    const n = Number(amountInput);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  }, [amountInput]);
+
+  const canPay = amount > 0;
+  const upiUrl = useMemo(() => (canPay ? buildUpiUrl(amount) : ""), [canPay, amount]);
+
+  const handleCopyUpiId = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(PHONE_NUMBER);
-      setCopied(true);
-      toast.success("Phone number copied to clipboard!", {
-        description: "You can now paste it in your UPI app to complete the payment.",
+      await navigator.clipboard.writeText(UPI_ID);
+      setCopiedUpi(true);
+      toast.success("UPI ID copied to clipboard!", {
+        description: "Paste it in any UPI app to complete your payment.",
       });
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopiedUpi(false), 2000);
     } catch {
-      toast.error("Could not copy number automatically.", {
-        description: `Please copy manually: ${PHONE_NUMBER}`,
+      toast.error("Could not copy UPI ID automatically.", {
+        description: `Please copy manually: ${UPI_ID}`,
       });
     }
   }, []);
 
+  const handleCopyLink = useCallback(async () => {
+    if (!canPay) return;
+    try {
+      await navigator.clipboard.writeText(upiUrl);
+      setCopied(true);
+      toast.success("Payment link copied!");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Could not copy link.");
+    }
+  }, [upiUrl, canPay]);
+
   const handlePayViaUpiApps = () => {
+    if (!canPay) {
+      toast.error("Enter a valid amount greater than ₹0 to continue.");
+      return;
+    }
     if (!isMobile) {
-      toast.info("UPI apps work best on mobile devices", {
-        description: "Please copy the number and use it in your UPI app on your phone.",
+      toast.info("UPI apps open only on mobile devices", {
+        description: "Scan the QR code from your phone, or copy the UPI ID.",
       });
       return;
     }
-
-    // Attempt to open UPI apps using the phone number
-    const upiUrl = `upi://pay?pa=${PHONE_NUMBER}@upi&pn=${encodeURIComponent(PAYEE_NAME)}&cu=INR`;
-
     try {
       window.location.href = upiUrl;
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error("[UPI] Failed to open deep link:", err);
       toast.error("Could not open UPI app automatically.", {
-        description: "Please copy the phone number and use it in your UPI app.",
+        description: "Please scan the QR code or copy the UPI ID.",
       });
     }
   };
@@ -130,39 +177,87 @@ const PaymentReview = () => {
                 </p>
 
                 <div className="flex flex-col items-center gap-3 w-full">
-                  <div className="bg-muted rounded-lg px-4 py-3 font-mono text-sm md:text-base text-foreground tracking-wide border border-border w-full max-w-xs text-center">
-                    {PHONE_NUMBER}
+                  <div className="w-full max-w-xs text-left">
+                    <Label htmlFor="amount" className="text-sm font-medium text-foreground">
+                      Amount (₹)
+                    </Label>
+                    <Input
+                      id="amount"
+                      type="number"
+                      inputMode="decimal"
+                      min={1}
+                      step="1"
+                      placeholder="Enter total amount"
+                      value={amountInput}
+                      onChange={(e) => setAmountInput(e.target.value)}
+                      className="mt-1"
+                    />
+                    {!canPay && amountInput !== "" && (
+                      <p className="text-xs text-destructive mt-1">
+                        Amount must be greater than ₹0.
+                      </p>
+                    )}
                   </div>
+
+                  <div className="bg-muted rounded-lg px-4 py-3 font-mono text-sm md:text-base text-foreground tracking-wide border border-border w-full max-w-xs text-center break-all">
+                    {UPI_ID}
+                  </div>
+
+                  {canPay && (
+                    <div className="bg-white p-3 rounded-xl border border-border shadow-sm">
+                      <QRCodeSVG
+                        value={upiUrl}
+                        size={180}
+                        level="M"
+                        includeMargin={false}
+                      />
+                      <p className="text-xs text-muted-foreground mt-2 text-center">
+                        Scan to pay ₹{amount.toFixed(2)}
+                      </p>
+                    </div>
+                  )}
+
                   <Button
                     onClick={handlePayViaUpiApps}
-                    className="w-full max-w-xs bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] px-6 py-3 h-auto text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/btn"
+                    disabled={!canPay}
+                    className="w-full max-w-xs bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] px-6 py-3 h-auto text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/btn disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Pay via UPI Apps
+                    {canPay ? `Pay ₹${amount.toFixed(2)} Now` : "Pay Now"}
                     <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
-                  <Button
-                    onClick={handleCopyNumber}
-                    variant="outline"
-                    className="w-full max-w-xs border-[hsl(152,73%,18%)] text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)] hover:text-white px-6 py-3 h-auto text-base font-semibold rounded-xl transition-all duration-300"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-4 h-4 mr-2" />
-                        Copied
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4 mr-2" />
-                        Copy Number
-                      </>
-                    )}
-                  </Button>
+
+                  <div className="flex w-full max-w-xs gap-2">
+                    <Button
+                      onClick={handleCopyUpiId}
+                      variant="outline"
+                      className="flex-1 border-[hsl(152,73%,18%)] text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)] hover:text-white h-auto py-2.5 text-sm font-semibold rounded-xl transition-all duration-300"
+                    >
+                      {copiedUpi ? (
+                        <><Check className="w-4 h-4 mr-1" />Copied</>
+                      ) : (
+                        <><Copy className="w-4 h-4 mr-1" />Copy UPI ID</>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={handleCopyLink}
+                      variant="outline"
+                      disabled={!canPay}
+                      className="flex-1 border-[hsl(152,73%,18%)] text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)] hover:text-white h-auto py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 disabled:opacity-50"
+                    >
+                      {copied ? (
+                        <><Check className="w-4 h-4 mr-1" />Copied</>
+                      ) : (
+                        <><Copy className="w-4 h-4 mr-1" />Copy Link</>
+                      )}
+                    </Button>
+                  </div>
+
                   <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-                    Use this number in Google Pay, PhonePe, Paytm, BHIM, or any UPI app to complete your payment.
+                    Works with Google Pay, PhonePe, Paytm, BHIM, and any UPI app.
                   </p>
                   {!isMobile && (
-                    <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-                      UPI apps open only on mobile. On desktop, copy the number and pay from your phone.
+                    <p className="text-xs text-muted-foreground max-w-xs">
+                      On desktop, scan the QR with your phone's UPI app.
                     </p>
                   )}
                 </div>
