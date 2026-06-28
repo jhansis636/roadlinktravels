@@ -3,59 +3,31 @@ import { Link } from "react-router-dom";
 import { CreditCard, Star, Copy, Check, ArrowRight, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { QRCodeSVG } from "qrcode.react";
 import SEO from "@/components/SEO";
 import { toast } from "sonner";
+import upiQrImage from "@/assets/upi-qr.jpeg";
 
-const UPI_ID = "jerryrobert.in@okicici";
+const PAY_PHONE = "9003305085";
 const PAYEE_NAME = "Roadlink Tours and Travels";
 const GOOGLE_REVIEW_URL = "https://g.page/r/CWb9iblFoyItEBM/review";
 
-const isMobileDevice = () => {
-  if (typeof navigator === "undefined") return false;
-  return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
-};
-
-const UPI_URL = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&cu=INR&tn=${encodeURIComponent("Roadlink Tours Booking")}`;
-
 const PaymentReview = () => {
-  const [copiedUpi, setCopiedUpi] = useState(false);
-  const isMobile = isMobileDevice();
+  const [copiedPhone, setCopiedPhone] = useState(false);
 
-  const handleCopyUpiId = useCallback(async () => {
+  const handleCopyPhone = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(UPI_ID);
-      setCopiedUpi(true);
-      toast.success("UPI ID copied to clipboard!", {
-        description: "Paste it in any UPI app to complete your payment.",
+      await navigator.clipboard.writeText(PAY_PHONE);
+      setCopiedPhone(true);
+      toast.success("Phone number copied!", {
+        description: "Paste it in any UPI app to send payment.",
       });
-      setTimeout(() => setCopiedUpi(false), 2000);
+      setTimeout(() => setCopiedPhone(false), 2000);
     } catch {
-      toast.error("Could not copy UPI ID automatically.", {
-        description: `Please copy manually: ${UPI_ID}`,
+      toast.error("Could not copy automatically.", {
+        description: `Please copy manually: ${PAY_PHONE}`,
       });
     }
   }, []);
-
-  const handlePayViaUpiApps = () => {
-    if (!isMobile) {
-      toast.info("UPI apps open only on mobile devices", {
-        description: "Scan the QR code from your phone, or copy the UPI ID.",
-      });
-      return;
-    }
-    try {
-      window.location.href = UPI_URL;
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error("[UPI] Failed to open deep link:", err);
-      toast.error("Could not open UPI app automatically.", {
-        description: "Please scan the QR code or copy the UPI ID.",
-      });
-    }
-  };
 
   return (
     <>
@@ -129,50 +101,35 @@ const PaymentReview = () => {
                 </p>
 
                 <div className="flex flex-col items-center gap-3 w-full">
-                  <div className="bg-muted rounded-lg px-4 py-3 font-mono text-sm md:text-base text-foreground tracking-wide border border-border w-full max-w-xs text-center break-all">
-                    {UPI_ID}
-                  </div>
-
                   <div className="bg-white p-3 rounded-xl border border-border shadow-sm">
-                    <QRCodeSVG
-                      value={UPI_URL}
-                      size={180}
-                      level="M"
-                      includeMargin={false}
+                    <img
+                      src={upiQrImage}
+                      alt="Roadlink Tours and Travels UPI QR code"
+                      className="w-[220px] h-[220px] object-contain"
                     />
                     <p className="text-xs text-muted-foreground mt-2 text-center">
                       Scan with any UPI app to pay
                     </p>
                   </div>
 
-                  <Button
-                    onClick={handlePayViaUpiApps}
-                    className="w-full max-w-xs bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] px-6 py-3 h-auto text-base font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group/btn"
-                  >
-                    Pay Now
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
+                  <div className="bg-muted rounded-lg px-4 py-3 font-mono text-base md:text-lg text-foreground tracking-wide border border-border w-full max-w-xs text-center">
+                    {PAY_PHONE}
+                  </div>
 
                   <Button
-                    onClick={handleCopyUpiId}
-                    variant="outline"
-                    className="w-full max-w-xs border-[hsl(152,73%,18%)] text-[hsl(152,73%,18%)] hover:bg-[hsl(152,73%,18%)] hover:text-white h-auto py-2.5 text-sm font-semibold rounded-xl transition-all duration-300"
+                    onClick={handleCopyPhone}
+                    className="w-full max-w-xs bg-[hsl(152,73%,18%)] text-white hover:bg-[hsl(152,73%,14%)] h-auto py-3 text-sm font-semibold rounded-xl transition-all duration-300"
                   >
-                    {copiedUpi ? (
+                    {copiedPhone ? (
                       <><Check className="w-4 h-4 mr-1" />Copied</>
                     ) : (
-                      <><Copy className="w-4 h-4 mr-1" />Copy UPI ID</>
+                      <><Copy className="w-4 h-4 mr-1" />Copy Phone Number</>
                     )}
                   </Button>
 
                   <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-                    Tap Pay Now to open Google Pay, PhonePe, Paytm, BHIM, or any UPI app and enter the amount in your app.
+                    Scan the QR with any UPI app, or copy the phone number and pay via Google Pay, PhonePe, Paytm, or BHIM.
                   </p>
-                  {!isMobile && (
-                    <p className="text-xs text-muted-foreground max-w-xs">
-                      On desktop, scan the QR with your phone's UPI app.
-                    </p>
-                  )}
                 </div>
               </div>
             </Card>
