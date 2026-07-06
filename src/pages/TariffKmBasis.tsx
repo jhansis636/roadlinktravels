@@ -2,24 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { TermsSection } from "@/components/TermsSection";
 import SEO from "@/components/SEO";
-
-const tariffData = [
-  { vehicle: "Swift", minKmPerDay: 300, farePerKm: 13, driverBata: 400, amount: 4300 },
-  { vehicle: "Etios", minKmPerDay: 300, farePerKm: 13, driverBata: 400, amount: 4300 },
-  { vehicle: "Ciaz or Amaze", minKmPerDay: 300, farePerKm: 14, driverBata: 400, amount: 4600 },
-  { vehicle: "Ertiga", minKmPerDay: 350, farePerKm: 17, driverBata: 400, amount: 5500 },  
-  { vehicle: "Innova", minKmPerDay: 350, farePerKm: 18, driverBata: 500, amount: 6800 },
-  { vehicle: "Crysta", minKmPerDay: 400, farePerKm: 20, driverBata: 500, amount: 8500 },
-  { vehicle: "Hycross", minKmPerDay: 400, farePerKm: 22, driverBata: 500, amount: 9300 },
-  { vehicle: "Audi (Premium Sedan)", minKmPerDay: 350, farePerKm: 85, driverBata: 900, amount: 30650 },
-  { vehicle: "Benz (Premium Sedan)", minKmPerDay: 350, farePerKm: 85, driverBata: 900, amount: 30650 },
-  { vehicle: "BMW (Premium Sedan)", minKmPerDay: 350, farePerKm: 85, driverBata: 900, amount: 30650 },
-  { vehicle: "Jaguar (Premium Sedan)", minKmPerDay: 350, farePerKm: 85, driverBata: 900, amount: 30650 },
-  { vehicle: "Tempo Traveller", minKmPerDay: 400, farePerKm: 30, driverBata: 600, amount: 12600 },
-  { vehicle: "Urbania", minKmPerDay: 400, farePerKm: 38, driverBata: 600, amount: 15800 },
-  { vehicle: "Coach Van", minKmPerDay: 400, farePerKm: 45, driverBata: 800, amount: 18800 },
-  { vehicle: "Bus", minKmPerDay: 400, farePerKm: "Call for details", driverBata: "Call for details", amount: "Call for details", isContact: true },
-];
+import { kmBasisTariff as tariffData } from "@/data/tariff";
 
 const TariffKmBasis = () => {
   const handleBook = (vehicle: string) => {
