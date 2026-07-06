@@ -2,24 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { TermsSection } from "@/components/TermsSection";
 import SEO from "@/components/SEO";
-
-const tariffData = [
-  { vehicle: "Swift", rentPerDay: 2600, freeKmPerDay: "100 km", fareAfterFree: 12, driverBata: 400, total: 3000 },
-  { vehicle: "Etios", rentPerDay: 2600, freeKmPerDay: "100 km", fareAfterFree: 12, driverBata: 400, total: 3000 },
-  { vehicle: "Ciaz or Amaze", rentPerDay: 3000, freeKmPerDay: "100 km", fareAfterFree: 13, driverBata: 400, total: 3400 },
-  { vehicle: "Ertiga", rentPerDay: 3200, freeKmPerDay: "100 km", fareAfterFree: 14, driverBata: 400, total: 3600 },
-  { vehicle: "Innova", rentPerDay: 3400, freeKmPerDay: "100 km", fareAfterFree: 16, driverBata: 400, total: 3800 },
-  { vehicle: "Crysta", rentPerDay: 4600, freeKmPerDay: "100 km", fareAfterFree: 17, driverBata: 400, total: 5000 },
-  { vehicle: "Hycross", rentPerDay: 5100, freeKmPerDay: "100 km", fareAfterFree: 18, driverBata: 400, total: 5500 },
-  { vehicle: "Audi (Luxury Sedan)", rentPerDay: 13000, freeKmPerDay: "100 km", fareAfterFree: 75, driverBata: "Included", total: 13000 },
-  { vehicle: "Benz (Luxury Sedan)", rentPerDay: 13000, freeKmPerDay: "100 km", fareAfterFree: 75, driverBata: "Included", total: 13000 },
-  { vehicle: "BMW (Luxury Sedan)", rentPerDay: 13000, freeKmPerDay: "100 km", fareAfterFree: 75, driverBata: "Included", total: 13000 },
-  { vehicle: "Jaguar (Luxury Sedan)", rentPerDay: 13000, freeKmPerDay: "100 km", fareAfterFree: 75, driverBata: "Included", total: 13000 },
-  { vehicle: "Tempo Traveller", rentPerDay: 5000, freeKmPerDay: "100 km", fareAfterFree: 20, driverBata: 400, total: 5400 },
-  { vehicle: "Urbania", rentPerDay: 6500, freeKmPerDay: "100 km", fareAfterFree: 30, driverBata: 500, total: 7000 },
-  { vehicle: "Coach Van", rentPerDay: 5500, freeKmPerDay: "100 km", fareAfterFree: 40, driverBata: 500, total: 6000 },
-  { vehicle: "Bus", rentPerDay: "Call for details", freeKmPerDay: "Call for details", fareAfterFree: "Call for details", driverBata: "Call for details", total: "Call for details", isContact: true },
-];
+import { dayBasisTariff as tariffData } from "@/data/tariff";
 
 const TariffDayBasis = () => {
   const handleBook = (vehicle: string) => {

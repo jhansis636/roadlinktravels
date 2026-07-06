@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.generate_bill_no() FROM PUBLIC, anon, authenticated;

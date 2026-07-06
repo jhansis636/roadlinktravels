@@ -74,6 +74,116 @@ export type Database = {
         }
         Relationships: []
       }
+      bills: {
+        Row: {
+          advance: number | null
+          balance: number | null
+          bill_date: string
+          bill_no: string | null
+          created_at: string
+          customer_id: string | null
+          customer_name: string
+          end_date: string | null
+          end_km: number | null
+          end_time: string | null
+          extra_hours: number | null
+          extra_hours_enabled: boolean
+          extra_km: number | null
+          id: string
+          night_halt: number | null
+          parking_tollgate: number | null
+          per_km_rate: number | null
+          permit: number | null
+          place: string | null
+          remarks: string | null
+          start_date: string | null
+          start_km: number | null
+          start_time: string | null
+          status: string
+          total_amount: number | null
+          total_days: number | null
+          total_km: number | null
+          total_time_minutes: number | null
+          updated_at: string
+          vehicle_number: string | null
+          vehicle_type: string | null
+        }
+        Insert: {
+          advance?: number | null
+          balance?: number | null
+          bill_date?: string
+          bill_no?: string | null
+          created_at?: string
+          customer_id?: string | null
+          customer_name: string
+          end_date?: string | null
+          end_km?: number | null
+          end_time?: string | null
+          extra_hours?: number | null
+          extra_hours_enabled?: boolean
+          extra_km?: number | null
+          id?: string
+          night_halt?: number | null
+          parking_tollgate?: number | null
+          per_km_rate?: number | null
+          permit?: number | null
+          place?: string | null
+          remarks?: string | null
+          start_date?: string | null
+          start_km?: number | null
+          start_time?: string | null
+          status?: string
+          total_amount?: number | null
+          total_days?: number | null
+          total_km?: number | null
+          total_time_minutes?: number | null
+          updated_at?: string
+          vehicle_number?: string | null
+          vehicle_type?: string | null
+        }
+        Update: {
+          advance?: number | null
+          balance?: number | null
+          bill_date?: string
+          bill_no?: string | null
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string
+          end_date?: string | null
+          end_km?: number | null
+          end_time?: string | null
+          extra_hours?: number | null
+          extra_hours_enabled?: boolean
+          extra_km?: number | null
+          id?: string
+          night_halt?: number | null
+          parking_tollgate?: number | null
+          per_km_rate?: number | null
+          permit?: number | null
+          place?: string | null
+          remarks?: string | null
+          start_date?: string | null
+          start_km?: number | null
+          start_time?: string | null
+          status?: string
+          total_amount?: number | null
+          total_days?: number | null
+          total_km?: number | null
+          total_time_minutes?: number | null
+          updated_at?: string
+          vehicle_number?: string | null
+          vehicle_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bills_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           booking_date: string
@@ -109,6 +219,39 @@ export type Database = {
           phone_number?: string
           pickup_location?: string
           status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
           updated_at?: string
         }
         Relationships: []
