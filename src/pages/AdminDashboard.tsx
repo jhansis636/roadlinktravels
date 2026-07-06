@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar, Car, Images, Youtube, FileText, PanelTop, MapPin } from "lucide-react";
+import { LogOut, Loader2, Home, Info, Briefcase, Award, MessageSquare, Phone, Calendar, Car, Images, Youtube, FileText, PanelTop, MapPin, Users, Receipt } from "lucide-react";
 import BookingsManager from "@/components/admin/BookingsManager";
 import TestimonialsManager from "@/components/admin/TestimonialsManager";
 import ServicesManager from "@/components/admin/ServicesManager";
@@ -14,6 +14,8 @@ import VideosManager from "@/components/admin/VideosManager";
 import QuotationManager from "@/components/admin/QuotationManager";
 import BannerManager from "@/components/admin/BannerManager";
 import TourPlaceImagesManager from "@/components/admin/TourPlaceImagesManager";
+import CustomersManager from "@/components/admin/CustomersManager";
+import BillingManager from "@/components/admin/BillingManager";
 
 const homeContentSections = [
   { key: "hero", label: "Hero Section", fields: ["title", "subtitle", "content", "image_url"] },
@@ -96,6 +98,14 @@ const AdminDashboard = () => {
               <Calendar className="h-4 w-4" />
               <span className="hidden sm:inline">Bookings</span>
             </TabsTrigger>
+            <TabsTrigger value="billing" className="flex items-center gap-2">
+              <Receipt className="h-4 w-4" />
+              <span className="hidden sm:inline">Billing</span>
+            </TabsTrigger>
+            <TabsTrigger value="customers" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Customers</span>
+            </TabsTrigger>
             <TabsTrigger value="home" className="flex items-center gap-2">
               <Home className="h-4 w-4" />
               <span className="hidden sm:inline">Home</span>
@@ -148,6 +158,14 @@ const AdminDashboard = () => {
 
           <TabsContent value="bookings">
             <BookingsManager />
+          </TabsContent>
+
+          <TabsContent value="billing">
+            <BillingManager />
+          </TabsContent>
+
+          <TabsContent value="customers">
+            <CustomersManager />
           </TabsContent>
 
           <TabsContent value="home">
