@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useBills, useSaveBill, useDeleteBill, type Bill } from "@/hooks/useBills";
 import { getBillingVehicles, getVehicleByName } from "@/data/tariff";
-import { printBill } from "@/lib/printBill";
+import { printBill, downloadBillPdf } from "@/lib/printBill";
 import { toast } from "@/hooks/use-toast";
 
 // ---------- helpers ----------
@@ -476,7 +476,22 @@ const BillingManager = () => {
             >
               <Printer className="h-4 w-4 mr-1" /> Print
             </Button>
-            <Button variant="outline" disabled className="opacity-60">
+            <Button
+              variant="outline"
+              onClick={async () => {
+                const b = bills?.find((x) => x.id === form.id);
+                if (!b) {
+                  toast({ title: "Save the bill first", description: "PDF is available after the bill is saved." });
+                  return;
+                }
+                try {
+                  await downloadBillPdf(b);
+                } catch (e) {
+                  toast({ title: "PDF failed", description: (e as Error).message, variant: "destructive" });
+                }
+              }}
+              className="border-blue-600 text-blue-700 hover:bg-blue-50"
+            >
               <FileText className="h-4 w-4 mr-1" /> Download PDF
             </Button>
             <Button variant="outline" onClick={resetForm} className="border-destructive text-destructive hover:bg-destructive/10">
