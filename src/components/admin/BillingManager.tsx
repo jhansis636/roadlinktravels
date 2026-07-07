@@ -20,7 +20,6 @@ import {
   FileText, Plus, Minus, Loader2, Save, Eraser, Printer,
   Pencil, Trash2, Eye, Search, RotateCcw,
 } from "lucide-react";
-import { useCustomers } from "@/hooks/useCustomers";
 import { useBills, useSaveBill, useDeleteBill, type Bill } from "@/hooks/useBills";
 import { getBillingVehicles, getVehicleByName } from "@/data/tariff";
 import { printBill } from "@/lib/printBill";
@@ -58,11 +57,38 @@ const diffDays = (a: string, b: string): number | null => {
   return Math.max(1, Math.round((db - da) / 86400000) + 1);
 };
 
+// Flat per-hour rate used for the optional "Extra Hours" charge.
+const EXTRA_HOUR_RATE = 150;
+
+// ---------- amount → words (Indian numbering) ----------
+const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+const twoDigit = (n: number): string => (n < 20 ? ones[n] : `${tens[Math.floor(n / 10)]}${n % 10 ? " " + ones[n % 10] : ""}`);
+const threeDigit = (n: number): string => {
+  const h = Math.floor(n / 100), r = n % 100;
+  return `${h ? ones[h] + " Hundred" + (r ? " " : "") : ""}${r ? twoDigit(r) : ""}`;
+};
+const amountToWords = (amt: number): string => {
+  if (!Number.isFinite(amt)) return "";
+  const n = Math.round(amt);
+  if (n === 0) return "Zero Rupees Only";
+  const crore = Math.floor(n / 10000000);
+  const lakh = Math.floor((n % 10000000) / 100000);
+  const thousand = Math.floor((n % 100000) / 1000);
+  const rest = n % 1000;
+  const parts = [
+    crore ? `${twoDigit(crore)} Crore` : "",
+    lakh ? `${twoDigit(lakh)} Lakh` : "",
+    thousand ? `${twoDigit(thousand)} Thousand` : "",
+    rest ? threeDigit(rest) : "",
+  ].filter(Boolean);
+  return `${parts.join(" ")} Rupees Only`;
+};
+
 // ---------- form state ----------
 
 interface FormState {
   id?: string;
-  customer_id: string; // "" = none
   customer_name: string;
   place: string;
   bill_date: string;
@@ -85,7 +111,6 @@ interface FormState {
 }
 
 const emptyForm = (): FormState => ({
-  customer_id: "",
   customer_name: "",
   place: "",
   bill_date: todayISO(),
@@ -109,7 +134,6 @@ const emptyForm = (): FormState => ({
 
 const billToForm = (b: Bill): FormState => ({
   id: b.id,
-  customer_id: b.customer_id ?? "",
   customer_name: b.customer_name,
   place: b.place ?? "",
   bill_date: b.bill_date ?? todayISO(),
@@ -134,7 +158,6 @@ const billToForm = (b: Bill): FormState => ({
 // ---------- component ----------
 
 const BillingManager = () => {
-  const { data: customers } = useCustomers();
   const { data: bills, isLoading } = useBills();
   const saveBill = useSaveBill();
   const deleteBill = useDeleteBill();
@@ -145,6 +168,8 @@ const BillingManager = () => {
   // derived values
   const selectedVehicle = form.vehicle_type ? getVehicleByName(form.vehicle_type) : undefined;
   const perKmRate = selectedVehicle?.perKmRate;
+  const perDayRate = selectedVehicle?.perDayRate;
+  const driverBataPerDay = selectedVehicle?.driverBataPerDay;
 
   const totalMinutes = useMemo(() => {
     const s = timeToMinutes(form.start_time);
@@ -170,6 +195,36 @@ const BillingManager = () => {
     () => diffDays(form.start_date, form.end_date),
     [form.start_date, form.end_date],
   );
+
+  // Live Total Amount. Uses km-basis rate when available, else day-basis.
+  const calc = useMemo(() => {
+    const days = totalDays ?? 1;
+    const km = totalKm ?? 0;
+    const kmCharge = perKmRate != null ? km * perKmRate : 0;
+    const dayCharge = perKmRate == null && perDayRate != null ? perDayRate * days : 0;
+    const bata = (driverBataPerDay ?? 0) * days;
+    const extraKmCharge = (num(form.extra_km) ?? 0) * (perKmRate ?? 0);
+    const extraHoursCharge = form.extra_hours_enabled
+      ? (num(form.extra_hours) ?? 0) * EXTRA_HOUR_RATE
+      : 0;
+    const parking = num(form.parking_tollgate) ?? 0;
+    const permit = num(form.permit) ?? 0;
+    const nightHalt = num(form.night_halt) ?? 0;
+    const total = Math.round(
+      kmCharge + dayCharge + bata + extraKmCharge + extraHoursCharge + parking + permit + nightHalt,
+    );
+    const advance = num(form.advance) ?? 0;
+    const balance = Math.max(0, total - advance);
+    return { total, balance };
+  }, [
+    totalKm, totalDays, perKmRate, perDayRate, driverBataPerDay,
+    form.extra_km, form.extra_hours_enabled, form.extra_hours,
+    form.parking_tollgate, form.permit, form.night_halt, form.advance,
+  ]);
+
+  const totalAmount = calc.total;
+  const balance = calc.balance;
+  const amountWords = useMemo(() => (totalAmount > 0 ? amountToWords(totalAmount) : ""), [totalAmount]);
 
   // filters + search
   const [fromDate, setFromDate] = useState("");
@@ -198,16 +253,6 @@ const BillingManager = () => {
 
   const [viewBill, setViewBill] = useState<Bill | null>(null);
 
-  // handlers
-  const handleCustomer = (id: string) => {
-    const c = customers?.find((c) => c.id === id);
-    setForm((f) => ({
-      ...f,
-      customer_id: id,
-      customer_name: c?.name ?? f.customer_name,
-    }));
-  };
-
   const resetForm = () => setForm(emptyForm());
 
   const startEdit = (b: Bill) => {
@@ -217,12 +262,12 @@ const BillingManager = () => {
 
   const handleSave = async () => {
     if (!form.customer_name.trim()) {
-      toast({ title: "Customer required", description: "Select or enter a customer name.", variant: "destructive" });
+      toast({ title: "Customer required", description: "Enter a customer name.", variant: "destructive" });
       return;
     }
     const saved = await saveBill.mutateAsync({
       id: form.id,
-      customer_id: form.customer_id || null,
+      customer_id: null,
       customer_name: form.customer_name.trim(),
       place: form.place || null,
       bill_date: form.bill_date,
@@ -246,8 +291,8 @@ const BillingManager = () => {
       extra_km: num(form.extra_km),
       advance: num(form.advance),
       remarks: form.remarks || null,
-      total_amount: null, // computed later
-      balance: null,
+      total_amount: totalAmount || null,
+      balance: totalAmount ? balance : null,
       status: "draft",
     });
     setForm(billToForm(saved));
@@ -269,18 +314,8 @@ const BillingManager = () => {
             <div className="grid gap-4 md:grid-cols-3">
               <div>
                 <Label>Customer Name</Label>
-                <Select value={form.customer_id || "none"} onValueChange={(v) => handleCustomer(v === "none" ? "" : v)}>
-                  <SelectTrigger><SelectValue placeholder="Select Customer" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">— None (type name below) —</SelectItem>
-                    {customers?.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
                 <Input
-                  className="mt-2"
-                  placeholder="Customer name"
+                  placeholder="Enter Customer Name"
                   value={form.customer_name}
                   onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
                 />
@@ -413,13 +448,13 @@ const BillingManager = () => {
                 <Textarea rows={2} value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} placeholder="Enter Remarks" />
               </div>
               <div className="space-y-2">
-                <div><Label>Amount in Words</Label><Input readOnly placeholder="--" className="bg-muted" /></div>
+                <div><Label>Amount in Words</Label><Input readOnly value={amountWords} placeholder="--" className="bg-muted" /></div>
               </div>
               <div className="md:col-span-4 grid grid-cols-2 gap-3 max-w-md ml-auto">
                 <Label className="self-center">Total</Label>
-                <Input readOnly placeholder="--" className="bg-blue-50 dark:bg-blue-950/30" />
+                <Input readOnly value={totalAmount ? `₹${totalAmount.toLocaleString("en-IN")}` : ""} placeholder="--" className="bg-blue-50 dark:bg-blue-950/30" />
                 <Label className="self-center">Balance</Label>
-                <Input readOnly placeholder="--" className="bg-green-50 dark:bg-green-950/30" />
+                <Input readOnly value={totalAmount ? `₹${balance.toLocaleString("en-IN")}` : ""} placeholder="--" className="bg-green-50 dark:bg-green-950/30" />
               </div>
             </div>
           </section>
