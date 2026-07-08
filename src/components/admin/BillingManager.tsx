@@ -745,6 +745,8 @@ const BillingManager = () => {
             <AlertDialogDescription asChild>
               <div className="text-left space-y-1 text-sm text-foreground">
                 <div><strong>Date:</strong> {viewBill?.bill_date}</div>
+                <div><strong>Category:</strong> {viewBill ? ((viewBill as unknown as { bill_category?: string | null }).bill_category ?? "-") : "-"}</div>
+                <div><strong>Billing Basis:</strong> {viewBill ? (((viewBill as unknown as { billing_basis?: string }).billing_basis ?? "kilometer") === "hourly" ? "Hourly Basis" : "Kilometer Basis") : "-"}</div>
                 <div><strong>Customer:</strong> {viewBill?.customer_name}</div>
                 <div><strong>Place:</strong> {viewBill?.place ?? "-"}</div>
                 <div><strong>Vehicle:</strong> {viewBill?.vehicle_type ?? "-"} · {viewBill?.vehicle_number ?? "-"}</div>
