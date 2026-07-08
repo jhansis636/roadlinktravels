@@ -605,6 +605,29 @@ const BillingManager = () => {
             <div><Label>From Date</Label><Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} /></div>
             <div><Label>To Date</Label><Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} /></div>
             <div>
+              <Label>Bill Category</Label>
+              <Select value={filterCategory || "all"} onValueChange={(v) => setFilterCategory(v === "all" ? "" : v)}>
+                <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="Official">Official</SelectItem>
+                  <SelectItem value="Personal">Personal</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Billing Basis</Label>
+              <Select value={filterBasis || "all"} onValueChange={(v) => setFilterBasis(v === "all" ? "" : v)}>
+                <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="hourly">Hourly Basis</SelectItem>
+                  <SelectItem value="kilometer">Kilometer Basis</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <Label>Customer</Label>
               <Select value={filterCustomer || "all"} onValueChange={(v) => setFilterCustomer(v === "all" ? "" : v)}>
                 <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
@@ -628,19 +651,19 @@ const BillingManager = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-6">
               <Label>Search</Label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Search className="h-4 w-4 absolute left-2 top-2.5 text-muted-foreground" />
                   <Input
                     className="pl-8"
-                    placeholder="Bill no, customer, vehicle number, place"
+                    placeholder="Bill no, customer, vehicle number, place, category, basis"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
-                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setSearch(""); }}>
+                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setFilterCategory(""); setFilterBasis(""); setSearch(""); }}>
                   <RotateCcw className="h-4 w-4 mr-1" /> Reset
                 </Button>
               </div>
@@ -658,6 +681,8 @@ const BillingManager = () => {
                   <TableRow>
                     <TableHead>Bill No</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Basis</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Vehicle Type</TableHead>
                     <TableHead>Vehicle Number</TableHead>
@@ -672,6 +697,8 @@ const BillingManager = () => {
                     <TableRow key={b.id}>
                       <TableCell className="font-mono text-xs">{b.bill_no}</TableCell>
                       <TableCell>{b.bill_date}</TableCell>
+                      <TableCell>{(b as unknown as { bill_category?: string | null }).bill_category ?? "-"}</TableCell>
+                      <TableCell className="capitalize">{(b as unknown as { billing_basis?: string }).billing_basis ?? "kilometer"}</TableCell>
                       <TableCell className="font-medium">{b.customer_name}</TableCell>
                       <TableCell>{b.vehicle_type ?? "-"}</TableCell>
                       <TableCell>{b.vehicle_number ?? "-"}</TableCell>
