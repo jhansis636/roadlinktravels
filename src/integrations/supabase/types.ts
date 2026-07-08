@@ -78,8 +78,10 @@ export type Database = {
         Row: {
           advance: number | null
           balance: number | null
+          bill_category: string | null
           bill_date: string
           bill_no: string | null
+          billing_basis: string
           created_at: string
           customer_id: string | null
           customer_name: string
@@ -111,8 +113,10 @@ export type Database = {
         Insert: {
           advance?: number | null
           balance?: number | null
+          bill_category?: string | null
           bill_date?: string
           bill_no?: string | null
+          billing_basis?: string
           created_at?: string
           customer_id?: string | null
           customer_name: string
@@ -144,8 +148,10 @@ export type Database = {
         Update: {
           advance?: number | null
           balance?: number | null
+          bill_category?: string | null
           bill_date?: string
           bill_no?: string | null
+          billing_basis?: string
           created_at?: string
           customer_id?: string | null
           customer_name?: string
