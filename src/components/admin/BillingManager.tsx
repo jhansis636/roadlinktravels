@@ -89,6 +89,8 @@ const amountToWords = (amt: number): string => {
 
 interface FormState {
   id?: string;
+  bill_category: string;
+  billing_basis: "kilometer" | "hourly";
   customer_name: string;
   place: string;
   bill_date: string;
@@ -108,9 +110,12 @@ interface FormState {
   extra_km: string;
   advance: string;
   remarks: string;
+  total_amount_override: string; // manual override; empty = auto
 }
 
 const emptyForm = (): FormState => ({
+  bill_category: "",
+  billing_basis: "kilometer",
   customer_name: "",
   place: "",
   bill_date: todayISO(),
@@ -130,10 +135,13 @@ const emptyForm = (): FormState => ({
   extra_km: "",
   advance: "",
   remarks: "",
+  total_amount_override: "",
 });
 
 const billToForm = (b: Bill): FormState => ({
   id: b.id,
+  bill_category: (b as unknown as { bill_category?: string | null }).bill_category ?? "",
+  billing_basis: (((b as unknown as { billing_basis?: string }).billing_basis) === "hourly" ? "hourly" : "kilometer"),
   customer_name: b.customer_name,
   place: b.place ?? "",
   bill_date: b.bill_date ?? todayISO(),
@@ -153,6 +161,7 @@ const billToForm = (b: Bill): FormState => ({
   extra_km: b.extra_km?.toString() ?? "",
   advance: b.advance?.toString() ?? "",
   remarks: b.remarks ?? "",
+  total_amount_override: b.total_amount != null ? String(b.total_amount) : "",
 });
 
 // ---------- component ----------
@@ -169,6 +178,7 @@ const BillingManager = () => {
   const selectedVehicle = form.vehicle_type ? getVehicleByName(form.vehicle_type) : undefined;
   const perKmRate = selectedVehicle?.perKmRate;
   const perDayRate = selectedVehicle?.perDayRate;
+  const perHourRate = selectedVehicle?.perHourRate;
   const driverBataPerDay = selectedVehicle?.driverBataPerDay;
 
   const totalMinutes = useMemo(() => {
@@ -196,14 +206,17 @@ const BillingManager = () => {
     [form.start_date, form.end_date],
   );
 
-  // Live Total Amount. Uses km-basis rate when available, else day-basis.
+  // Live Total Amount. Branches on billing_basis.
   const calc = useMemo(() => {
     const days = totalDays ?? 1;
     const km = totalKm ?? 0;
-    const kmCharge = perKmRate != null ? km * perKmRate : 0;
-    const dayCharge = perKmRate == null && perDayRate != null ? perDayRate * days : 0;
-    const bata = (driverBataPerDay ?? 0) * days;
-    const extraKmCharge = (num(form.extra_km) ?? 0) * (perKmRate ?? 0);
+    const isHourly = form.billing_basis === "hourly";
+    const hours = (totalMinutes ?? 0) / 60;
+    const kmCharge = !isHourly && perKmRate != null ? km * perKmRate : 0;
+    const dayCharge = !isHourly && perKmRate == null && perDayRate != null ? perDayRate * days : 0;
+    const hourlyCharge = isHourly && perHourRate != null ? hours * perHourRate : 0;
+    const bata = !isHourly ? (driverBataPerDay ?? 0) * days : 0;
+    const extraKmCharge = !isHourly ? (num(form.extra_km) ?? 0) * (perKmRate ?? 0) : 0;
     const extraHoursCharge = form.extra_hours_enabled
       ? (num(form.extra_hours) ?? 0) * EXTRA_HOUR_RATE
       : 0;
@@ -211,26 +224,41 @@ const BillingManager = () => {
     const permit = num(form.permit) ?? 0;
     const nightHalt = num(form.night_halt) ?? 0;
     const total = Math.round(
-      kmCharge + dayCharge + bata + extraKmCharge + extraHoursCharge + parking + permit + nightHalt,
+      kmCharge + dayCharge + hourlyCharge + bata + extraKmCharge + extraHoursCharge + parking + permit + nightHalt,
     );
     const advance = num(form.advance) ?? 0;
-    const balance = Math.max(0, total - advance);
-    return { total, balance };
+    return { total, advance };
   }, [
-    totalKm, totalDays, perKmRate, perDayRate, driverBataPerDay,
+    totalKm, totalDays, totalMinutes, perKmRate, perDayRate, perHourRate, driverBataPerDay,
+    form.billing_basis,
     form.extra_km, form.extra_hours_enabled, form.extra_hours,
     form.parking_tollgate, form.permit, form.night_halt, form.advance,
   ]);
 
-  const totalAmount = calc.total;
-  const balance = calc.balance;
+  // Manual override: use the override value when it's a valid number, else auto.
+  const overrideNum = num(form.total_amount_override);
+  const totalAmount = overrideNum != null ? overrideNum : calc.total;
+  const balance = Math.max(0, totalAmount - calc.advance);
   const amountWords = useMemo(() => (totalAmount > 0 ? amountToWords(totalAmount) : ""), [totalAmount]);
+
+  // When trip/tariff inputs change, clear the manual override so auto-recalc kicks in.
+  useEffect(() => {
+    setForm((f) => ({ ...f, total_amount_override: "" }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    form.vehicle_type, form.billing_basis, form.start_km, form.end_km,
+    form.start_date, form.end_date, form.start_time, form.end_time,
+    form.extra_km, form.extra_hours_enabled, form.extra_hours,
+    form.parking_tollgate, form.permit, form.night_halt,
+  ]);
 
   // filters + search
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [filterCustomer, setFilterCustomer] = useState("");
   const [filterVehicle, setFilterVehicle] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
+  const [filterBasis, setFilterBasis] = useState("");
   const [search, setSearch] = useState("");
 
   const filteredBills = useMemo(() => {
@@ -241,15 +269,19 @@ const BillingManager = () => {
       if (toDate && (b.bill_date ?? "") > toDate) return false;
       if (filterCustomer && b.customer_name !== filterCustomer) return false;
       if (filterVehicle && b.vehicle_type !== filterVehicle) return false;
+      const bCat = (b as unknown as { bill_category?: string | null }).bill_category ?? "";
+      const bBasis = (b as unknown as { billing_basis?: string }).billing_basis ?? "kilometer";
+      if (filterCategory && bCat !== filterCategory) return false;
+      if (filterBasis && bBasis !== filterBasis) return false;
       if (q) {
         const hay = [
-          b.customer_name, b.vehicle_number, b.place, b.bill_no,
+          b.customer_name, b.vehicle_number, b.place, b.bill_no, bCat, bBasis,
         ].filter(Boolean).join(" ").toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, search]);
+  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, filterCategory, filterBasis, search]);
 
   const [viewBill, setViewBill] = useState<Bill | null>(null);
 
@@ -261,12 +293,18 @@ const BillingManager = () => {
   };
 
   const handleSave = async () => {
+    if (!form.bill_category) {
+      toast({ title: "Bill Category required", description: "Choose Official, Personal, or Other.", variant: "destructive" });
+      return;
+    }
     if (!form.customer_name.trim()) {
       toast({ title: "Customer required", description: "Enter a customer name.", variant: "destructive" });
       return;
     }
     const saved = await saveBill.mutateAsync({
       id: form.id,
+      bill_category: form.bill_category,
+      billing_basis: form.billing_basis,
       customer_id: null,
       customer_name: form.customer_name.trim(),
       place: form.place || null,
@@ -312,6 +350,28 @@ const BillingManager = () => {
           {/* Customer Information */}
           <section className="rounded-xl border bg-card p-4">
             <div className="grid gap-4 md:grid-cols-3">
+              <div>
+                <Label>Bill Category <span className="text-destructive">*</span></Label>
+                <Select value={form.bill_category} onValueChange={(v) => setForm({ ...form, bill_category: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select Category" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Official">Official</SelectItem>
+                    <SelectItem value="Personal">Personal</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Billing Basis <span className="text-destructive">*</span></Label>
+                <Select value={form.billing_basis} onValueChange={(v) => setForm({ ...form, billing_basis: v as "kilometer" | "hourly" })}>
+                  <SelectTrigger><SelectValue placeholder="Select Basis" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hourly">Hourly Basis</SelectItem>
+                    <SelectItem value="kilometer">Kilometer Basis</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="hidden md:block" />
               <div>
                 <Label>Customer Name</Label>
                 <Input
@@ -383,7 +443,21 @@ const BillingManager = () => {
 
               {/* Kilometer */}
               <div className="rounded-lg border p-3">
-                <h4 className="text-primary font-medium mb-2">Kilometer</h4>
+                <h4 className="text-primary font-medium mb-2">
+                  {form.billing_basis === "hourly" ? "Hourly Rate" : "Kilometer"}
+                </h4>
+                {form.billing_basis === "hourly" ? (
+                  <div className="space-y-3">
+                    <div>
+                      <Label>Per Hour Rate</Label>
+                      <Input readOnly value={perHourRate != null ? `₹${perHourRate}` : ""} placeholder="--" className="bg-muted" />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Hourly charge = Total Time (hrs) × Per Hour Rate
+                    </p>
+                  </div>
+                ) : (
+                <>
                 <div className="grid grid-cols-2 gap-3">
                   <div><Label>Start KM</Label><Input type="number" min="0" value={form.start_km} onChange={(e) => setForm({ ...form, start_km: e.target.value })} placeholder="0" /></div>
                   <div><Label>End KM</Label><Input type="number" min="0" value={form.end_km} onChange={(e) => setForm({ ...form, end_km: e.target.value })} placeholder="0" /></div>
@@ -400,6 +474,8 @@ const BillingManager = () => {
                 </div>
                 {kmCharge != null && (
                   <p className="text-xs text-primary mt-2">Kilometer Charge: ₹{kmCharge.toLocaleString("en-IN")}</p>
+                )}
+                </>
                 )}
               </div>
 
@@ -421,7 +497,7 @@ const BillingManager = () => {
           {/* Additional Charges */}
           <section className="rounded-xl border bg-card p-4">
             <h3 className="text-primary font-semibold mb-3">Additional Charges (Inputs Only)</h3>
-            <div className={`grid gap-4 ${form.extra_hours_enabled ? "md:grid-cols-3 lg:grid-cols-5" : "md:grid-cols-2 lg:grid-cols-4"}`}>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div><Label>Parking & Tollgate</Label><Input type="number" value={form.parking_tollgate} onChange={(e) => setForm({ ...form, parking_tollgate: e.target.value })} placeholder="Enter Amount" /></div>
               <div><Label>Permit</Label><Input type="number" value={form.permit} onChange={(e) => setForm({ ...form, permit: e.target.value })} placeholder="Enter Amount" /></div>
               <div><Label>Night Halt</Label><Input type="number" value={form.night_halt} onChange={(e) => setForm({ ...form, night_halt: e.target.value })} placeholder="Enter Amount" /></div>
@@ -431,7 +507,9 @@ const BillingManager = () => {
                   <Input type="number" value={form.extra_hours} onChange={(e) => setForm({ ...form, extra_hours: e.target.value })} placeholder="Enter Hours" />
                 </div>
               )}
-              <div><Label>Extra KM</Label><Input type="number" value={form.extra_km} onChange={(e) => setForm({ ...form, extra_km: e.target.value })} placeholder="Enter KM" /></div>
+              {form.billing_basis === "kilometer" && (
+                <div><Label>Extra KM</Label><Input type="number" value={form.extra_km} onChange={(e) => setForm({ ...form, extra_km: e.target.value })} placeholder="Enter KM" /></div>
+              )}
             </div>
           </section>
 
@@ -451,8 +529,24 @@ const BillingManager = () => {
                 <div><Label>Amount in Words</Label><Input readOnly value={amountWords} placeholder="--" className="bg-muted" /></div>
               </div>
               <div className="md:col-span-4 grid grid-cols-2 gap-3 max-w-md ml-auto">
-                <Label className="self-center">Total</Label>
-                <Input readOnly value={totalAmount ? `₹${totalAmount.toLocaleString("en-IN")}` : ""} placeholder="--" className="bg-blue-50 dark:bg-blue-950/30" />
+                <Label className="self-center">
+                  Total {overrideNum != null && <span className="text-xs text-amber-600">(manual)</span>}
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    value={overrideNum != null ? form.total_amount_override : (totalAmount ? String(totalAmount) : "")}
+                    onChange={(e) => setForm({ ...form, total_amount_override: e.target.value })}
+                    placeholder="--"
+                    className="bg-blue-50 dark:bg-blue-950/30"
+                  />
+                  {overrideNum != null && (
+                    <Button type="button" variant="outline" size="icon" title="Reset to auto"
+                      onClick={() => setForm({ ...form, total_amount_override: "" })}>
+                      <RotateCcw className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
                 <Label className="self-center">Balance</Label>
                 <Input readOnly value={totalAmount ? `₹${balance.toLocaleString("en-IN")}` : ""} placeholder="--" className="bg-green-50 dark:bg-green-950/30" />
               </div>
@@ -511,6 +605,29 @@ const BillingManager = () => {
             <div><Label>From Date</Label><Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} /></div>
             <div><Label>To Date</Label><Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} /></div>
             <div>
+              <Label>Bill Category</Label>
+              <Select value={filterCategory || "all"} onValueChange={(v) => setFilterCategory(v === "all" ? "" : v)}>
+                <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="Official">Official</SelectItem>
+                  <SelectItem value="Personal">Personal</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Billing Basis</Label>
+              <Select value={filterBasis || "all"} onValueChange={(v) => setFilterBasis(v === "all" ? "" : v)}>
+                <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="hourly">Hourly Basis</SelectItem>
+                  <SelectItem value="kilometer">Kilometer Basis</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <Label>Customer</Label>
               <Select value={filterCustomer || "all"} onValueChange={(v) => setFilterCustomer(v === "all" ? "" : v)}>
                 <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
@@ -534,19 +651,19 @@ const BillingManager = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-6">
               <Label>Search</Label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Search className="h-4 w-4 absolute left-2 top-2.5 text-muted-foreground" />
                   <Input
                     className="pl-8"
-                    placeholder="Bill no, customer, vehicle number, place"
+                    placeholder="Bill no, customer, vehicle number, place, category, basis"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
-                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setSearch(""); }}>
+                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setFilterCategory(""); setFilterBasis(""); setSearch(""); }}>
                   <RotateCcw className="h-4 w-4 mr-1" /> Reset
                 </Button>
               </div>
@@ -564,6 +681,8 @@ const BillingManager = () => {
                   <TableRow>
                     <TableHead>Bill No</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Basis</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Vehicle Type</TableHead>
                     <TableHead>Vehicle Number</TableHead>
@@ -578,6 +697,8 @@ const BillingManager = () => {
                     <TableRow key={b.id}>
                       <TableCell className="font-mono text-xs">{b.bill_no}</TableCell>
                       <TableCell>{b.bill_date}</TableCell>
+                      <TableCell>{(b as unknown as { bill_category?: string | null }).bill_category ?? "-"}</TableCell>
+                      <TableCell className="capitalize">{(b as unknown as { billing_basis?: string }).billing_basis ?? "kilometer"}</TableCell>
                       <TableCell className="font-medium">{b.customer_name}</TableCell>
                       <TableCell>{b.vehicle_type ?? "-"}</TableCell>
                       <TableCell>{b.vehicle_number ?? "-"}</TableCell>
@@ -624,6 +745,8 @@ const BillingManager = () => {
             <AlertDialogDescription asChild>
               <div className="text-left space-y-1 text-sm text-foreground">
                 <div><strong>Date:</strong> {viewBill?.bill_date}</div>
+                <div><strong>Category:</strong> {viewBill ? ((viewBill as unknown as { bill_category?: string | null }).bill_category ?? "-") : "-"}</div>
+                <div><strong>Billing Basis:</strong> {viewBill ? (((viewBill as unknown as { billing_basis?: string }).billing_basis ?? "kilometer") === "hourly" ? "Hourly Basis" : "Kilometer Basis") : "-"}</div>
                 <div><strong>Customer:</strong> {viewBill?.customer_name}</div>
                 <div><strong>Place:</strong> {viewBill?.place ?? "-"}</div>
                 <div><strong>Vehicle:</strong> {viewBill?.vehicle_type ?? "-"} · {viewBill?.vehicle_number ?? "-"}</div>

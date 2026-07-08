@@ -14,6 +14,8 @@ const CONTACT = "Coimbatore, Tamil Nadu · +91 82481 99154";
 // Night Halt are intentionally excluded from the printout (still saved in DB).
 const buildRows = (bill: Bill): [string, string][] => [
   ["Bill Date", bill.bill_date ?? "-"],
+  ["Bill Category", (bill as unknown as { bill_category?: string }).bill_category ?? "-"],
+  ["Billing Basis", ((bill as unknown as { billing_basis?: string }).billing_basis ?? "kilometer") === "hourly" ? "Hourly Basis" : "Kilometer Basis"],
   ["Customer", bill.customer_name ?? "-"],
   ["Place / Destination", bill.place ?? "-"],
   ["Vehicle Type", bill.vehicle_type ?? "-"],
@@ -105,57 +107,74 @@ const loadImageDataUrl = (src: string): Promise<string> =>
 export const downloadBillPdf = async (bill: Bill) => {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 40;
+
+  // Header: logo + company block, all sized to fit inside the page margins.
+  const logoSize = 48;
+  const headerTop = margin;
+  const textLeft = margin + logoSize + 14;
 
   try {
     const logoData = await loadImageDataUrl(logo);
-    doc.addImage(logoData, "PNG", margin, 30, 60, 60);
+    doc.addImage(logoData, "PNG", margin, headerTop, logoSize, logoSize);
   } catch {
     // logo failed — continue without it
   }
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(18);
+  doc.setFontSize(15);
   doc.setTextColor(29, 78, 216);
-  doc.text(COMPANY, margin + 75, 55);
+  doc.text(COMPANY, textLeft, headerTop + 16);
 
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setTextColor(100, 116, 139);
-  doc.text(CONTACT, margin + 75, 72);
+  doc.text(CONTACT, textLeft, headerTop + 30);
 
   doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
   doc.setTextColor(15, 81, 50);
-  doc.text(MSME, margin + 75, 88);
+  doc.text(MSME, textLeft, headerTop + 44);
 
+  const headerBottom = headerTop + logoSize + 8;
   doc.setDrawColor(29, 78, 216);
   doc.setLineWidth(1.5);
-  doc.line(margin, 100, pageWidth - margin, 100);
+  doc.line(margin, headerBottom, pageWidth - margin, headerBottom);
 
   doc.setTextColor(15, 23, 42);
-  doc.setFontSize(11);
-  doc.text(`Bill No: ${bill.bill_no ?? "-"}`, margin, 120);
-  doc.text(`Date: ${bill.bill_date ?? "-"}`, pageWidth - margin, 120, { align: "right" });
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text(`Bill No: ${bill.bill_no ?? "-"}`, margin, headerBottom + 18);
+  doc.text(`Date: ${bill.bill_date ?? "-"}`, pageWidth - margin, headerBottom + 18, { align: "right" });
 
+  const tableStart = headerBottom + 28;
   autoTable(doc, {
-    startY: 135,
+    startY: tableStart,
     head: [["Field", "Value"]],
     body: buildRows(bill),
     theme: "striped",
     headStyles: { fillColor: [239, 246, 255], textColor: [30, 64, 175] },
-    styles: { fontSize: 10, cellPadding: 6 },
-    columnStyles: { 0: { cellWidth: 180, fontStyle: "bold" } },
+    styles: { fontSize: 9, cellPadding: 5, overflow: "linebreak" },
+    columnStyles: {
+      0: { cellWidth: 170, fontStyle: "bold" },
+      1: { cellWidth: pageWidth - margin * 2 - 170 },
+    },
     margin: { left: margin, right: margin },
   });
 
-  const finalY = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? 200;
-  doc.setFontSize(13);
+  const finalY = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? tableStart + 40;
+  const totalsBase = Math.min(finalY + 20, pageHeight - margin - 60);
+  doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(15, 23, 42);
-  doc.text(`Total: ${fmt(bill.total_amount)}`, pageWidth - margin, finalY + 24, { align: "right" });
+  doc.text(`Total: ${fmt(bill.total_amount)}`, pageWidth - margin, totalsBase, { align: "right" });
+  doc.setTextColor(100, 116, 139);
+  doc.setFontSize(10);
+  doc.text(`Advance: ${fmt(bill.advance)}`, pageWidth - margin, totalsBase + 16, { align: "right" });
   doc.setTextColor(5, 150, 105);
-  doc.setFontSize(11);
-  doc.text(`Balance: ${fmt(bill.balance)}`, pageWidth - margin, finalY + 42, { align: "right" });
+  doc.setFont("helvetica", "bold");
+  doc.text(`Balance: ${fmt(bill.balance)}`, pageWidth - margin, totalsBase + 32, { align: "right" });
 
   doc.save(`Bill-${bill.bill_no ?? "roadlink"}.pdf`);
 };
