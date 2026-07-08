@@ -14,6 +14,8 @@ const CONTACT = "Coimbatore, Tamil Nadu · +91 82481 99154";
 // Night Halt are intentionally excluded from the printout (still saved in DB).
 const buildRows = (bill: Bill): [string, string][] => [
   ["Bill Date", bill.bill_date ?? "-"],
+  ["Bill Category", (bill as unknown as { bill_category?: string }).bill_category ?? "-"],
+  ["Billing Basis", ((bill as unknown as { billing_basis?: string }).billing_basis ?? "kilometer") === "hourly" ? "Hourly Basis" : "Kilometer Basis"],
   ["Customer", bill.customer_name ?? "-"],
   ["Place / Destination", bill.place ?? "-"],
   ["Vehicle Type", bill.vehicle_type ?? "-"],
