@@ -74,6 +74,8 @@ export interface BillingVehicleOption {
   perDayRate?: number;
   /** driver bata per day (km-basis), undefined if not numeric */
   driverBataPerDay?: number;
+  /** derived per-hour rate (day-basis / 10hrs), undefined if day rate missing */
+  perHourRate?: number;
 }
 
 /**
@@ -96,9 +98,11 @@ export const getBillingVehicles = (): BillingVehicleOption[] => {
   for (const r of dayBasisTariff) {
     const key = stripLabel(r.vehicle);
     const existing = map.get(key) ?? { value: key, label: key };
+    const perDayRate = typeof r.rentPerDay === "number" ? r.rentPerDay : undefined;
     map.set(key, {
       ...existing,
-      perDayRate: typeof r.rentPerDay === "number" ? r.rentPerDay : undefined,
+      perDayRate,
+      perHourRate: perDayRate != null ? Math.round(perDayRate / 10) : undefined,
     });
   }
   return Array.from(map.values());
