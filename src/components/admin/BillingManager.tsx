@@ -89,6 +89,8 @@ const amountToWords = (amt: number): string => {
 
 interface FormState {
   id?: string;
+  bill_category: string;
+  billing_basis: "kilometer" | "hourly";
   customer_name: string;
   place: string;
   bill_date: string;
@@ -108,9 +110,12 @@ interface FormState {
   extra_km: string;
   advance: string;
   remarks: string;
+  total_amount_override: string; // manual override; empty = auto
 }
 
 const emptyForm = (): FormState => ({
+  bill_category: "",
+  billing_basis: "kilometer",
   customer_name: "",
   place: "",
   bill_date: todayISO(),
@@ -130,10 +135,13 @@ const emptyForm = (): FormState => ({
   extra_km: "",
   advance: "",
   remarks: "",
+  total_amount_override: "",
 });
 
 const billToForm = (b: Bill): FormState => ({
   id: b.id,
+  bill_category: (b as unknown as { bill_category?: string | null }).bill_category ?? "",
+  billing_basis: (((b as unknown as { billing_basis?: string }).billing_basis) === "hourly" ? "hourly" : "kilometer"),
   customer_name: b.customer_name,
   place: b.place ?? "",
   bill_date: b.bill_date ?? todayISO(),
@@ -153,6 +161,7 @@ const billToForm = (b: Bill): FormState => ({
   extra_km: b.extra_km?.toString() ?? "",
   advance: b.advance?.toString() ?? "",
   remarks: b.remarks ?? "",
+  total_amount_override: b.total_amount != null ? String(b.total_amount) : "",
 });
 
 // ---------- component ----------
@@ -169,6 +178,7 @@ const BillingManager = () => {
   const selectedVehicle = form.vehicle_type ? getVehicleByName(form.vehicle_type) : undefined;
   const perKmRate = selectedVehicle?.perKmRate;
   const perDayRate = selectedVehicle?.perDayRate;
+  const perHourRate = selectedVehicle?.perHourRate;
   const driverBataPerDay = selectedVehicle?.driverBataPerDay;
 
   const totalMinutes = useMemo(() => {
@@ -196,14 +206,17 @@ const BillingManager = () => {
     [form.start_date, form.end_date],
   );
 
-  // Live Total Amount. Uses km-basis rate when available, else day-basis.
+  // Live Total Amount. Branches on billing_basis.
   const calc = useMemo(() => {
     const days = totalDays ?? 1;
     const km = totalKm ?? 0;
-    const kmCharge = perKmRate != null ? km * perKmRate : 0;
-    const dayCharge = perKmRate == null && perDayRate != null ? perDayRate * days : 0;
-    const bata = (driverBataPerDay ?? 0) * days;
-    const extraKmCharge = (num(form.extra_km) ?? 0) * (perKmRate ?? 0);
+    const isHourly = form.billing_basis === "hourly";
+    const hours = (totalMinutes ?? 0) / 60;
+    const kmCharge = !isHourly && perKmRate != null ? km * perKmRate : 0;
+    const dayCharge = !isHourly && perKmRate == null && perDayRate != null ? perDayRate * days : 0;
+    const hourlyCharge = isHourly && perHourRate != null ? hours * perHourRate : 0;
+    const bata = !isHourly ? (driverBataPerDay ?? 0) * days : 0;
+    const extraKmCharge = !isHourly ? (num(form.extra_km) ?? 0) * (perKmRate ?? 0) : 0;
     const extraHoursCharge = form.extra_hours_enabled
       ? (num(form.extra_hours) ?? 0) * EXTRA_HOUR_RATE
       : 0;
@@ -211,26 +224,41 @@ const BillingManager = () => {
     const permit = num(form.permit) ?? 0;
     const nightHalt = num(form.night_halt) ?? 0;
     const total = Math.round(
-      kmCharge + dayCharge + bata + extraKmCharge + extraHoursCharge + parking + permit + nightHalt,
+      kmCharge + dayCharge + hourlyCharge + bata + extraKmCharge + extraHoursCharge + parking + permit + nightHalt,
     );
     const advance = num(form.advance) ?? 0;
-    const balance = Math.max(0, total - advance);
-    return { total, balance };
+    return { total, advance };
   }, [
-    totalKm, totalDays, perKmRate, perDayRate, driverBataPerDay,
+    totalKm, totalDays, totalMinutes, perKmRate, perDayRate, perHourRate, driverBataPerDay,
+    form.billing_basis,
     form.extra_km, form.extra_hours_enabled, form.extra_hours,
     form.parking_tollgate, form.permit, form.night_halt, form.advance,
   ]);
 
-  const totalAmount = calc.total;
-  const balance = calc.balance;
+  // Manual override: use the override value when it's a valid number, else auto.
+  const overrideNum = num(form.total_amount_override);
+  const totalAmount = overrideNum != null ? overrideNum : calc.total;
+  const balance = Math.max(0, totalAmount - calc.advance);
   const amountWords = useMemo(() => (totalAmount > 0 ? amountToWords(totalAmount) : ""), [totalAmount]);
+
+  // When trip/tariff inputs change, clear the manual override so auto-recalc kicks in.
+  useEffect(() => {
+    setForm((f) => ({ ...f, total_amount_override: "" }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    form.vehicle_type, form.billing_basis, form.start_km, form.end_km,
+    form.start_date, form.end_date, form.start_time, form.end_time,
+    form.extra_km, form.extra_hours_enabled, form.extra_hours,
+    form.parking_tollgate, form.permit, form.night_halt,
+  ]);
 
   // filters + search
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [filterCustomer, setFilterCustomer] = useState("");
   const [filterVehicle, setFilterVehicle] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
+  const [filterBasis, setFilterBasis] = useState("");
   const [search, setSearch] = useState("");
 
   const filteredBills = useMemo(() => {
@@ -241,15 +269,19 @@ const BillingManager = () => {
       if (toDate && (b.bill_date ?? "") > toDate) return false;
       if (filterCustomer && b.customer_name !== filterCustomer) return false;
       if (filterVehicle && b.vehicle_type !== filterVehicle) return false;
+      const bCat = (b as unknown as { bill_category?: string | null }).bill_category ?? "";
+      const bBasis = (b as unknown as { billing_basis?: string }).billing_basis ?? "kilometer";
+      if (filterCategory && bCat !== filterCategory) return false;
+      if (filterBasis && bBasis !== filterBasis) return false;
       if (q) {
         const hay = [
-          b.customer_name, b.vehicle_number, b.place, b.bill_no,
+          b.customer_name, b.vehicle_number, b.place, b.bill_no, bCat, bBasis,
         ].filter(Boolean).join(" ").toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, search]);
+  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, filterCategory, filterBasis, search]);
 
   const [viewBill, setViewBill] = useState<Bill | null>(null);
 
@@ -261,12 +293,18 @@ const BillingManager = () => {
   };
 
   const handleSave = async () => {
+    if (!form.bill_category) {
+      toast({ title: "Bill Category required", description: "Choose Official, Personal, or Other.", variant: "destructive" });
+      return;
+    }
     if (!form.customer_name.trim()) {
       toast({ title: "Customer required", description: "Enter a customer name.", variant: "destructive" });
       return;
     }
     const saved = await saveBill.mutateAsync({
       id: form.id,
+      bill_category: form.bill_category,
+      billing_basis: form.billing_basis,
       customer_id: null,
       customer_name: form.customer_name.trim(),
       place: form.place || null,
