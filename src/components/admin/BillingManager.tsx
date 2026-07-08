@@ -443,7 +443,21 @@ const BillingManager = () => {
 
               {/* Kilometer */}
               <div className="rounded-lg border p-3">
-                <h4 className="text-primary font-medium mb-2">Kilometer</h4>
+                <h4 className="text-primary font-medium mb-2">
+                  {form.billing_basis === "hourly" ? "Hourly Rate" : "Kilometer"}
+                </h4>
+                {form.billing_basis === "hourly" ? (
+                  <div className="space-y-3">
+                    <div>
+                      <Label>Per Hour Rate</Label>
+                      <Input readOnly value={perHourRate != null ? `₹${perHourRate}` : ""} placeholder="--" className="bg-muted" />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Hourly charge = Total Time (hrs) × Per Hour Rate
+                    </p>
+                  </div>
+                ) : (
+                <>
                 <div className="grid grid-cols-2 gap-3">
                   <div><Label>Start KM</Label><Input type="number" min="0" value={form.start_km} onChange={(e) => setForm({ ...form, start_km: e.target.value })} placeholder="0" /></div>
                   <div><Label>End KM</Label><Input type="number" min="0" value={form.end_km} onChange={(e) => setForm({ ...form, end_km: e.target.value })} placeholder="0" /></div>
@@ -460,6 +474,8 @@ const BillingManager = () => {
                 </div>
                 {kmCharge != null && (
                   <p className="text-xs text-primary mt-2">Kilometer Charge: ₹{kmCharge.toLocaleString("en-IN")}</p>
+                )}
+                </>
                 )}
               </div>
 
