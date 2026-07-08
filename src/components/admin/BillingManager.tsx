@@ -497,7 +497,7 @@ const BillingManager = () => {
           {/* Additional Charges */}
           <section className="rounded-xl border bg-card p-4">
             <h3 className="text-primary font-semibold mb-3">Additional Charges (Inputs Only)</h3>
-            <div className={`grid gap-4 ${form.extra_hours_enabled ? "md:grid-cols-3 lg:grid-cols-5" : "md:grid-cols-2 lg:grid-cols-4"}`}>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div><Label>Parking & Tollgate</Label><Input type="number" value={form.parking_tollgate} onChange={(e) => setForm({ ...form, parking_tollgate: e.target.value })} placeholder="Enter Amount" /></div>
               <div><Label>Permit</Label><Input type="number" value={form.permit} onChange={(e) => setForm({ ...form, permit: e.target.value })} placeholder="Enter Amount" /></div>
               <div><Label>Night Halt</Label><Input type="number" value={form.night_halt} onChange={(e) => setForm({ ...form, night_halt: e.target.value })} placeholder="Enter Amount" /></div>
@@ -507,7 +507,9 @@ const BillingManager = () => {
                   <Input type="number" value={form.extra_hours} onChange={(e) => setForm({ ...form, extra_hours: e.target.value })} placeholder="Enter Hours" />
                 </div>
               )}
-              <div><Label>Extra KM</Label><Input type="number" value={form.extra_km} onChange={(e) => setForm({ ...form, extra_km: e.target.value })} placeholder="Enter KM" /></div>
+              {form.billing_basis === "kilometer" && (
+                <div><Label>Extra KM</Label><Input type="number" value={form.extra_km} onChange={(e) => setForm({ ...form, extra_km: e.target.value })} placeholder="Enter KM" /></div>
+              )}
             </div>
           </section>
 
@@ -527,8 +529,24 @@ const BillingManager = () => {
                 <div><Label>Amount in Words</Label><Input readOnly value={amountWords} placeholder="--" className="bg-muted" /></div>
               </div>
               <div className="md:col-span-4 grid grid-cols-2 gap-3 max-w-md ml-auto">
-                <Label className="self-center">Total</Label>
-                <Input readOnly value={totalAmount ? `₹${totalAmount.toLocaleString("en-IN")}` : ""} placeholder="--" className="bg-blue-50 dark:bg-blue-950/30" />
+                <Label className="self-center">
+                  Total {overrideNum != null && <span className="text-xs text-amber-600">(manual)</span>}
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    value={overrideNum != null ? form.total_amount_override : (totalAmount ? String(totalAmount) : "")}
+                    onChange={(e) => setForm({ ...form, total_amount_override: e.target.value })}
+                    placeholder="--"
+                    className="bg-blue-50 dark:bg-blue-950/30"
+                  />
+                  {overrideNum != null && (
+                    <Button type="button" variant="outline" size="icon" title="Reset to auto"
+                      onClick={() => setForm({ ...form, total_amount_override: "" })}>
+                      <RotateCcw className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
                 <Label className="self-center">Balance</Label>
                 <Input readOnly value={totalAmount ? `₹${balance.toLocaleString("en-IN")}` : ""} placeholder="--" className="bg-green-50 dark:bg-green-950/30" />
               </div>
