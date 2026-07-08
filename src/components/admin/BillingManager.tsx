@@ -351,6 +351,28 @@ const BillingManager = () => {
           <section className="rounded-xl border bg-card p-4">
             <div className="grid gap-4 md:grid-cols-3">
               <div>
+                <Label>Bill Category <span className="text-destructive">*</span></Label>
+                <Select value={form.bill_category} onValueChange={(v) => setForm({ ...form, bill_category: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select Category" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Official">Official</SelectItem>
+                    <SelectItem value="Personal">Personal</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Billing Basis <span className="text-destructive">*</span></Label>
+                <Select value={form.billing_basis} onValueChange={(v) => setForm({ ...form, billing_basis: v as "kilometer" | "hourly" })}>
+                  <SelectTrigger><SelectValue placeholder="Select Basis" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hourly">Hourly Basis</SelectItem>
+                    <SelectItem value="kilometer">Kilometer Basis</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="hidden md:block" />
+              <div>
                 <Label>Customer Name</Label>
                 <Input
                   placeholder="Enter Customer Name"
