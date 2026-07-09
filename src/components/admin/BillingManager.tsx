@@ -21,7 +21,8 @@ import {
   Pencil, Trash2, Eye, Search, RotateCcw,
 } from "lucide-react";
 import { useBills, useSaveBill, useDeleteBill, type Bill } from "@/hooks/useBills";
-import { getBillingVehicles, getVehicleByName } from "@/data/tariff";
+import { useVehicleTariffs } from "@/hooks/useVehicleTariffs";
+import { useCustomers } from "@/hooks/useCustomers";
 import { printBill, downloadBillPdf } from "@/lib/printBill";
 import { toast } from "@/hooks/use-toast";
 
@@ -170,8 +171,22 @@ const BillingManager = () => {
   const { data: bills, isLoading } = useBills();
   const saveBill = useSaveBill();
   const deleteBill = useDeleteBill();
+  const { data: tariffs } = useVehicleTariffs();
+  const { data: customers } = useCustomers();
 
-  const vehicles = useMemo(() => getBillingVehicles(), []);
+  const vehicles = useMemo(
+    () =>
+      (tariffs ?? []).map((t) => ({
+        value: t.vehicle_type,
+        label: t.vehicle_type,
+        perKmRate: t.per_km_rate != null ? Number(t.per_km_rate) : undefined,
+        perDayRate: t.day_rent != null ? Number(t.day_rent) : undefined,
+        perHourRate: t.per_hour_rate != null ? Number(t.per_hour_rate) : undefined,
+        driverBataPerDay: t.driver_bata != null ? Number(t.driver_bata) : undefined,
+      })),
+    [tariffs],
+  );
+  const getVehicleByName = (name: string) => vehicles.find((v) => v.value === name);
   const [form, setForm] = useState<FormState>(emptyForm());
 
   // derived values
@@ -373,12 +388,18 @@ const BillingManager = () => {
               </div>
               <div className="hidden md:block" />
               <div>
-                <Label>Customer Name</Label>
-                <Input
-                  placeholder="Enter Customer Name"
-                  value={form.customer_name}
-                  onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
-                />
+                 <Label>Customer Name</Label>
+                 <Input
+                   list="billing-customer-list"
+                   placeholder="Search or enter customer name"
+                   value={form.customer_name}
+                   onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
+                 />
+                 <datalist id="billing-customer-list">
+                   {(customers ?? []).map((c) => (
+                     <option key={c.id} value={c.name} />
+                   ))}
+                 </datalist>
               </div>
               <div>
                 <Label>Place / Destination</Label>
