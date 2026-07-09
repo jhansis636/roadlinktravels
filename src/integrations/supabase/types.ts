@@ -233,6 +233,7 @@ export type Database = {
         Row: {
           address: string | null
           created_at: string
+          department: string | null
           email: string | null
           id: string
           name: string
@@ -243,6 +244,7 @@ export type Database = {
         Insert: {
           address?: string | null
           created_at?: string
+          department?: string | null
           email?: string | null
           id?: string
           name: string
@@ -253,6 +255,7 @@ export type Database = {
         Update: {
           address?: string | null
           created_at?: string
+          department?: string | null
           email?: string | null
           id?: string
           name?: string
@@ -261,6 +264,68 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      enquiries: {
+        Row: {
+          category: string | null
+          created_at: string
+          customer_id: string | null
+          customer_name: string
+          date_from: string | null
+          date_to: string | null
+          drop_place: string | null
+          enquiry_no: string | null
+          id: string
+          pickup_location: string | null
+          remarks: string | null
+          status: string
+          total_days: number | null
+          updated_at: string
+          vehicle_type: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          customer_id?: string | null
+          customer_name: string
+          date_from?: string | null
+          date_to?: string | null
+          drop_place?: string | null
+          enquiry_no?: string | null
+          id?: string
+          pickup_location?: string | null
+          remarks?: string | null
+          status?: string
+          total_days?: number | null
+          updated_at?: string
+          vehicle_type?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string
+          date_from?: string | null
+          date_to?: string | null
+          drop_place?: string | null
+          enquiry_no?: string | null
+          id?: string
+          pickup_location?: string | null
+          remarks?: string | null
+          status?: string
+          total_days?: number | null
+          updated_at?: string
+          vehicle_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enquiries_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       page_content: {
         Row: {
@@ -502,6 +567,48 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      vehicle_tariffs: {
+        Row: {
+          active: boolean
+          created_at: string
+          day_rent: number | null
+          driver_bata: number | null
+          extra_km_rate: number | null
+          id: string
+          per_hour_rate: number | null
+          per_km_rate: number | null
+          sort_order: number
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          day_rent?: number | null
+          driver_bata?: number | null
+          extra_km_rate?: number | null
+          id?: string
+          per_hour_rate?: number | null
+          per_km_rate?: number | null
+          sort_order?: number
+          updated_at?: string
+          vehicle_type: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          day_rent?: number | null
+          driver_bata?: number | null
+          extra_km_rate?: number | null
+          id?: string
+          per_hour_rate?: number | null
+          per_km_rate?: number | null
+          sort_order?: number
+          updated_at?: string
+          vehicle_type?: string
         }
         Relationships: []
       }
