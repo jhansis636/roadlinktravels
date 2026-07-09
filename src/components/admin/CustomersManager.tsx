@@ -24,9 +24,10 @@ interface FormState {
   phone: string;
   email: string;
   address: string;
+  department: string;
   notes: string;
 }
-const empty: FormState = { name: "", phone: "", email: "", address: "", notes: "" };
+const empty: FormState = { name: "", phone: "", email: "", address: "", department: "", notes: "" };
 
 const CustomersManager = () => {
   const { data: customers, isLoading } = useCustomers();
@@ -43,6 +44,7 @@ const CustomersManager = () => {
       phone: c.phone ?? "",
       email: c.email ?? "",
       address: c.address ?? "",
+      department: c.department ?? "",
       notes: c.notes ?? "",
     });
     setOpen(true);
@@ -57,6 +59,7 @@ const CustomersManager = () => {
       phone: form.phone.trim() || null,
       email: form.email.trim() || null,
       address: form.address.trim() || null,
+      department: form.department.trim() || null,
       notes: form.notes.trim() || null,
     });
     setOpen(false);
@@ -83,7 +86,8 @@ const CustomersManager = () => {
                 <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
               </div>
               <div><Label>Address</Label><Textarea rows={2} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
-              <div><Label>Notes</Label><Textarea rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
+              <div><Label>Department</Label><Input value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} placeholder="e.g. Corporate, Personal" /></div>
+              <div><Label>Notes / Remarks</Label><Textarea rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
                 <Button type="submit" disabled={save.isPending}>
@@ -108,6 +112,7 @@ const CustomersManager = () => {
                   <TableHead>Name</TableHead>
                   <TableHead>Phone</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Department</TableHead>
                   <TableHead>Address</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -118,6 +123,7 @@ const CustomersManager = () => {
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell>{c.phone ?? "-"}</TableCell>
                     <TableCell>{c.email ?? "-"}</TableCell>
+                    <TableCell>{c.department ?? "-"}</TableCell>
                     <TableCell className="max-w-xs truncate">{c.address ?? "-"}</TableCell>
                     <TableCell className="text-right space-x-1">
                       <Button size="icon" variant="ghost" onClick={() => startEdit(c)}>
