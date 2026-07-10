@@ -898,6 +898,17 @@ const BillingManager = () => {
                       <TableCell className="text-right space-x-1 whitespace-nowrap">
                         <Button size="icon" variant="ghost" onClick={() => setViewBill(b)}><Eye className="h-4 w-4" /></Button>
                         <Button size="icon" variant="ghost" onClick={() => startEdit(b)}><Pencil className="h-4 w-4" /></Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          title="Download PDF"
+                          onClick={async () => {
+                            try { await downloadBillPdf(b); }
+                            catch (e) { toast({ title: "PDF failed", description: (e as Error).message, variant: "destructive" }); }
+                          }}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
                         <Button size="icon" variant="ghost" onClick={() => printBill(b)}><Printer className="h-4 w-4" /></Button>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
