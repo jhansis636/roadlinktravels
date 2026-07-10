@@ -522,8 +522,8 @@ const BillingManager = () => {
               <div className="rounded-lg border p-3">
                 <h4 className="text-primary font-medium mb-2">Time</h4>
                 <div className="grid grid-cols-2 gap-3">
-                  <div><Label>Start Time</Label><Input type="time" value={form.start_time} onChange={(e) => setForm({ ...form, start_time: e.target.value })} /></div>
-                  <div><Label>End Time</Label><Input type="time" value={form.end_time} onChange={(e) => setForm({ ...form, end_time: e.target.value })} /></div>
+                  <div><Label>Start Time</Label><Time12Input value={form.start_time} onChange={(v) => setForm({ ...form, start_time: v })} /></div>
+                  <div><Label>End Time</Label><Time12Input value={form.end_time} onChange={(v) => setForm({ ...form, end_time: v })} /></div>
                 </div>
                 <div className="mt-3">
                   <Label>Total Time</Label>
@@ -538,7 +538,7 @@ const BillingManager = () => {
                       {form.extra_hours_enabled ? <><Minus className="h-4 w-4 mr-1" />Remove Extra Hours</> : <><Plus className="h-4 w-4 mr-1" />Extra Hours</>}
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">Click only if extra hours are required</p>
+                  <p className="text-xs text-muted-foreground mt-1">Enter extra hours manually in Additional Charges</p>
                 </div>
               </div>
 
@@ -591,6 +591,15 @@ const BillingManager = () => {
                   <Label>Total Days</Label>
                   <Input readOnly value={totalDays ?? ""} placeholder="--" className="bg-muted" />
                 </div>
+                <div className="mt-3">
+                  <Label>Day Rent</Label>
+                  <Input
+                    type="number"
+                    value={form.day_rent}
+                    onChange={(e) => setForm({ ...form, day_rent: e.target.value })}
+                    placeholder={perDayRate != null ? String(perDayRate) : "Enter Day Rent"}
+                  />
+                </div>
               </div>
             </div>
           </section>
@@ -602,10 +611,22 @@ const BillingManager = () => {
               <div><Label>Parking & Tollgate</Label><Input type="number" value={form.parking_tollgate} onChange={(e) => setForm({ ...form, parking_tollgate: e.target.value })} placeholder="Enter Amount" /></div>
               <div><Label>Permit</Label><Input type="number" value={form.permit} onChange={(e) => setForm({ ...form, permit: e.target.value })} placeholder="Enter Amount" /></div>
               <div><Label>Night Halt</Label><Input type="number" value={form.night_halt} onChange={(e) => setForm({ ...form, night_halt: e.target.value })} placeholder="Enter Amount" /></div>
+              <div>
+                <Label>Driver Bata</Label>
+                <Input
+                  type="number"
+                  value={form.driver_bata}
+                  onChange={(e) => setForm({ ...form, driver_bata: e.target.value })}
+                  placeholder={driverBataPerDay != null ? String(driverBataPerDay) : "Enter Amount"}
+                />
+              </div>
               {form.extra_hours_enabled && (
                 <div>
                   <Label>Extra Hours</Label>
                   <Input type="number" value={form.extra_hours} onChange={(e) => setForm({ ...form, extra_hours: e.target.value })} placeholder="Enter Hours" />
+                  {perHourRate != null && (
+                    <p className="text-xs text-muted-foreground mt-1">Rate: ₹{perHourRate}/hr</p>
+                  )}
                 </div>
               )}
               {form.billing_basis === "kilometer" && (
@@ -702,6 +723,20 @@ const BillingManager = () => {
           <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5" /> Bills Management</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant={showAll ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowAll((s) => !s)}
+            >
+              {showAll ? "Showing All" : "All"}
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              {showAll || anyFilterActive
+                ? "Showing bills across all months"
+                : `Showing bills for ${new Date().toLocaleString("en-IN", { month: "long", year: "numeric" })}`}
+            </span>
+          </div>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-6">
             <div><Label>From Date</Label><Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} /></div>
             <div><Label>To Date</Label><Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} /></div>
@@ -764,7 +799,7 @@ const BillingManager = () => {
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
-                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setFilterCategory(""); setFilterBasis(""); setSearch(""); }}>
+                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setFilterCategory(""); setFilterBasis(""); setSearch(""); setShowAll(false); }}>
                   <RotateCcw className="h-4 w-4 mr-1" /> Reset
                 </Button>
               </div>
