@@ -18,7 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import {
   FileText, Plus, Minus, Loader2, Save, Eraser, Printer,
-  Pencil, Trash2, Eye, Search, RotateCcw,
+  Pencil, Trash2, Eye, Search, RotateCcw, Download,
 } from "lucide-react";
 import { useBills, useSaveBill, useDeleteBill, type Bill } from "@/hooks/useBills";
 import { useVehicleTariffs } from "@/hooks/useVehicleTariffs";
@@ -124,6 +124,49 @@ const amountToWords = (amt: number): string => {
     rest ? threeDigit(rest) : "",
   ].filter(Boolean);
   return `${parts.join(" ")} Rupees Only`;
+};
+
+// ---------- CSV export ----------
+const csvEscape = (v: unknown): string => {
+  if (v == null) return "";
+  const s = String(v);
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
+
+const exportBillsCsv = (rows: Bill[]) => {
+  const headers = [
+    "Bill No", "Date", "Category", "Basis", "Customer", "Place",
+    "Vehicle Type", "Vehicle Number",
+    "Start Date", "End Date", "Total Days",
+    "Start Time", "End Time", "Total Minutes",
+    "Extra Hours", "Start KM", "End KM", "Total KM", "Per KM Rate", "Extra KM",
+    "Parking/Tollgate", "Permit", "Night Halt",
+    "Advance", "Total Amount", "Balance", "Status", "Remarks",
+  ];
+  const body = rows.map((b) => {
+    const bx = b as unknown as { bill_category?: string | null; billing_basis?: string };
+    return [
+      b.bill_no, b.bill_date, bx.bill_category ?? "", bx.billing_basis ?? "kilometer",
+      b.customer_name, b.place ?? "",
+      b.vehicle_type ?? "", b.vehicle_number ?? "",
+      b.start_date ?? "", b.end_date ?? "", b.total_days ?? "",
+      b.start_time ?? "", b.end_time ?? "", b.total_time_minutes ?? "",
+      b.extra_hours ?? "", b.start_km ?? "", b.end_km ?? "", b.total_km ?? "",
+      b.per_km_rate ?? "", b.extra_km ?? "",
+      b.parking_tollgate ?? "", b.permit ?? "", b.night_halt ?? "",
+      b.advance ?? "", b.total_amount ?? "", b.balance ?? "", b.status ?? "", b.remarks ?? "",
+    ].map(csvEscape).join(",");
+  });
+  const csv = [headers.map(csvEscape).join(","), ...body].join("\n");
+  const blob = new Blob([`\ufeff${csv}`], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `bills-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
 
 // ---------- form state ----------
@@ -736,6 +779,17 @@ const BillingManager = () => {
                 ? "Showing bills across all months"
                 : `Showing bills for ${new Date().toLocaleString("en-IN", { month: "long", year: "numeric" })}`}
             </span>
+            <div className="ml-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportBillsCsv(filteredBills)}
+                disabled={filteredBills.length === 0}
+                className="border-green-600 text-green-700 hover:bg-green-50"
+              >
+                <Download className="h-4 w-4 mr-1" /> Export CSV
+              </Button>
+            </div>
           </div>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-6">
             <div><Label>From Date</Label><Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} /></div>
@@ -844,6 +898,17 @@ const BillingManager = () => {
                       <TableCell className="text-right space-x-1 whitespace-nowrap">
                         <Button size="icon" variant="ghost" onClick={() => setViewBill(b)}><Eye className="h-4 w-4" /></Button>
                         <Button size="icon" variant="ghost" onClick={() => startEdit(b)}><Pencil className="h-4 w-4" /></Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          title="Download PDF"
+                          onClick={async () => {
+                            try { await downloadBillPdf(b); }
+                            catch (e) { toast({ title: "PDF failed", description: (e as Error).message, variant: "destructive" }); }
+                          }}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
                         <Button size="icon" variant="ghost" onClick={() => printBill(b)}><Printer className="h-4 w-4" /></Button>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
