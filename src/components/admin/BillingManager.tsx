@@ -58,8 +58,48 @@ const diffDays = (a: string, b: string): number | null => {
   return Math.max(1, Math.round((db - da) / 86400000) + 1);
 };
 
-// Flat per-hour rate used for the optional "Extra Hours" charge.
-const EXTRA_HOUR_RATE = 150;
+// ---------- 12-hour time picker ----------
+// Stores value as "HH:MM" 24-hour string (matches HTML <input type="time">).
+const to12h = (v: string): { h: string; m: string; p: "AM" | "PM" } => {
+  if (!v) return { h: "", m: "", p: "AM" };
+  const [hh, mm] = v.split(":").map(Number);
+  if (Number.isNaN(hh) || Number.isNaN(mm)) return { h: "", m: "", p: "AM" };
+  const p: "AM" | "PM" = hh >= 12 ? "PM" : "AM";
+  const h12 = ((hh + 11) % 12) + 1;
+  return { h: String(h12).padStart(2, "0"), m: String(mm).padStart(2, "0"), p };
+};
+const from12h = (h: string, m: string, p: "AM" | "PM"): string => {
+  if (!h || !m) return "";
+  let hh = Number(h) % 12;
+  if (p === "PM") hh += 12;
+  return `${String(hh).padStart(2, "0")}:${m}`;
+};
+
+const Time12Input = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
+  const { h, m, p } = to12h(value);
+  const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+  const mins = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
+  const update = (nh: string, nm: string, np: "AM" | "PM") => onChange(from12h(nh, nm, np));
+  return (
+    <div className="flex gap-1">
+      <Select value={h} onValueChange={(v) => update(v, m || "00", p)}>
+        <SelectTrigger className="w-[70px]"><SelectValue placeholder="HH" /></SelectTrigger>
+        <SelectContent>{hours.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent>
+      </Select>
+      <Select value={m} onValueChange={(v) => update(h || "12", v, p)}>
+        <SelectTrigger className="w-[70px]"><SelectValue placeholder="MM" /></SelectTrigger>
+        <SelectContent>{mins.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent>
+      </Select>
+      <Select value={p} onValueChange={(v) => update(h || "12", m || "00", v as "AM" | "PM")}>
+        <SelectTrigger className="w-[70px]"><SelectValue /></SelectTrigger>
+        <SelectContent>
+          <SelectItem value="AM">AM</SelectItem>
+          <SelectItem value="PM">PM</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
 
 // ---------- amount → words (Indian numbering) ----------
 const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
@@ -105,6 +145,8 @@ interface FormState {
   end_km: string;
   start_date: string;
   end_date: string;
+  day_rent: string;
+  driver_bata: string;
   parking_tollgate: string;
   permit: string;
   night_halt: string;
@@ -130,6 +172,8 @@ const emptyForm = (): FormState => ({
   end_km: "",
   start_date: todayISO(),
   end_date: todayISO(),
+  day_rent: "",
+  driver_bata: "",
   parking_tollgate: "",
   permit: "",
   night_halt: "",
@@ -156,6 +200,8 @@ const billToForm = (b: Bill): FormState => ({
   end_km: b.end_km?.toString() ?? "",
   start_date: b.start_date ?? todayISO(),
   end_date: b.end_date ?? todayISO(),
+  day_rent: "",
+  driver_bata: "",
   parking_tollgate: b.parking_tollgate?.toString() ?? "",
   permit: b.permit?.toString() ?? "",
   night_halt: b.night_halt?.toString() ?? "",
@@ -221,19 +267,33 @@ const BillingManager = () => {
     [form.start_date, form.end_date],
   );
 
+  // Auto-populate Day Rent + Driver Bata from selected vehicle. Admin can
+  // still overwrite; changing vehicle refreshes both.
+  useEffect(() => {
+    setForm((f) => ({
+      ...f,
+      day_rent: perDayRate != null ? String(perDayRate) : "",
+      driver_bata: driverBataPerDay != null ? String(driverBataPerDay) : "",
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.vehicle_type]);
+
   // Live Total Amount. Branches on billing_basis.
   const calc = useMemo(() => {
     const days = totalDays ?? 1;
     const km = totalKm ?? 0;
     const isHourly = form.billing_basis === "hourly";
     const hours = (totalMinutes ?? 0) / 60;
+    const dayRent = num(form.day_rent) ?? perDayRate ?? 0;
     const kmCharge = !isHourly && perKmRate != null ? km * perKmRate : 0;
-    const dayCharge = !isHourly && perKmRate == null && perDayRate != null ? perDayRate * days : 0;
+    const dayCharge = !isHourly && perKmRate == null && dayRent ? dayRent * days : 0;
     const hourlyCharge = isHourly && perHourRate != null ? hours * perHourRate : 0;
-    const bata = !isHourly ? (driverBataPerDay ?? 0) * days : 0;
+    const bata = !isHourly ? (num(form.driver_bata) ?? 0) * days : 0;
     const extraKmCharge = !isHourly ? (num(form.extra_km) ?? 0) * (perKmRate ?? 0) : 0;
-    const extraHoursCharge = form.extra_hours_enabled
-      ? (num(form.extra_hours) ?? 0) * EXTRA_HOUR_RATE
+    // Extra Hours uses the selected vehicle's per-hour rate. If no rate
+    // configured or no value entered, contributes 0.
+    const extraHoursCharge = form.extra_hours_enabled && num(form.extra_hours) != null && perHourRate != null
+      ? (num(form.extra_hours) as number) * perHourRate
       : 0;
     const parking = num(form.parking_tollgate) ?? 0;
     const permit = num(form.permit) ?? 0;
@@ -246,6 +306,7 @@ const BillingManager = () => {
   }, [
     totalKm, totalDays, totalMinutes, perKmRate, perDayRate, perHourRate, driverBataPerDay,
     form.billing_basis,
+    form.day_rent, form.driver_bata,
     form.extra_km, form.extra_hours_enabled, form.extra_hours,
     form.parking_tollgate, form.permit, form.night_halt, form.advance,
   ]);
@@ -263,6 +324,7 @@ const BillingManager = () => {
   }, [
     form.vehicle_type, form.billing_basis, form.start_km, form.end_km,
     form.start_date, form.end_date, form.start_time, form.end_time,
+    form.day_rent, form.driver_bata,
     form.extra_km, form.extra_hours_enabled, form.extra_hours,
     form.parking_tollgate, form.permit, form.night_halt,
   ]);
@@ -275,11 +337,29 @@ const BillingManager = () => {
   const [filterCategory, setFilterCategory] = useState("");
   const [filterBasis, setFilterBasis] = useState("");
   const [search, setSearch] = useState("");
+  // Default view = current calendar month. "All" clears this.
+  const [showAll, setShowAll] = useState(false);
+
+  const anyFilterActive =
+    !!fromDate || !!toDate || !!filterCustomer || !!filterVehicle ||
+    !!filterCategory || !!filterBasis || !!search.trim();
+
+  const monthBounds = useMemo(() => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10);
+    return { start, end };
+  }, []);
 
   const filteredBills = useMemo(() => {
     if (!bills) return [];
     const q = search.trim().toLowerCase();
+    const applyMonth = !showAll && !anyFilterActive;
     return bills.filter((b) => {
+      if (applyMonth) {
+        const d = b.bill_date ?? "";
+        if (d < monthBounds.start || d > monthBounds.end) return false;
+      }
       if (fromDate && (b.bill_date ?? "") < fromDate) return false;
       if (toDate && (b.bill_date ?? "") > toDate) return false;
       if (filterCustomer && b.customer_name !== filterCustomer) return false;
@@ -296,7 +376,7 @@ const BillingManager = () => {
       }
       return true;
     });
-  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, filterCategory, filterBasis, search]);
+  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, filterCategory, filterBasis, search, showAll, anyFilterActive, monthBounds]);
 
   const [viewBill, setViewBill] = useState<Bill | null>(null);
 
