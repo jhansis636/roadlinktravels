@@ -18,7 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import {
   FileText, Plus, Minus, Loader2, Save, Eraser, Printer,
-  Pencil, Trash2, Eye, Search, RotateCcw,
+  Pencil, Trash2, Eye, Search, RotateCcw, Download,
 } from "lucide-react";
 import { useBills, useSaveBill, useDeleteBill, type Bill } from "@/hooks/useBills";
 import { useVehicleTariffs } from "@/hooks/useVehicleTariffs";
@@ -736,6 +736,17 @@ const BillingManager = () => {
                 ? "Showing bills across all months"
                 : `Showing bills for ${new Date().toLocaleString("en-IN", { month: "long", year: "numeric" })}`}
             </span>
+            <div className="ml-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => exportBillsCsv(filteredBills)}
+                disabled={filteredBills.length === 0}
+                className="border-green-600 text-green-700 hover:bg-green-50"
+              >
+                <Download className="h-4 w-4 mr-1" /> Export CSV
+              </Button>
+            </div>
           </div>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-6">
             <div><Label>From Date</Label><Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} /></div>
