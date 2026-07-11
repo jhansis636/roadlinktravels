@@ -184,8 +184,12 @@ const exportBillsCsv = (rows: Bill[]) => {
 interface FormState {
   id?: string;
   bill_category: string;
-  billing_basis: "kilometer" | "hourly";
+  trip_type: "half_day" | "full_day" | "pickup_drop";
   customer_name: string;
+  customer_phone: string;
+  customer_address: string;
+  pickup: string;
+  drop: string;
   place: string;
   bill_date: string;
   vehicle_type: string;
@@ -194,6 +198,8 @@ interface FormState {
   end_time: string;
   extra_hours_enabled: boolean;
   extra_hours: string;
+  extra_hours_amount: string;
+  extra_km_enabled: boolean;
   start_km: string;
   end_km: string;
   start_date: string;
@@ -204,6 +210,7 @@ interface FormState {
   permit: string;
   night_halt: string;
   extra_km: string;
+  extra_km_amount: string;
   advance: string;
   remarks: string;
   total_amount_override: string; // manual override; empty = auto
@@ -211,8 +218,12 @@ interface FormState {
 
 const emptyForm = (): FormState => ({
   bill_category: "",
-  billing_basis: "kilometer",
+  trip_type: "full_day",
   customer_name: "",
+  customer_phone: "",
+  customer_address: "",
+  pickup: "",
+  drop: "",
   place: "",
   bill_date: todayISO(),
   vehicle_type: "",
@@ -221,6 +232,8 @@ const emptyForm = (): FormState => ({
   end_time: "",
   extra_hours_enabled: false,
   extra_hours: "",
+  extra_hours_amount: "",
+  extra_km_enabled: false,
   start_km: "",
   end_km: "",
   start_date: todayISO(),
@@ -231,6 +244,7 @@ const emptyForm = (): FormState => ({
   permit: "",
   night_halt: "",
   extra_km: "",
+  extra_km_amount: "",
   advance: "",
   remarks: "",
   total_amount_override: "",
@@ -239,26 +253,37 @@ const emptyForm = (): FormState => ({
 const billToForm = (b: Bill): FormState => ({
   id: b.id,
   bill_category: (b as unknown as { bill_category?: string | null }).bill_category ?? "",
-  billing_basis: (((b as unknown as { billing_basis?: string }).billing_basis) === "hourly" ? "hourly" : "kilometer"),
+  trip_type: ((): FormState["trip_type"] => {
+    const t = (b as unknown as { trip_type?: string | null }).trip_type;
+    if (t === "half_day" || t === "full_day" || t === "pickup_drop") return t;
+    return "full_day";
+  })(),
   customer_name: b.customer_name,
+  customer_phone: (b as unknown as { customer_phone?: string | null }).customer_phone ?? "",
+  customer_address: (b as unknown as { customer_address?: string | null }).customer_address ?? "",
+  pickup: (b as unknown as { pickup?: string | null }).pickup ?? "",
+  drop: (b as unknown as { drop_location?: string | null }).drop_location ?? "",
   place: b.place ?? "",
   bill_date: b.bill_date ?? todayISO(),
   vehicle_type: b.vehicle_type ?? "",
   vehicle_number: b.vehicle_number ?? "",
   start_time: b.start_time ?? "",
   end_time: b.end_time ?? "",
-  extra_hours_enabled: b.extra_hours_enabled ?? false,
+  extra_hours_enabled: (b.extra_hours_enabled ?? false) || b.extra_hours != null,
   extra_hours: b.extra_hours?.toString() ?? "",
+  extra_hours_amount: (b as unknown as { extra_hours_amount?: number | null }).extra_hours_amount?.toString() ?? "",
+  extra_km_enabled: b.extra_km != null,
   start_km: b.start_km?.toString() ?? "",
   end_km: b.end_km?.toString() ?? "",
   start_date: b.start_date ?? todayISO(),
   end_date: b.end_date ?? todayISO(),
-  day_rent: "",
-  driver_bata: "",
+  day_rent: (b as unknown as { day_rent?: number | null }).day_rent?.toString() ?? "",
+  driver_bata: (b as unknown as { driver_bata?: number | null }).driver_bata?.toString() ?? "",
   parking_tollgate: b.parking_tollgate?.toString() ?? "",
   permit: b.permit?.toString() ?? "",
   night_halt: b.night_halt?.toString() ?? "",
   extra_km: b.extra_km?.toString() ?? "",
+  extra_km_amount: (b as unknown as { extra_km_amount?: number | null }).extra_km_amount?.toString() ?? "",
   advance: b.advance?.toString() ?? "",
   remarks: b.remarks ?? "",
   total_amount_override: b.total_amount != null ? String(b.total_amount) : "",
