@@ -971,7 +971,7 @@ const BillingManager = () => {
                       <TableCell className="font-mono text-xs">{b.bill_no}</TableCell>
                       <TableCell>{b.bill_date}</TableCell>
                       <TableCell>{(b as unknown as { bill_category?: string | null }).bill_category ?? "-"}</TableCell>
-                      <TableCell className="capitalize">{(b as unknown as { billing_basis?: string }).billing_basis ?? "kilometer"}</TableCell>
+                      <TableCell className="capitalize">{((b as unknown as { trip_type?: string }).trip_type ?? "full_day").replace("_", " ")}</TableCell>
                       <TableCell className="font-medium">{b.customer_name}</TableCell>
                       <TableCell>{b.vehicle_type ?? "-"}</TableCell>
                       <TableCell>{b.vehicle_number ?? "-"}</TableCell>
@@ -1030,7 +1030,10 @@ const BillingManager = () => {
               <div className="text-left space-y-1 text-sm text-foreground">
                 <div><strong>Date:</strong> {viewBill?.bill_date}</div>
                 <div><strong>Category:</strong> {viewBill ? ((viewBill as unknown as { bill_category?: string | null }).bill_category ?? "-") : "-"}</div>
-                <div><strong>Billing Basis:</strong> {viewBill ? (((viewBill as unknown as { billing_basis?: string }).billing_basis ?? "kilometer") === "hourly" ? "Hourly Basis" : "Kilometer Basis") : "-"}</div>
+                <div><strong>Trip Type:</strong> {viewBill ? (() => {
+                  const t = (viewBill as unknown as { trip_type?: string }).trip_type ?? "full_day";
+                  return t === "half_day" ? "Half Day Rent" : t === "pickup_drop" ? "Pick Up & Drop" : "Full Day Rent";
+                })() : "-"}</div>
                 <div><strong>Customer:</strong> {viewBill?.customer_name}</div>
                 <div><strong>Place:</strong> {viewBill?.place ?? "-"}</div>
                 <div><strong>Vehicle:</strong> {viewBill?.vehicle_type ?? "-"} · {viewBill?.vehicle_number ?? "-"}</div>
