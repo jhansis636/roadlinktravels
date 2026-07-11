@@ -646,18 +646,7 @@ const BillingManager = () => {
                 </div>
                 <div className="mt-3">
                   <Label>Total Time</Label>
-                  <div className="flex gap-2 items-start">
-                    <Input readOnly value={formatDuration(totalMinutes)} placeholder="--" className="bg-muted" />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setForm({ ...form, extra_hours_enabled: !form.extra_hours_enabled, extra_hours: form.extra_hours_enabled ? "" : form.extra_hours })}
-                    >
-                      {form.extra_hours_enabled ? <><Minus className="h-4 w-4 mr-1" />Remove Extra Hours</> : <><Plus className="h-4 w-4 mr-1" />Extra Hours</>}
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Enter extra hours manually in Additional Charges</p>
+                  <Input readOnly value={formatDuration(totalMinutes)} placeholder="--" className="bg-muted" />
                 </div>
               </div>
 
