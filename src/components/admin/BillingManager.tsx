@@ -547,12 +547,16 @@ const BillingManager = () => {
                 </Select>
               </div>
               <div>
-                <Label>Billing Basis <span className="text-destructive">*</span></Label>
-                <Select value={form.billing_basis} onValueChange={(v) => setForm({ ...form, billing_basis: v as "kilometer" | "hourly" })}>
-                  <SelectTrigger><SelectValue placeholder="Select Basis" /></SelectTrigger>
+                <Label>Trip Type <span className="text-destructive">*</span></Label>
+                <Select
+                  value={form.trip_type}
+                  onValueChange={(v) => setForm({ ...form, trip_type: v as FormState["trip_type"] })}
+                >
+                  <SelectTrigger><SelectValue placeholder="Select Trip Type" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="hourly">Hourly Basis</SelectItem>
-                    <SelectItem value="kilometer">Kilometer Basis</SelectItem>
+                    <SelectItem value="half_day">Half Day Rent</SelectItem>
+                    <SelectItem value="full_day">Full Day Rent</SelectItem>
+                    <SelectItem value="pickup_drop">Pick Up & Drop</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -563,13 +567,38 @@ const BillingManager = () => {
                    list="billing-customer-list"
                    placeholder="Search or enter customer name"
                    value={form.customer_name}
-                   onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
+                   onChange={(e) => {
+                     const name = e.target.value;
+                     const match = (customers ?? []).find((c) => c.name === name);
+                     setForm({
+                       ...form,
+                       customer_name: name,
+                       customer_phone: match?.phone ?? form.customer_phone,
+                       customer_address: match?.address ?? form.customer_address,
+                     });
+                   }}
                  />
                  <datalist id="billing-customer-list">
                    {(customers ?? []).map((c) => (
                      <option key={c.id} value={c.name} />
                    ))}
                  </datalist>
+              </div>
+              <div>
+                <Label>Customer Phone</Label>
+                <Input value={form.customer_phone} onChange={(e) => setForm({ ...form, customer_phone: e.target.value })} placeholder="Enter Phone Number" />
+              </div>
+              <div>
+                <Label>Customer Address</Label>
+                <Input value={form.customer_address} onChange={(e) => setForm({ ...form, customer_address: e.target.value })} placeholder="Enter Address" />
+              </div>
+              <div>
+                <Label>Pickup</Label>
+                <Input value={form.pickup} onChange={(e) => setForm({ ...form, pickup: e.target.value })} placeholder="Enter Pickup Location" />
+              </div>
+              <div>
+                <Label>Drop</Label>
+                <Input value={form.drop} onChange={(e) => setForm({ ...form, drop: e.target.value })} placeholder="Enter Drop Location" />
               </div>
               <div>
                 <Label>Place / Destination</Label>
@@ -634,21 +663,7 @@ const BillingManager = () => {
 
               {/* Kilometer */}
               <div className="rounded-lg border p-3">
-                <h4 className="text-primary font-medium mb-2">
-                  {form.billing_basis === "hourly" ? "Hourly Rate" : "Kilometer"}
-                </h4>
-                {form.billing_basis === "hourly" ? (
-                  <div className="space-y-3">
-                    <div>
-                      <Label>Per Hour Rate</Label>
-                      <Input readOnly value={perHourRate != null ? `₹${perHourRate}` : ""} placeholder="--" className="bg-muted" />
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Hourly charge = Total Time (hrs) × Per Hour Rate
-                    </p>
-                  </div>
-                ) : (
-                <>
+                <h4 className="text-primary font-medium mb-2">Kilometer</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <div><Label>Start KM</Label><Input type="number" min="0" value={form.start_km} onChange={(e) => setForm({ ...form, start_km: e.target.value })} placeholder="0" /></div>
                   <div><Label>End KM</Label><Input type="number" min="0" value={form.end_km} onChange={(e) => setForm({ ...form, end_km: e.target.value })} placeholder="0" /></div>
@@ -666,8 +681,6 @@ const BillingManager = () => {
                 {kmCharge != null && (
                   <p className="text-xs text-primary mt-2">Kilometer Charge: ₹{kmCharge.toLocaleString("en-IN")}</p>
                 )}
-                </>
-                )}
               </div>
 
               {/* Date */}
@@ -682,12 +695,16 @@ const BillingManager = () => {
                   <Input readOnly value={totalDays ?? ""} placeholder="--" className="bg-muted" />
                 </div>
                 <div className="mt-3">
-                  <Label>Day Rent</Label>
+                  <Label>
+                    {form.trip_type === "half_day" ? "Half Day Rent" :
+                     form.trip_type === "pickup_drop" ? "Pick Up & Drop Charge" :
+                     "Full Day Rent"}
+                  </Label>
                   <Input
                     type="number"
                     value={form.day_rent}
                     onChange={(e) => setForm({ ...form, day_rent: e.target.value })}
-                    placeholder={perDayRate != null ? String(perDayRate) : "Enter Day Rent"}
+                    placeholder={tripBaseRate != null ? String(tripBaseRate) : "Enter Rent"}
                   />
                 </div>
               </div>
@@ -696,7 +713,19 @@ const BillingManager = () => {
 
           {/* Additional Charges */}
           <section className="rounded-xl border bg-card p-4">
-            <h3 className="text-primary font-semibold mb-3">Additional Charges (Inputs Only)</h3>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <h3 className="text-primary font-semibold">Additional Charges</h3>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" size="sm"
+                  onClick={() => setForm({ ...form, extra_hours_enabled: !form.extra_hours_enabled, extra_hours: form.extra_hours_enabled ? "" : form.extra_hours, extra_hours_amount: form.extra_hours_enabled ? "" : form.extra_hours_amount })}>
+                  {form.extra_hours_enabled ? <><Minus className="h-4 w-4 mr-1" />Remove Extra Hours</> : <><Plus className="h-4 w-4 mr-1" />Extra Hours</>}
+                </Button>
+                <Button type="button" variant="outline" size="sm"
+                  onClick={() => setForm({ ...form, extra_km_enabled: !form.extra_km_enabled, extra_km: form.extra_km_enabled ? "" : form.extra_km, extra_km_amount: form.extra_km_enabled ? "" : form.extra_km_amount })}>
+                  {form.extra_km_enabled ? <><Minus className="h-4 w-4 mr-1" />Remove Extra KM</> : <><Plus className="h-4 w-4 mr-1" />Extra Kilometer</>}
+                </Button>
+              </div>
+            </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div><Label>Parking & Tollgate</Label><Input type="number" value={form.parking_tollgate} onChange={(e) => setForm({ ...form, parking_tollgate: e.target.value })} placeholder="Enter Amount" /></div>
               <div><Label>Permit</Label><Input type="number" value={form.permit} onChange={(e) => setForm({ ...form, permit: e.target.value })} placeholder="Enter Amount" /></div>
@@ -711,16 +740,22 @@ const BillingManager = () => {
                 />
               </div>
               {form.extra_hours_enabled && (
+                <>
                 <div>
-                  <Label>Extra Hours</Label>
+                  <Label>Extra Hours (Hrs)</Label>
                   <Input type="number" value={form.extra_hours} onChange={(e) => setForm({ ...form, extra_hours: e.target.value })} placeholder="Enter Hours" />
-                  {perHourRate != null && (
-                    <p className="text-xs text-muted-foreground mt-1">Rate: ₹{perHourRate}/hr</p>
-                  )}
                 </div>
+                <div>
+                  <Label>Extra Hours Amount (₹)</Label>
+                  <Input type="number" value={form.extra_hours_amount} onChange={(e) => setForm({ ...form, extra_hours_amount: e.target.value })} placeholder="Enter Amount" />
+                </div>
+                </>
               )}
-              {form.billing_basis === "kilometer" && (
+              {form.extra_km_enabled && (
+                <>
                 <div><Label>Extra KM</Label><Input type="number" value={form.extra_km} onChange={(e) => setForm({ ...form, extra_km: e.target.value })} placeholder="Enter KM" /></div>
+                <div><Label>Extra KM Amount (₹)</Label><Input type="number" value={form.extra_km_amount} onChange={(e) => setForm({ ...form, extra_km_amount: e.target.value })} placeholder="Enter Amount" /></div>
+                </>
               )}
             </div>
           </section>
