@@ -24,6 +24,8 @@ interface FormState {
   id?: string;
   vehicle_type: string;
   day_rent: string;
+  half_day_rate: string;
+  pickup_drop_rate: string;
   per_km_rate: string;
   extra_km_rate: string;
   driver_bata: string;
@@ -32,7 +34,8 @@ interface FormState {
 }
 
 const empty: FormState = {
-  vehicle_type: "", day_rent: "", per_km_rate: "", extra_km_rate: "",
+  vehicle_type: "", day_rent: "", half_day_rate: "", pickup_drop_rate: "",
+  per_km_rate: "", extra_km_rate: "",
   driver_bata: "", per_hour_rate: "", sort_order: "0",
 };
 
@@ -51,6 +54,8 @@ const TariffManager = () => {
       id: t.id,
       vehicle_type: t.vehicle_type,
       day_rent: t.day_rent?.toString() ?? "",
+      half_day_rate: t.half_day_rate?.toString() ?? "",
+      pickup_drop_rate: t.pickup_drop_rate?.toString() ?? "",
       per_km_rate: t.per_km_rate?.toString() ?? "",
       extra_km_rate: t.extra_km_rate?.toString() ?? "",
       driver_bata: t.driver_bata?.toString() ?? "",
@@ -67,6 +72,8 @@ const TariffManager = () => {
       id: form.id,
       vehicle_type: form.vehicle_type.trim(),
       day_rent: toNum(form.day_rent),
+      half_day_rate: toNum(form.half_day_rate),
+      pickup_drop_rate: toNum(form.pickup_drop_rate),
       per_km_rate: toNum(form.per_km_rate),
       extra_km_rate: toNum(form.extra_km_rate),
       driver_bata: toNum(form.driver_bata),
@@ -97,8 +104,12 @@ const TariffManager = () => {
                   onChange={(e) => setForm({ ...form, vehicle_type: e.target.value })} />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div><Label>Day Rent (₹)</Label><Input type="number" value={form.day_rent}
+                <div><Label>Full Day Rent (₹)</Label><Input type="number" value={form.day_rent}
                   onChange={(e) => setForm({ ...form, day_rent: e.target.value })} /></div>
+                <div><Label>Half Day Rent (₹)</Label><Input type="number" value={form.half_day_rate}
+                  onChange={(e) => setForm({ ...form, half_day_rate: e.target.value })} /></div>
+                <div><Label>Pick Up & Drop (₹)</Label><Input type="number" value={form.pickup_drop_rate}
+                  onChange={(e) => setForm({ ...form, pickup_drop_rate: e.target.value })} /></div>
                 <div><Label>Per KM Rate (₹)</Label><Input type="number" value={form.per_km_rate}
                   onChange={(e) => setForm({ ...form, per_km_rate: e.target.value })} /></div>
                 <div><Label>Extra KM Rate (₹)</Label><Input type="number" value={form.extra_km_rate}
@@ -131,7 +142,9 @@ const TariffManager = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Vehicle Type</TableHead>
-                  <TableHead className="text-right">Day Rent</TableHead>
+                  <TableHead className="text-right">Full Day</TableHead>
+                  <TableHead className="text-right">Half Day</TableHead>
+                  <TableHead className="text-right">Pickup/Drop</TableHead>
                   <TableHead className="text-right">Per KM</TableHead>
                   <TableHead className="text-right">Extra KM</TableHead>
                   <TableHead className="text-right">Driver Bata</TableHead>
@@ -144,6 +157,8 @@ const TariffManager = () => {
                   <TableRow key={t.id}>
                     <TableCell className="font-medium">{t.vehicle_type}</TableCell>
                     <TableCell className="text-right">{t.day_rent != null ? `₹${Number(t.day_rent).toLocaleString("en-IN")}` : "-"}</TableCell>
+                    <TableCell className="text-right">{t.half_day_rate != null ? `₹${Number(t.half_day_rate).toLocaleString("en-IN")}` : "-"}</TableCell>
+                    <TableCell className="text-right">{t.pickup_drop_rate != null ? `₹${Number(t.pickup_drop_rate).toLocaleString("en-IN")}` : "-"}</TableCell>
                     <TableCell className="text-right">{t.per_km_rate != null ? `₹${t.per_km_rate}` : "-"}</TableCell>
                     <TableCell className="text-right">{t.extra_km_rate != null ? `₹${t.extra_km_rate}` : "-"}</TableCell>
                     <TableCell className="text-right">{t.driver_bata != null ? `₹${t.driver_bata}` : "-"}</TableCell>
