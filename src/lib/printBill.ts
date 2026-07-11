@@ -8,15 +8,48 @@ const fmt = (v: number | null | undefined) =>
 
 const MSME = "UDYAM Reg. No: TN-03-0046434";
 const COMPANY = "Roadlink Tours and Travels";
-const CONTACT = "Coimbatore, Tamil Nadu · +91 82481 99154";
+const ADDRESS = "Coimbatore, Tamil Nadu";
+const CONTACT = "+91 82481 99154";
+
+const tripTypeLabel = (t?: string | null) =>
+  t === "half_day" ? "Half Day Rent" :
+  t === "pickup_drop" ? "Pick Up & Drop" :
+  "Full Day Rent";
+
+// Convert an integer amount (rupees) to Indian words
+const numToWords = (n: number): string => {
+  if (!Number.isFinite(n) || n <= 0) return "";
+  const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+  const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+  const two = (x: number): string => x < 20 ? a[x] : `${b[Math.floor(x / 10)]}${x % 10 ? " " + a[x % 10] : ""}`;
+  const three = (x: number): string => {
+    const h = Math.floor(x / 100), r = x % 100;
+    return `${h ? a[h] + " Hundred" + (r ? " " : "") : ""}${r ? two(r) : ""}`;
+  };
+  let num = Math.round(n);
+  const crore = Math.floor(num / 10000000); num %= 10000000;
+  const lakh = Math.floor(num / 100000); num %= 100000;
+  const thousand = Math.floor(num / 1000); num %= 1000;
+  const rest = num;
+  const parts: string[] = [];
+  if (crore) parts.push(`${two(crore)} Crore`);
+  if (lakh) parts.push(`${two(lakh)} Lakh`);
+  if (thousand) parts.push(`${two(thousand)} Thousand`);
+  if (rest) parts.push(three(rest));
+  return `Rupees ${parts.join(" ").trim()} Only`;
+};
 
 // Rows shown on the printed/PDF invoice. Parking & Tollgate, Permit and
 // Night Halt are intentionally excluded from the printout (still saved in DB).
 const buildRows = (bill: Bill): [string, string][] => [
   ["Bill Date", bill.bill_date ?? "-"],
   ["Bill Category", (bill as unknown as { bill_category?: string }).bill_category ?? "-"],
-  ["Billing Basis", ((bill as unknown as { billing_basis?: string }).billing_basis ?? "kilometer") === "hourly" ? "Hourly Basis" : "Kilometer Basis"],
+  ["Trip Type", tripTypeLabel((bill as unknown as { trip_type?: string }).trip_type)],
   ["Customer", bill.customer_name ?? "-"],
+  ["Customer Phone", (bill as unknown as { customer_phone?: string }).customer_phone ?? "-"],
+  ["Customer Address", (bill as unknown as { customer_address?: string }).customer_address ?? "-"],
+  ["Pickup", (bill as unknown as { pickup?: string }).pickup ?? "-"],
+  ["Drop", (bill as unknown as { drop_location?: string }).drop_location ?? "-"],
   ["Place / Destination", bill.place ?? "-"],
   ["Vehicle Type", bill.vehicle_type ?? "-"],
   ["Vehicle Number", bill.vehicle_number ?? "-"],
@@ -24,14 +57,33 @@ const buildRows = (bill: Bill): [string, string][] => [
   ["Total Days", bill.total_days?.toString() ?? "-"],
   ["Start Time → End Time", `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`],
   ["Total Time (minutes)", bill.total_time_minutes?.toString() ?? "-"],
-  ["Extra Hours", bill.extra_hours_enabled ? (bill.extra_hours ?? "-").toString() : "-"],
   ["Start KM → End KM", `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"}`],
   ["Total KM", bill.total_km?.toString() ?? "-"],
-  ["Per KM Rate", fmt(bill.per_km_rate)],
-  ["Extra KM", bill.extra_km?.toString() ?? "-"],
   ["Advance", fmt(bill.advance)],
   ["Remarks", bill.remarks ?? "-"],
 ];
+
+const buildChargeRows = (bill: Bill): [string, number][] => {
+  const b = bill as unknown as {
+    day_rent?: number | null; driver_bata?: number | null;
+    extra_hours_amount?: number | null; extra_km_amount?: number | null;
+    trip_type?: string | null;
+  };
+  const days = bill.total_days ?? 1;
+  const rows: [string, number][] = [];
+  if (b.day_rent) {
+    const label = tripTypeLabel(b.trip_type);
+    const total = b.trip_type === "pickup_drop" ? Number(b.day_rent) : Number(b.day_rent) * days;
+    rows.push([`${label}${b.trip_type !== "pickup_drop" ? ` × ${days} day(s)` : ""}`, total]);
+  }
+  if (b.driver_bata) rows.push([`Driver Bata × ${days} day(s)`, Number(b.driver_bata) * days]);
+  if (b.extra_hours_amount) rows.push(["Extra Hours", Number(b.extra_hours_amount)]);
+  if (b.extra_km_amount) rows.push(["Extra Kilometer", Number(b.extra_km_amount)]);
+  if (bill.parking_tollgate) rows.push(["Parking & Tollgate", Number(bill.parking_tollgate)]);
+  if (bill.permit) rows.push(["Permit", Number(bill.permit)]);
+  if (bill.night_halt) rows.push(["Night Halt", Number(bill.night_halt)]);
+  return rows;
+};
 
 /**
  * Opens a browser print dialog with a clean printable invoice for the given
