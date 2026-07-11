@@ -135,24 +135,34 @@ const csvEscape = (v: unknown): string => {
 
 const exportBillsCsv = (rows: Bill[]) => {
   const headers = [
-    "Bill No", "Date", "Category", "Basis", "Customer", "Place",
+    "Bill No", "Date", "Category", "Trip Type", "Customer", "Phone", "Pickup", "Drop", "Place",
     "Vehicle Type", "Vehicle Number",
     "Start Date", "End Date", "Total Days",
     "Start Time", "End Time", "Total Minutes",
-    "Extra Hours", "Start KM", "End KM", "Total KM", "Per KM Rate", "Extra KM",
+    "Extra Hours", "Extra Hours Amount",
+    "Start KM", "End KM", "Total KM", "Per KM Rate",
+    "Extra KM", "Extra KM Amount",
+    "Day Rent", "Driver Bata",
     "Parking/Tollgate", "Permit", "Night Halt",
     "Advance", "Total Amount", "Balance", "Status", "Remarks",
   ];
   const body = rows.map((b) => {
-    const bx = b as unknown as { bill_category?: string | null; billing_basis?: string };
+    const bx = b as unknown as {
+      bill_category?: string | null; trip_type?: string | null;
+      customer_phone?: string | null; pickup?: string | null; drop_location?: string | null;
+      day_rent?: number | null; driver_bata?: number | null;
+      extra_hours_amount?: number | null; extra_km_amount?: number | null;
+    };
     return [
-      b.bill_no, b.bill_date, bx.bill_category ?? "", bx.billing_basis ?? "kilometer",
-      b.customer_name, b.place ?? "",
+      b.bill_no, b.bill_date, bx.bill_category ?? "", bx.trip_type ?? "",
+      b.customer_name, bx.customer_phone ?? "", bx.pickup ?? "", bx.drop_location ?? "", b.place ?? "",
       b.vehicle_type ?? "", b.vehicle_number ?? "",
       b.start_date ?? "", b.end_date ?? "", b.total_days ?? "",
       b.start_time ?? "", b.end_time ?? "", b.total_time_minutes ?? "",
-      b.extra_hours ?? "", b.start_km ?? "", b.end_km ?? "", b.total_km ?? "",
-      b.per_km_rate ?? "", b.extra_km ?? "",
+      b.extra_hours ?? "", bx.extra_hours_amount ?? "",
+      b.start_km ?? "", b.end_km ?? "", b.total_km ?? "", b.per_km_rate ?? "",
+      b.extra_km ?? "", bx.extra_km_amount ?? "",
+      bx.day_rent ?? "", bx.driver_bata ?? "",
       b.parking_tollgate ?? "", b.permit ?? "", b.night_halt ?? "",
       b.advance ?? "", b.total_amount ?? "", b.balance ?? "", b.status ?? "", b.remarks ?? "",
     ].map(csvEscape).join(",");
@@ -174,8 +184,12 @@ const exportBillsCsv = (rows: Bill[]) => {
 interface FormState {
   id?: string;
   bill_category: string;
-  billing_basis: "kilometer" | "hourly";
+  trip_type: "half_day" | "full_day" | "pickup_drop";
   customer_name: string;
+  customer_phone: string;
+  customer_address: string;
+  pickup: string;
+  drop: string;
   place: string;
   bill_date: string;
   vehicle_type: string;
@@ -184,6 +198,8 @@ interface FormState {
   end_time: string;
   extra_hours_enabled: boolean;
   extra_hours: string;
+  extra_hours_amount: string;
+  extra_km_enabled: boolean;
   start_km: string;
   end_km: string;
   start_date: string;
@@ -194,6 +210,7 @@ interface FormState {
   permit: string;
   night_halt: string;
   extra_km: string;
+  extra_km_amount: string;
   advance: string;
   remarks: string;
   total_amount_override: string; // manual override; empty = auto
@@ -201,8 +218,12 @@ interface FormState {
 
 const emptyForm = (): FormState => ({
   bill_category: "",
-  billing_basis: "kilometer",
+  trip_type: "full_day",
   customer_name: "",
+  customer_phone: "",
+  customer_address: "",
+  pickup: "",
+  drop: "",
   place: "",
   bill_date: todayISO(),
   vehicle_type: "",
@@ -211,6 +232,8 @@ const emptyForm = (): FormState => ({
   end_time: "",
   extra_hours_enabled: false,
   extra_hours: "",
+  extra_hours_amount: "",
+  extra_km_enabled: false,
   start_km: "",
   end_km: "",
   start_date: todayISO(),
@@ -221,6 +244,7 @@ const emptyForm = (): FormState => ({
   permit: "",
   night_halt: "",
   extra_km: "",
+  extra_km_amount: "",
   advance: "",
   remarks: "",
   total_amount_override: "",
@@ -229,26 +253,37 @@ const emptyForm = (): FormState => ({
 const billToForm = (b: Bill): FormState => ({
   id: b.id,
   bill_category: (b as unknown as { bill_category?: string | null }).bill_category ?? "",
-  billing_basis: (((b as unknown as { billing_basis?: string }).billing_basis) === "hourly" ? "hourly" : "kilometer"),
+  trip_type: ((): FormState["trip_type"] => {
+    const t = (b as unknown as { trip_type?: string | null }).trip_type;
+    if (t === "half_day" || t === "full_day" || t === "pickup_drop") return t;
+    return "full_day";
+  })(),
   customer_name: b.customer_name,
+  customer_phone: (b as unknown as { customer_phone?: string | null }).customer_phone ?? "",
+  customer_address: (b as unknown as { customer_address?: string | null }).customer_address ?? "",
+  pickup: (b as unknown as { pickup?: string | null }).pickup ?? "",
+  drop: (b as unknown as { drop_location?: string | null }).drop_location ?? "",
   place: b.place ?? "",
   bill_date: b.bill_date ?? todayISO(),
   vehicle_type: b.vehicle_type ?? "",
   vehicle_number: b.vehicle_number ?? "",
   start_time: b.start_time ?? "",
   end_time: b.end_time ?? "",
-  extra_hours_enabled: b.extra_hours_enabled ?? false,
+  extra_hours_enabled: (b.extra_hours_enabled ?? false) || b.extra_hours != null,
   extra_hours: b.extra_hours?.toString() ?? "",
+  extra_hours_amount: (b as unknown as { extra_hours_amount?: number | null }).extra_hours_amount?.toString() ?? "",
+  extra_km_enabled: b.extra_km != null,
   start_km: b.start_km?.toString() ?? "",
   end_km: b.end_km?.toString() ?? "",
   start_date: b.start_date ?? todayISO(),
   end_date: b.end_date ?? todayISO(),
-  day_rent: "",
-  driver_bata: "",
+  day_rent: (b as unknown as { day_rent?: number | null }).day_rent?.toString() ?? "",
+  driver_bata: (b as unknown as { driver_bata?: number | null }).driver_bata?.toString() ?? "",
   parking_tollgate: b.parking_tollgate?.toString() ?? "",
   permit: b.permit?.toString() ?? "",
   night_halt: b.night_halt?.toString() ?? "",
   extra_km: b.extra_km?.toString() ?? "",
+  extra_km_amount: (b as unknown as { extra_km_amount?: number | null }).extra_km_amount?.toString() ?? "",
   advance: b.advance?.toString() ?? "",
   remarks: b.remarks ?? "",
   total_amount_override: b.total_amount != null ? String(b.total_amount) : "",
@@ -270,6 +305,8 @@ const BillingManager = () => {
         label: t.vehicle_type,
         perKmRate: t.per_km_rate != null ? Number(t.per_km_rate) : undefined,
         perDayRate: t.day_rent != null ? Number(t.day_rent) : undefined,
+        halfDayRate: t.half_day_rate != null ? Number(t.half_day_rate) : undefined,
+        pickupDropRate: t.pickup_drop_rate != null ? Number(t.pickup_drop_rate) : undefined,
         perHourRate: t.per_hour_rate != null ? Number(t.per_hour_rate) : undefined,
         driverBataPerDay: t.driver_bata != null ? Number(t.driver_bata) : undefined,
       })),
@@ -282,8 +319,16 @@ const BillingManager = () => {
   const selectedVehicle = form.vehicle_type ? getVehicleByName(form.vehicle_type) : undefined;
   const perKmRate = selectedVehicle?.perKmRate;
   const perDayRate = selectedVehicle?.perDayRate;
+  const halfDayRate = selectedVehicle?.halfDayRate;
+  const pickupDropRate = selectedVehicle?.pickupDropRate;
   const perHourRate = selectedVehicle?.perHourRate;
   const driverBataPerDay = selectedVehicle?.driverBataPerDay;
+
+  // Per-trip-type base rate used to auto-populate Day Rent field
+  const tripBaseRate =
+    form.trip_type === "half_day" ? halfDayRate :
+    form.trip_type === "pickup_drop" ? pickupDropRate :
+    perDayRate;
 
   const totalMinutes = useMemo(() => {
     const s = timeToMinutes(form.start_time);
@@ -310,47 +355,40 @@ const BillingManager = () => {
     [form.start_date, form.end_date],
   );
 
-  // Auto-populate Day Rent + Driver Bata from selected vehicle. Admin can
-  // still overwrite; changing vehicle refreshes both.
+  // Auto-populate Day Rent + Driver Bata from selected vehicle and trip type.
+  // Admin can still overwrite; changing either resets to the tariff value.
   useEffect(() => {
     setForm((f) => ({
       ...f,
-      day_rent: perDayRate != null ? String(perDayRate) : "",
+      day_rent: tripBaseRate != null ? String(tripBaseRate) : "",
       driver_bata: driverBataPerDay != null ? String(driverBataPerDay) : "",
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.vehicle_type]);
+  }, [form.vehicle_type, form.trip_type]);
 
-  // Live Total Amount. Branches on billing_basis.
+  // Live Total Amount. Trip-type driven: uses tariff base rate for the chosen
+  // trip type. Extra Hours and Extra KM are fully manual amounts.
   const calc = useMemo(() => {
     const days = totalDays ?? 1;
-    const km = totalKm ?? 0;
-    const isHourly = form.billing_basis === "hourly";
-    const hours = (totalMinutes ?? 0) / 60;
-    const dayRent = num(form.day_rent) ?? perDayRate ?? 0;
-    const kmCharge = !isHourly && perKmRate != null ? km * perKmRate : 0;
-    const dayCharge = !isHourly && perKmRate == null && dayRent ? dayRent * days : 0;
-    const hourlyCharge = isHourly && perHourRate != null ? hours * perHourRate : 0;
-    const bata = !isHourly ? (num(form.driver_bata) ?? 0) * days : 0;
-    const extraKmCharge = !isHourly ? (num(form.extra_km) ?? 0) * (perKmRate ?? 0) : 0;
-    // Extra Hours uses the selected vehicle's per-hour rate. If no rate
-    // configured or no value entered, contributes 0.
-    const extraHoursCharge = form.extra_hours_enabled && num(form.extra_hours) != null && perHourRate != null
-      ? (num(form.extra_hours) as number) * perHourRate
-      : 0;
+    const rentValue = num(form.day_rent) ?? tripBaseRate ?? 0;
+    // Pickup & Drop is a fixed one-way charge; others multiply by days.
+    const rentCharge = form.trip_type === "pickup_drop" ? rentValue : rentValue * days;
+    const bata = (num(form.driver_bata) ?? 0) * days;
+    const extraHoursCharge = form.extra_hours_enabled ? (num(form.extra_hours_amount) ?? 0) : 0;
+    const extraKmCharge = form.extra_km_enabled ? (num(form.extra_km_amount) ?? 0) : 0;
     const parking = num(form.parking_tollgate) ?? 0;
     const permit = num(form.permit) ?? 0;
     const nightHalt = num(form.night_halt) ?? 0;
     const total = Math.round(
-      kmCharge + dayCharge + hourlyCharge + bata + extraKmCharge + extraHoursCharge + parking + permit + nightHalt,
+      rentCharge + bata + extraKmCharge + extraHoursCharge + parking + permit + nightHalt,
     );
     const advance = num(form.advance) ?? 0;
     return { total, advance };
   }, [
-    totalKm, totalDays, totalMinutes, perKmRate, perDayRate, perHourRate, driverBataPerDay,
-    form.billing_basis,
+    totalDays, tripBaseRate, form.trip_type,
     form.day_rent, form.driver_bata,
-    form.extra_km, form.extra_hours_enabled, form.extra_hours,
+    form.extra_hours_enabled, form.extra_hours_amount,
+    form.extra_km_enabled, form.extra_km_amount,
     form.parking_tollgate, form.permit, form.night_halt, form.advance,
   ]);
 
@@ -365,10 +403,11 @@ const BillingManager = () => {
     setForm((f) => ({ ...f, total_amount_override: "" }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    form.vehicle_type, form.billing_basis, form.start_km, form.end_km,
+    form.vehicle_type, form.trip_type,
     form.start_date, form.end_date, form.start_time, form.end_time,
     form.day_rent, form.driver_bata,
-    form.extra_km, form.extra_hours_enabled, form.extra_hours,
+    form.extra_hours_enabled, form.extra_hours_amount,
+    form.extra_km_enabled, form.extra_km_amount,
     form.parking_tollgate, form.permit, form.night_halt,
   ]);
 
@@ -378,14 +417,14 @@ const BillingManager = () => {
   const [filterCustomer, setFilterCustomer] = useState("");
   const [filterVehicle, setFilterVehicle] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
-  const [filterBasis, setFilterBasis] = useState("");
+  const [filterTripType, setFilterTripType] = useState("");
   const [search, setSearch] = useState("");
   // Default view = current calendar month. "All" clears this.
   const [showAll, setShowAll] = useState(false);
 
   const anyFilterActive =
     !!fromDate || !!toDate || !!filterCustomer || !!filterVehicle ||
-    !!filterCategory || !!filterBasis || !!search.trim();
+    !!filterCategory || !!filterTripType || !!search.trim();
 
   const monthBounds = useMemo(() => {
     const now = new Date();
@@ -408,18 +447,18 @@ const BillingManager = () => {
       if (filterCustomer && b.customer_name !== filterCustomer) return false;
       if (filterVehicle && b.vehicle_type !== filterVehicle) return false;
       const bCat = (b as unknown as { bill_category?: string | null }).bill_category ?? "";
-      const bBasis = (b as unknown as { billing_basis?: string }).billing_basis ?? "kilometer";
+      const bTrip = (b as unknown as { trip_type?: string | null }).trip_type ?? "";
       if (filterCategory && bCat !== filterCategory) return false;
-      if (filterBasis && bBasis !== filterBasis) return false;
+      if (filterTripType && bTrip !== filterTripType) return false;
       if (q) {
         const hay = [
-          b.customer_name, b.vehicle_number, b.place, b.bill_no, bCat, bBasis,
+          b.customer_name, b.vehicle_number, b.place, b.bill_no, bCat, bTrip,
         ].filter(Boolean).join(" ").toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, filterCategory, filterBasis, search, showAll, anyFilterActive, monthBounds]);
+  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, filterCategory, filterTripType, search, showAll, anyFilterActive, monthBounds]);
 
   const [viewBill, setViewBill] = useState<Bill | null>(null);
 
@@ -442,9 +481,13 @@ const BillingManager = () => {
     const saved = await saveBill.mutateAsync({
       id: form.id,
       bill_category: form.bill_category,
-      billing_basis: form.billing_basis,
+      trip_type: form.trip_type,
       customer_id: null,
       customer_name: form.customer_name.trim(),
+      customer_phone: form.customer_phone || null,
+      customer_address: form.customer_address || null,
+      pickup: form.pickup || null,
+      drop_location: form.drop || null,
       place: form.place || null,
       bill_date: form.bill_date,
       vehicle_type: form.vehicle_type || null,
@@ -454,6 +497,7 @@ const BillingManager = () => {
       total_time_minutes: totalMinutes,
       extra_hours_enabled: form.extra_hours_enabled,
       extra_hours: form.extra_hours_enabled ? num(form.extra_hours) : null,
+      extra_hours_amount: form.extra_hours_enabled ? num(form.extra_hours_amount) : null,
       start_km: num(form.start_km),
       end_km: num(form.end_km),
       total_km: totalKm,
@@ -461,10 +505,13 @@ const BillingManager = () => {
       start_date: form.start_date || null,
       end_date: form.end_date || null,
       total_days: totalDays,
+      day_rent: num(form.day_rent),
+      driver_bata: num(form.driver_bata),
       parking_tollgate: num(form.parking_tollgate),
       permit: num(form.permit),
       night_halt: num(form.night_halt),
-      extra_km: num(form.extra_km),
+      extra_km: form.extra_km_enabled ? num(form.extra_km) : null,
+      extra_km_amount: form.extra_km_enabled ? num(form.extra_km_amount) : null,
       advance: num(form.advance),
       remarks: form.remarks || null,
       total_amount: totalAmount || null,
@@ -500,12 +547,16 @@ const BillingManager = () => {
                 </Select>
               </div>
               <div>
-                <Label>Billing Basis <span className="text-destructive">*</span></Label>
-                <Select value={form.billing_basis} onValueChange={(v) => setForm({ ...form, billing_basis: v as "kilometer" | "hourly" })}>
-                  <SelectTrigger><SelectValue placeholder="Select Basis" /></SelectTrigger>
+                <Label>Trip Type <span className="text-destructive">*</span></Label>
+                <Select
+                  value={form.trip_type}
+                  onValueChange={(v) => setForm({ ...form, trip_type: v as FormState["trip_type"] })}
+                >
+                  <SelectTrigger><SelectValue placeholder="Select Trip Type" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="hourly">Hourly Basis</SelectItem>
-                    <SelectItem value="kilometer">Kilometer Basis</SelectItem>
+                    <SelectItem value="half_day">Half Day Rent</SelectItem>
+                    <SelectItem value="full_day">Full Day Rent</SelectItem>
+                    <SelectItem value="pickup_drop">Pick Up & Drop</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -516,13 +567,38 @@ const BillingManager = () => {
                    list="billing-customer-list"
                    placeholder="Search or enter customer name"
                    value={form.customer_name}
-                   onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
+                   onChange={(e) => {
+                     const name = e.target.value;
+                     const match = (customers ?? []).find((c) => c.name === name);
+                     setForm({
+                       ...form,
+                       customer_name: name,
+                       customer_phone: match?.phone ?? form.customer_phone,
+                       customer_address: match?.address ?? form.customer_address,
+                     });
+                   }}
                  />
                  <datalist id="billing-customer-list">
                    {(customers ?? []).map((c) => (
                      <option key={c.id} value={c.name} />
                    ))}
                  </datalist>
+              </div>
+              <div>
+                <Label>Customer Phone</Label>
+                <Input value={form.customer_phone} onChange={(e) => setForm({ ...form, customer_phone: e.target.value })} placeholder="Enter Phone Number" />
+              </div>
+              <div>
+                <Label>Customer Address</Label>
+                <Input value={form.customer_address} onChange={(e) => setForm({ ...form, customer_address: e.target.value })} placeholder="Enter Address" />
+              </div>
+              <div>
+                <Label>Pickup</Label>
+                <Input value={form.pickup} onChange={(e) => setForm({ ...form, pickup: e.target.value })} placeholder="Enter Pickup Location" />
+              </div>
+              <div>
+                <Label>Drop</Label>
+                <Input value={form.drop} onChange={(e) => setForm({ ...form, drop: e.target.value })} placeholder="Enter Drop Location" />
               </div>
               <div>
                 <Label>Place / Destination</Label>
@@ -570,38 +646,13 @@ const BillingManager = () => {
                 </div>
                 <div className="mt-3">
                   <Label>Total Time</Label>
-                  <div className="flex gap-2 items-start">
-                    <Input readOnly value={formatDuration(totalMinutes)} placeholder="--" className="bg-muted" />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setForm({ ...form, extra_hours_enabled: !form.extra_hours_enabled, extra_hours: form.extra_hours_enabled ? "" : form.extra_hours })}
-                    >
-                      {form.extra_hours_enabled ? <><Minus className="h-4 w-4 mr-1" />Remove Extra Hours</> : <><Plus className="h-4 w-4 mr-1" />Extra Hours</>}
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Enter extra hours manually in Additional Charges</p>
+                  <Input readOnly value={formatDuration(totalMinutes)} placeholder="--" className="bg-muted" />
                 </div>
               </div>
 
               {/* Kilometer */}
               <div className="rounded-lg border p-3">
-                <h4 className="text-primary font-medium mb-2">
-                  {form.billing_basis === "hourly" ? "Hourly Rate" : "Kilometer"}
-                </h4>
-                {form.billing_basis === "hourly" ? (
-                  <div className="space-y-3">
-                    <div>
-                      <Label>Per Hour Rate</Label>
-                      <Input readOnly value={perHourRate != null ? `₹${perHourRate}` : ""} placeholder="--" className="bg-muted" />
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Hourly charge = Total Time (hrs) × Per Hour Rate
-                    </p>
-                  </div>
-                ) : (
-                <>
+                <h4 className="text-primary font-medium mb-2">Kilometer</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <div><Label>Start KM</Label><Input type="number" min="0" value={form.start_km} onChange={(e) => setForm({ ...form, start_km: e.target.value })} placeholder="0" /></div>
                   <div><Label>End KM</Label><Input type="number" min="0" value={form.end_km} onChange={(e) => setForm({ ...form, end_km: e.target.value })} placeholder="0" /></div>
@@ -619,8 +670,6 @@ const BillingManager = () => {
                 {kmCharge != null && (
                   <p className="text-xs text-primary mt-2">Kilometer Charge: ₹{kmCharge.toLocaleString("en-IN")}</p>
                 )}
-                </>
-                )}
               </div>
 
               {/* Date */}
@@ -635,12 +684,16 @@ const BillingManager = () => {
                   <Input readOnly value={totalDays ?? ""} placeholder="--" className="bg-muted" />
                 </div>
                 <div className="mt-3">
-                  <Label>Day Rent</Label>
+                  <Label>
+                    {form.trip_type === "half_day" ? "Half Day Rent" :
+                     form.trip_type === "pickup_drop" ? "Pick Up & Drop Charge" :
+                     "Full Day Rent"}
+                  </Label>
                   <Input
                     type="number"
                     value={form.day_rent}
                     onChange={(e) => setForm({ ...form, day_rent: e.target.value })}
-                    placeholder={perDayRate != null ? String(perDayRate) : "Enter Day Rent"}
+                    placeholder={tripBaseRate != null ? String(tripBaseRate) : "Enter Rent"}
                   />
                 </div>
               </div>
@@ -649,7 +702,19 @@ const BillingManager = () => {
 
           {/* Additional Charges */}
           <section className="rounded-xl border bg-card p-4">
-            <h3 className="text-primary font-semibold mb-3">Additional Charges (Inputs Only)</h3>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <h3 className="text-primary font-semibold">Additional Charges</h3>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" size="sm"
+                  onClick={() => setForm({ ...form, extra_hours_enabled: !form.extra_hours_enabled, extra_hours: form.extra_hours_enabled ? "" : form.extra_hours, extra_hours_amount: form.extra_hours_enabled ? "" : form.extra_hours_amount })}>
+                  {form.extra_hours_enabled ? <><Minus className="h-4 w-4 mr-1" />Remove Extra Hours</> : <><Plus className="h-4 w-4 mr-1" />Extra Hours</>}
+                </Button>
+                <Button type="button" variant="outline" size="sm"
+                  onClick={() => setForm({ ...form, extra_km_enabled: !form.extra_km_enabled, extra_km: form.extra_km_enabled ? "" : form.extra_km, extra_km_amount: form.extra_km_enabled ? "" : form.extra_km_amount })}>
+                  {form.extra_km_enabled ? <><Minus className="h-4 w-4 mr-1" />Remove Extra KM</> : <><Plus className="h-4 w-4 mr-1" />Extra Kilometer</>}
+                </Button>
+              </div>
+            </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div><Label>Parking & Tollgate</Label><Input type="number" value={form.parking_tollgate} onChange={(e) => setForm({ ...form, parking_tollgate: e.target.value })} placeholder="Enter Amount" /></div>
               <div><Label>Permit</Label><Input type="number" value={form.permit} onChange={(e) => setForm({ ...form, permit: e.target.value })} placeholder="Enter Amount" /></div>
@@ -664,16 +729,22 @@ const BillingManager = () => {
                 />
               </div>
               {form.extra_hours_enabled && (
+                <>
                 <div>
-                  <Label>Extra Hours</Label>
+                  <Label>Extra Hours (Hrs)</Label>
                   <Input type="number" value={form.extra_hours} onChange={(e) => setForm({ ...form, extra_hours: e.target.value })} placeholder="Enter Hours" />
-                  {perHourRate != null && (
-                    <p className="text-xs text-muted-foreground mt-1">Rate: ₹{perHourRate}/hr</p>
-                  )}
                 </div>
+                <div>
+                  <Label>Extra Hours Amount (₹)</Label>
+                  <Input type="number" value={form.extra_hours_amount} onChange={(e) => setForm({ ...form, extra_hours_amount: e.target.value })} placeholder="Enter Amount" />
+                </div>
+                </>
               )}
-              {form.billing_basis === "kilometer" && (
+              {form.extra_km_enabled && (
+                <>
                 <div><Label>Extra KM</Label><Input type="number" value={form.extra_km} onChange={(e) => setForm({ ...form, extra_km: e.target.value })} placeholder="Enter KM" /></div>
+                <div><Label>Extra KM Amount (₹)</Label><Input type="number" value={form.extra_km_amount} onChange={(e) => setForm({ ...form, extra_km_amount: e.target.value })} placeholder="Enter Amount" /></div>
+                </>
               )}
             </div>
           </section>
@@ -807,13 +878,14 @@ const BillingManager = () => {
               </Select>
             </div>
             <div>
-              <Label>Billing Basis</Label>
-              <Select value={filterBasis || "all"} onValueChange={(v) => setFilterBasis(v === "all" ? "" : v)}>
+              <Label>Trip Type</Label>
+              <Select value={filterTripType || "all"} onValueChange={(v) => setFilterTripType(v === "all" ? "" : v)}>
                 <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="hourly">Hourly Basis</SelectItem>
-                  <SelectItem value="kilometer">Kilometer Basis</SelectItem>
+                  <SelectItem value="half_day">Half Day Rent</SelectItem>
+                  <SelectItem value="full_day">Full Day Rent</SelectItem>
+                  <SelectItem value="pickup_drop">Pick Up & Drop</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -853,7 +925,7 @@ const BillingManager = () => {
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
-                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setFilterCategory(""); setFilterBasis(""); setSearch(""); setShowAll(false); }}>
+                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setFilterCategory(""); setFilterTripType(""); setSearch(""); setShowAll(false); }}>
                   <RotateCcw className="h-4 w-4 mr-1" /> Reset
                 </Button>
               </div>
@@ -888,7 +960,7 @@ const BillingManager = () => {
                       <TableCell className="font-mono text-xs">{b.bill_no}</TableCell>
                       <TableCell>{b.bill_date}</TableCell>
                       <TableCell>{(b as unknown as { bill_category?: string | null }).bill_category ?? "-"}</TableCell>
-                      <TableCell className="capitalize">{(b as unknown as { billing_basis?: string }).billing_basis ?? "kilometer"}</TableCell>
+                      <TableCell className="capitalize">{((b as unknown as { trip_type?: string }).trip_type ?? "full_day").replace("_", " ")}</TableCell>
                       <TableCell className="font-medium">{b.customer_name}</TableCell>
                       <TableCell>{b.vehicle_type ?? "-"}</TableCell>
                       <TableCell>{b.vehicle_number ?? "-"}</TableCell>
@@ -947,7 +1019,10 @@ const BillingManager = () => {
               <div className="text-left space-y-1 text-sm text-foreground">
                 <div><strong>Date:</strong> {viewBill?.bill_date}</div>
                 <div><strong>Category:</strong> {viewBill ? ((viewBill as unknown as { bill_category?: string | null }).bill_category ?? "-") : "-"}</div>
-                <div><strong>Billing Basis:</strong> {viewBill ? (((viewBill as unknown as { billing_basis?: string }).billing_basis ?? "kilometer") === "hourly" ? "Hourly Basis" : "Kilometer Basis") : "-"}</div>
+                <div><strong>Trip Type:</strong> {viewBill ? (() => {
+                  const t = (viewBill as unknown as { trip_type?: string }).trip_type ?? "full_day";
+                  return t === "half_day" ? "Half Day Rent" : t === "pickup_drop" ? "Pick Up & Drop" : "Full Day Rent";
+                })() : "-"}</div>
                 <div><strong>Customer:</strong> {viewBill?.customer_name}</div>
                 <div><strong>Place:</strong> {viewBill?.place ?? "-"}</div>
                 <div><strong>Vehicle:</strong> {viewBill?.vehicle_type ?? "-"} · {viewBill?.vehicle_number ?? "-"}</div>

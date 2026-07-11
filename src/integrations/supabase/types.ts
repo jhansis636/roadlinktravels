@@ -83,19 +83,27 @@ export type Database = {
           bill_no: string | null
           billing_basis: string
           created_at: string
+          customer_address: string | null
           customer_id: string | null
           customer_name: string
+          customer_phone: string | null
+          day_rent: number | null
+          driver_bata: number | null
+          drop_location: string | null
           end_date: string | null
           end_km: number | null
           end_time: string | null
           extra_hours: number | null
+          extra_hours_amount: number | null
           extra_hours_enabled: boolean
           extra_km: number | null
+          extra_km_amount: number | null
           id: string
           night_halt: number | null
           parking_tollgate: number | null
           per_km_rate: number | null
           permit: number | null
+          pickup: string | null
           place: string | null
           remarks: string | null
           start_date: string | null
@@ -106,6 +114,7 @@ export type Database = {
           total_days: number | null
           total_km: number | null
           total_time_minutes: number | null
+          trip_type: string | null
           updated_at: string
           vehicle_number: string | null
           vehicle_type: string | null
@@ -118,19 +127,27 @@ export type Database = {
           bill_no?: string | null
           billing_basis?: string
           created_at?: string
+          customer_address?: string | null
           customer_id?: string | null
           customer_name: string
+          customer_phone?: string | null
+          day_rent?: number | null
+          driver_bata?: number | null
+          drop_location?: string | null
           end_date?: string | null
           end_km?: number | null
           end_time?: string | null
           extra_hours?: number | null
+          extra_hours_amount?: number | null
           extra_hours_enabled?: boolean
           extra_km?: number | null
+          extra_km_amount?: number | null
           id?: string
           night_halt?: number | null
           parking_tollgate?: number | null
           per_km_rate?: number | null
           permit?: number | null
+          pickup?: string | null
           place?: string | null
           remarks?: string | null
           start_date?: string | null
@@ -141,6 +158,7 @@ export type Database = {
           total_days?: number | null
           total_km?: number | null
           total_time_minutes?: number | null
+          trip_type?: string | null
           updated_at?: string
           vehicle_number?: string | null
           vehicle_type?: string | null
@@ -153,19 +171,27 @@ export type Database = {
           bill_no?: string | null
           billing_basis?: string
           created_at?: string
+          customer_address?: string | null
           customer_id?: string | null
           customer_name?: string
+          customer_phone?: string | null
+          day_rent?: number | null
+          driver_bata?: number | null
+          drop_location?: string | null
           end_date?: string | null
           end_km?: number | null
           end_time?: string | null
           extra_hours?: number | null
+          extra_hours_amount?: number | null
           extra_hours_enabled?: boolean
           extra_km?: number | null
+          extra_km_amount?: number | null
           id?: string
           night_halt?: number | null
           parking_tollgate?: number | null
           per_km_rate?: number | null
           permit?: number | null
+          pickup?: string | null
           place?: string | null
           remarks?: string | null
           start_date?: string | null
@@ -176,6 +202,7 @@ export type Database = {
           total_days?: number | null
           total_km?: number | null
           total_time_minutes?: number | null
+          trip_type?: string | null
           updated_at?: string
           vehicle_number?: string | null
           vehicle_type?: string | null
@@ -577,9 +604,11 @@ export type Database = {
           day_rent: number | null
           driver_bata: number | null
           extra_km_rate: number | null
+          half_day_rate: number | null
           id: string
           per_hour_rate: number | null
           per_km_rate: number | null
+          pickup_drop_rate: number | null
           sort_order: number
           updated_at: string
           vehicle_type: string
@@ -590,9 +619,11 @@ export type Database = {
           day_rent?: number | null
           driver_bata?: number | null
           extra_km_rate?: number | null
+          half_day_rate?: number | null
           id?: string
           per_hour_rate?: number | null
           per_km_rate?: number | null
+          pickup_drop_rate?: number | null
           sort_order?: number
           updated_at?: string
           vehicle_type: string
@@ -603,9 +634,11 @@ export type Database = {
           day_rent?: number | null
           driver_bata?: number | null
           extra_km_rate?: number | null
+          half_day_rate?: number | null
           id?: string
           per_hour_rate?: number | null
           per_km_rate?: number | null
+          pickup_drop_rate?: number | null
           sort_order?: number
           updated_at?: string
           vehicle_type?: string
