@@ -159,74 +159,149 @@ const loadImageDataUrl = (src: string): Promise<string> =>
 export const downloadBillPdf = async (bill: Bill) => {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 40;
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const contentWidth = pageWidth - margin * 2;
+  const bx = bill as unknown as {
+    trip_type?: string; pickup?: string; drop_location?: string;
+    customer_phone?: string; customer_address?: string;
+  };
 
-  // Header: logo + company block, all sized to fit inside the page margins.
-  const logoSize = 48;
-  const headerTop = margin;
-  const textLeft = margin + logoSize + 14;
-
+  // ===== Header =====
+  const logoSize = 56;
   try {
     const logoData = await loadImageDataUrl(logo);
-    doc.addImage(logoData, "PNG", margin, headerTop, logoSize, logoSize);
-  } catch {
-    // logo failed — continue without it
-  }
+    doc.addImage(logoData, "PNG", margin, margin, logoSize, logoSize);
+  } catch { /* ignore */ }
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(15);
-  doc.setTextColor(29, 78, 216);
-  doc.text(COMPANY, textLeft, headerTop + 16);
+  const textLeft = margin + logoSize + 14;
+  doc.setFont("helvetica", "bold").setFontSize(17).setTextColor(29, 78, 216);
+  doc.text(COMPANY, textLeft, margin + 18);
+  doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(80, 80, 80);
+  doc.text(ADDRESS, textLeft, margin + 32);
+  doc.text(`Contact: ${CONTACT}`, textLeft, margin + 44);
+  doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(15, 81, 50);
+  doc.text(MSME, textLeft, margin + 56);
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(100, 116, 139);
-  doc.text(CONTACT, textLeft, headerTop + 30);
+  // INVOICE label right side
+  doc.setFont("helvetica", "bold").setFontSize(22).setTextColor(29, 78, 216);
+  doc.text("INVOICE", pageWidth - margin, margin + 20, { align: "right" });
+  doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(60, 60, 60);
+  doc.text(`Bill No: ${bill.bill_no ?? "-"}`, pageWidth - margin, margin + 36, { align: "right" });
+  doc.text(`Date: ${bill.bill_date ?? "-"}`, pageWidth - margin, margin + 48, { align: "right" });
+  doc.text(`Category: ${(bill as unknown as { bill_category?: string }).bill_category ?? "-"}`, pageWidth - margin, margin + 60, { align: "right" });
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(15, 81, 50);
-  doc.text(MSME, textLeft, headerTop + 44);
+  const dividerY = margin + logoSize + 14;
+  doc.setDrawColor(29, 78, 216).setLineWidth(1.2);
+  doc.line(margin, dividerY, pageWidth - margin, dividerY);
 
-  const headerBottom = headerTop + logoSize + 8;
-  doc.setDrawColor(29, 78, 216);
-  doc.setLineWidth(1.5);
-  doc.line(margin, headerBottom, pageWidth - margin, headerBottom);
+  // ===== Customer & Trip Info (two columns) =====
+  let y = dividerY + 18;
+  const colWidth = (contentWidth - 12) / 2;
 
-  doc.setTextColor(15, 23, 42);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text(`Bill No: ${bill.bill_no ?? "-"}`, margin, headerBottom + 18);
-  doc.text(`Date: ${bill.bill_date ?? "-"}`, pageWidth - margin, headerBottom + 18, { align: "right" });
+  const drawInfoBox = (x: number, top: number, title: string, rows: [string, string][]) => {
+    doc.setFillColor(239, 246, 255);
+    doc.rect(x, top, colWidth, 16, "F");
+    doc.setFont("helvetica", "bold").setFontSize(10).setTextColor(30, 64, 175);
+    doc.text(title, x + 8, top + 11);
+    doc.setDrawColor(210, 220, 235).setLineWidth(0.5);
+    let ry = top + 22;
+    doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(30, 30, 30);
+    rows.forEach(([k, v]) => {
+      doc.setFont("helvetica", "bold").setTextColor(80, 80, 80);
+      doc.text(k, x + 8, ry);
+      doc.setFont("helvetica", "normal").setTextColor(20, 20, 20);
+      const lines = doc.splitTextToSize(v || "-", colWidth - 90);
+      doc.text(lines, x + 90, ry);
+      ry += Math.max(12, lines.length * 11);
+    });
+    doc.setDrawColor(210, 220, 235);
+    doc.rect(x, top, colWidth, ry - top + 4);
+    return ry + 4;
+  };
 
-  const tableStart = headerBottom + 28;
+  const customerRows: [string, string][] = [
+    ["Name", bill.customer_name ?? "-"],
+    ["Phone", bx.customer_phone ?? "-"],
+    ["Address", bx.customer_address ?? "-"],
+  ];
+  const tripRows: [string, string][] = [
+    ["Trip Type", tripTypeLabel(bx.trip_type)],
+    ["Pickup", bx.pickup ?? "-"],
+    ["Drop", bx.drop_location ?? "-"],
+    ["Vehicle", `${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}`],
+    ["Dates", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})`],
+    ["Time", `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`],
+    ["Kilometer", `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"})`],
+  ];
+  const custEnd = drawInfoBox(margin, y, "Customer Information", customerRows);
+  const tripEnd = drawInfoBox(margin + colWidth + 12, y, "Trip Information", tripRows);
+  y = Math.max(custEnd, tripEnd) + 10;
+
+  // ===== Charges table =====
+  const chargeRows = buildChargeRows(bill);
   autoTable(doc, {
-    startY: tableStart,
-    head: [["Field", "Value"]],
-    body: buildRows(bill),
-    theme: "striped",
-    headStyles: { fillColor: [239, 246, 255], textColor: [30, 64, 175] },
-    styles: { fontSize: 9, cellPadding: 5, overflow: "linebreak" },
+    startY: y,
+    head: [["Description", "Amount (INR)"]],
+    body: chargeRows.length ? chargeRows.map(([k, v]) => [k, fmt(v)]) : [["No charges", "-"]],
+    theme: "grid",
+    headStyles: { fillColor: [29, 78, 216], textColor: [255, 255, 255], fontStyle: "bold" },
+    styles: { fontSize: 10, cellPadding: 6 },
     columnStyles: {
-      0: { cellWidth: 170, fontStyle: "bold" },
-      1: { cellWidth: pageWidth - margin * 2 - 170 },
+      0: { cellWidth: contentWidth - 140 },
+      1: { cellWidth: 140, halign: "right" },
     },
     margin: { left: margin, right: margin },
   });
 
-  const finalY = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? tableStart + 40;
-  const totalsBase = Math.min(finalY + 20, pageHeight - margin - 60);
-  doc.setFontSize(11);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(15, 23, 42);
-  doc.text(`Total: ${fmt(bill.total_amount)}`, pageWidth - margin, totalsBase, { align: "right" });
-  doc.setTextColor(100, 116, 139);
-  doc.setFontSize(10);
-  doc.text(`Advance: ${fmt(bill.advance)}`, pageWidth - margin, totalsBase + 16, { align: "right" });
-  doc.setTextColor(5, 150, 105);
-  doc.setFont("helvetica", "bold");
-  doc.text(`Balance: ${fmt(bill.balance)}`, pageWidth - margin, totalsBase + 32, { align: "right" });
+  const afterTable = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? y + 40;
+
+  // ===== Payment Summary =====
+  const total = Number(bill.total_amount ?? 0);
+  const advance = Number(bill.advance ?? 0);
+  const balance = Number(bill.balance ?? (total - advance));
+  const sumY = afterTable + 14;
+  const boxW = 220;
+  const boxX = pageWidth - margin - boxW;
+  doc.setDrawColor(29, 78, 216).setLineWidth(0.6);
+  doc.rect(boxX, sumY, boxW, 68);
+  doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(60, 60, 60);
+  doc.text("Sub Total", boxX + 10, sumY + 16);
+  doc.text(fmt(total), boxX + boxW - 10, sumY + 16, { align: "right" });
+  doc.text("Advance", boxX + 10, sumY + 32);
+  doc.text(fmt(advance), boxX + boxW - 10, sumY + 32, { align: "right" });
+  doc.setFillColor(239, 246, 255);
+  doc.rect(boxX, sumY + 42, boxW, 26, "F");
+  doc.setFont("helvetica", "bold").setFontSize(12).setTextColor(5, 150, 105);
+  doc.text("Balance", boxX + 10, sumY + 60);
+  doc.text(fmt(balance), boxX + boxW - 10, sumY + 60, { align: "right" });
+
+  // Amount in words
+  doc.setFont("helvetica", "italic").setFontSize(9).setTextColor(60, 60, 60);
+  const words = numToWords(total);
+  const wrapped = doc.splitTextToSize(`Amount in Words: ${words}`, contentWidth - boxW - 20);
+  doc.text(wrapped, margin, sumY + 16);
+
+  if (bill.remarks) {
+    doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(80, 80, 80);
+    doc.text("Remarks:", margin, sumY + 46);
+    doc.setFont("helvetica", "normal").setTextColor(30, 30, 30);
+    const rem = doc.splitTextToSize(bill.remarks, contentWidth - boxW - 20);
+    doc.text(rem, margin, sumY + 58);
+  }
+
+  // ===== Footer =====
+  const footerY = pageHeight - margin - 30;
+  doc.setDrawColor(200, 200, 200).setLineWidth(0.5);
+  doc.line(margin, footerY - 10, pageWidth - margin, footerY - 10);
+  doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(29, 78, 216);
+  doc.text("Thank You for choosing Roadlink Tours and Travels!", margin, footerY + 2);
+  doc.setFont("helvetica", "normal").setFontSize(8).setTextColor(120, 120, 120);
+  doc.text("Generated by Roadlink", margin, footerY + 16);
+  doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(60, 60, 60);
+  doc.text("Authorized Signature", pageWidth - margin, footerY + 2, { align: "right" });
+  doc.setDrawColor(120, 120, 120);
+  doc.line(pageWidth - margin - 120, footerY - 4, pageWidth - margin, footerY - 4);
 
   doc.save(`Bill-${bill.bill_no ?? "roadlink"}.pdf`);
 };
