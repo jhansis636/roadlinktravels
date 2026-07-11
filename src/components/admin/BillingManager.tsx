@@ -135,24 +135,34 @@ const csvEscape = (v: unknown): string => {
 
 const exportBillsCsv = (rows: Bill[]) => {
   const headers = [
-    "Bill No", "Date", "Category", "Basis", "Customer", "Place",
+    "Bill No", "Date", "Category", "Trip Type", "Customer", "Phone", "Pickup", "Drop", "Place",
     "Vehicle Type", "Vehicle Number",
     "Start Date", "End Date", "Total Days",
     "Start Time", "End Time", "Total Minutes",
-    "Extra Hours", "Start KM", "End KM", "Total KM", "Per KM Rate", "Extra KM",
+    "Extra Hours", "Extra Hours Amount",
+    "Start KM", "End KM", "Total KM", "Per KM Rate",
+    "Extra KM", "Extra KM Amount",
+    "Day Rent", "Driver Bata",
     "Parking/Tollgate", "Permit", "Night Halt",
     "Advance", "Total Amount", "Balance", "Status", "Remarks",
   ];
   const body = rows.map((b) => {
-    const bx = b as unknown as { bill_category?: string | null; billing_basis?: string };
+    const bx = b as unknown as {
+      bill_category?: string | null; trip_type?: string | null;
+      customer_phone?: string | null; pickup?: string | null; drop_location?: string | null;
+      day_rent?: number | null; driver_bata?: number | null;
+      extra_hours_amount?: number | null; extra_km_amount?: number | null;
+    };
     return [
-      b.bill_no, b.bill_date, bx.bill_category ?? "", bx.billing_basis ?? "kilometer",
-      b.customer_name, b.place ?? "",
+      b.bill_no, b.bill_date, bx.bill_category ?? "", bx.trip_type ?? "",
+      b.customer_name, bx.customer_phone ?? "", bx.pickup ?? "", bx.drop_location ?? "", b.place ?? "",
       b.vehicle_type ?? "", b.vehicle_number ?? "",
       b.start_date ?? "", b.end_date ?? "", b.total_days ?? "",
       b.start_time ?? "", b.end_time ?? "", b.total_time_minutes ?? "",
-      b.extra_hours ?? "", b.start_km ?? "", b.end_km ?? "", b.total_km ?? "",
-      b.per_km_rate ?? "", b.extra_km ?? "",
+      b.extra_hours ?? "", bx.extra_hours_amount ?? "",
+      b.start_km ?? "", b.end_km ?? "", b.total_km ?? "", b.per_km_rate ?? "",
+      b.extra_km ?? "", bx.extra_km_amount ?? "",
+      bx.day_rent ?? "", bx.driver_bata ?? "",
       b.parking_tollgate ?? "", b.permit ?? "", b.night_halt ?? "",
       b.advance ?? "", b.total_amount ?? "", b.balance ?? "", b.status ?? "", b.remarks ?? "",
     ].map(csvEscape).join(",");
