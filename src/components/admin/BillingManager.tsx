@@ -305,6 +305,8 @@ const BillingManager = () => {
         label: t.vehicle_type,
         perKmRate: t.per_km_rate != null ? Number(t.per_km_rate) : undefined,
         perDayRate: t.day_rent != null ? Number(t.day_rent) : undefined,
+        halfDayRate: t.half_day_rate != null ? Number(t.half_day_rate) : undefined,
+        pickupDropRate: t.pickup_drop_rate != null ? Number(t.pickup_drop_rate) : undefined,
         perHourRate: t.per_hour_rate != null ? Number(t.per_hour_rate) : undefined,
         driverBataPerDay: t.driver_bata != null ? Number(t.driver_bata) : undefined,
       })),
@@ -317,8 +319,16 @@ const BillingManager = () => {
   const selectedVehicle = form.vehicle_type ? getVehicleByName(form.vehicle_type) : undefined;
   const perKmRate = selectedVehicle?.perKmRate;
   const perDayRate = selectedVehicle?.perDayRate;
+  const halfDayRate = selectedVehicle?.halfDayRate;
+  const pickupDropRate = selectedVehicle?.pickupDropRate;
   const perHourRate = selectedVehicle?.perHourRate;
   const driverBataPerDay = selectedVehicle?.driverBataPerDay;
+
+  // Per-trip-type base rate used to auto-populate Day Rent field
+  const tripBaseRate =
+    form.trip_type === "half_day" ? halfDayRate :
+    form.trip_type === "pickup_drop" ? pickupDropRate :
+    perDayRate;
 
   const totalMinutes = useMemo(() => {
     const s = timeToMinutes(form.start_time);
@@ -345,47 +355,40 @@ const BillingManager = () => {
     [form.start_date, form.end_date],
   );
 
-  // Auto-populate Day Rent + Driver Bata from selected vehicle. Admin can
-  // still overwrite; changing vehicle refreshes both.
+  // Auto-populate Day Rent + Driver Bata from selected vehicle and trip type.
+  // Admin can still overwrite; changing either resets to the tariff value.
   useEffect(() => {
     setForm((f) => ({
       ...f,
-      day_rent: perDayRate != null ? String(perDayRate) : "",
+      day_rent: tripBaseRate != null ? String(tripBaseRate) : "",
       driver_bata: driverBataPerDay != null ? String(driverBataPerDay) : "",
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.vehicle_type]);
+  }, [form.vehicle_type, form.trip_type]);
 
-  // Live Total Amount. Branches on billing_basis.
+  // Live Total Amount. Trip-type driven: uses tariff base rate for the chosen
+  // trip type. Extra Hours and Extra KM are fully manual amounts.
   const calc = useMemo(() => {
     const days = totalDays ?? 1;
-    const km = totalKm ?? 0;
-    const isHourly = form.billing_basis === "hourly";
-    const hours = (totalMinutes ?? 0) / 60;
-    const dayRent = num(form.day_rent) ?? perDayRate ?? 0;
-    const kmCharge = !isHourly && perKmRate != null ? km * perKmRate : 0;
-    const dayCharge = !isHourly && perKmRate == null && dayRent ? dayRent * days : 0;
-    const hourlyCharge = isHourly && perHourRate != null ? hours * perHourRate : 0;
-    const bata = !isHourly ? (num(form.driver_bata) ?? 0) * days : 0;
-    const extraKmCharge = !isHourly ? (num(form.extra_km) ?? 0) * (perKmRate ?? 0) : 0;
-    // Extra Hours uses the selected vehicle's per-hour rate. If no rate
-    // configured or no value entered, contributes 0.
-    const extraHoursCharge = form.extra_hours_enabled && num(form.extra_hours) != null && perHourRate != null
-      ? (num(form.extra_hours) as number) * perHourRate
-      : 0;
+    const rentValue = num(form.day_rent) ?? tripBaseRate ?? 0;
+    // Pickup & Drop is a fixed one-way charge; others multiply by days.
+    const rentCharge = form.trip_type === "pickup_drop" ? rentValue : rentValue * days;
+    const bata = (num(form.driver_bata) ?? 0) * days;
+    const extraHoursCharge = form.extra_hours_enabled ? (num(form.extra_hours_amount) ?? 0) : 0;
+    const extraKmCharge = form.extra_km_enabled ? (num(form.extra_km_amount) ?? 0) : 0;
     const parking = num(form.parking_tollgate) ?? 0;
     const permit = num(form.permit) ?? 0;
     const nightHalt = num(form.night_halt) ?? 0;
     const total = Math.round(
-      kmCharge + dayCharge + hourlyCharge + bata + extraKmCharge + extraHoursCharge + parking + permit + nightHalt,
+      rentCharge + bata + extraKmCharge + extraHoursCharge + parking + permit + nightHalt,
     );
     const advance = num(form.advance) ?? 0;
     return { total, advance };
   }, [
-    totalKm, totalDays, totalMinutes, perKmRate, perDayRate, perHourRate, driverBataPerDay,
-    form.billing_basis,
+    totalDays, tripBaseRate, form.trip_type,
     form.day_rent, form.driver_bata,
-    form.extra_km, form.extra_hours_enabled, form.extra_hours,
+    form.extra_hours_enabled, form.extra_hours_amount,
+    form.extra_km_enabled, form.extra_km_amount,
     form.parking_tollgate, form.permit, form.night_halt, form.advance,
   ]);
 
@@ -400,10 +403,11 @@ const BillingManager = () => {
     setForm((f) => ({ ...f, total_amount_override: "" }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    form.vehicle_type, form.billing_basis, form.start_km, form.end_km,
+    form.vehicle_type, form.trip_type,
     form.start_date, form.end_date, form.start_time, form.end_time,
     form.day_rent, form.driver_bata,
-    form.extra_km, form.extra_hours_enabled, form.extra_hours,
+    form.extra_hours_enabled, form.extra_hours_amount,
+    form.extra_km_enabled, form.extra_km_amount,
     form.parking_tollgate, form.permit, form.night_halt,
   ]);
 
@@ -413,14 +417,14 @@ const BillingManager = () => {
   const [filterCustomer, setFilterCustomer] = useState("");
   const [filterVehicle, setFilterVehicle] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
-  const [filterBasis, setFilterBasis] = useState("");
+  const [filterTripType, setFilterTripType] = useState("");
   const [search, setSearch] = useState("");
   // Default view = current calendar month. "All" clears this.
   const [showAll, setShowAll] = useState(false);
 
   const anyFilterActive =
     !!fromDate || !!toDate || !!filterCustomer || !!filterVehicle ||
-    !!filterCategory || !!filterBasis || !!search.trim();
+    !!filterCategory || !!filterTripType || !!search.trim();
 
   const monthBounds = useMemo(() => {
     const now = new Date();
@@ -443,18 +447,18 @@ const BillingManager = () => {
       if (filterCustomer && b.customer_name !== filterCustomer) return false;
       if (filterVehicle && b.vehicle_type !== filterVehicle) return false;
       const bCat = (b as unknown as { bill_category?: string | null }).bill_category ?? "";
-      const bBasis = (b as unknown as { billing_basis?: string }).billing_basis ?? "kilometer";
+      const bTrip = (b as unknown as { trip_type?: string | null }).trip_type ?? "";
       if (filterCategory && bCat !== filterCategory) return false;
-      if (filterBasis && bBasis !== filterBasis) return false;
+      if (filterTripType && bTrip !== filterTripType) return false;
       if (q) {
         const hay = [
-          b.customer_name, b.vehicle_number, b.place, b.bill_no, bCat, bBasis,
+          b.customer_name, b.vehicle_number, b.place, b.bill_no, bCat, bTrip,
         ].filter(Boolean).join(" ").toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, filterCategory, filterBasis, search, showAll, anyFilterActive, monthBounds]);
+  }, [bills, fromDate, toDate, filterCustomer, filterVehicle, filterCategory, filterTripType, search, showAll, anyFilterActive, monthBounds]);
 
   const [viewBill, setViewBill] = useState<Bill | null>(null);
 
