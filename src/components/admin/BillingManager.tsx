@@ -889,13 +889,14 @@ const BillingManager = () => {
               </Select>
             </div>
             <div>
-              <Label>Billing Basis</Label>
-              <Select value={filterBasis || "all"} onValueChange={(v) => setFilterBasis(v === "all" ? "" : v)}>
+              <Label>Trip Type</Label>
+              <Select value={filterTripType || "all"} onValueChange={(v) => setFilterTripType(v === "all" ? "" : v)}>
                 <SelectTrigger><SelectValue placeholder="All" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="hourly">Hourly Basis</SelectItem>
-                  <SelectItem value="kilometer">Kilometer Basis</SelectItem>
+                  <SelectItem value="half_day">Half Day Rent</SelectItem>
+                  <SelectItem value="full_day">Full Day Rent</SelectItem>
+                  <SelectItem value="pickup_drop">Pick Up & Drop</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -935,7 +936,7 @@ const BillingManager = () => {
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
-                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setFilterCategory(""); setFilterBasis(""); setSearch(""); setShowAll(false); }}>
+                <Button variant="outline" onClick={() => { setFromDate(""); setToDate(""); setFilterCustomer(""); setFilterVehicle(""); setFilterCategory(""); setFilterTripType(""); setSearch(""); setShowAll(false); }}>
                   <RotateCcw className="h-4 w-4 mr-1" /> Reset
                 </Button>
               </div>
