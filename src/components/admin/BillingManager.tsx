@@ -342,6 +342,38 @@ const BillingManager = ({
     return diff < 0 ? diff + 24 * 60 : diff;
   }, [form.start_time, form.end_time]);
 
+  // Additional Hours = trip duration beyond 10 hours. Auto-computed from
+  // Start/End Time; charge uses the vehicle's per-hour tariff rate.
+  const additionalHours = useMemo(() => {
+    if (totalMinutes == null || totalMinutes <= 600) return null;
+    return Math.round(((totalMinutes - 600) / 60) * 100) / 100;
+  }, [totalMinutes]);
+
+  const additionalHoursCharge = useMemo(() => {
+    if (additionalHours == null || perHourRate == null) return null;
+    return Math.round(additionalHours * perHourRate);
+  }, [additionalHours, perHourRate]);
+
+  // Sync Additional Hours into the bill's extra_hours fields automatically.
+  useEffect(() => {
+    setForm((f) => {
+      if (additionalHours != null) {
+        return {
+          ...f,
+          extra_hours_enabled: true,
+          extra_hours: String(additionalHours),
+          extra_hours_amount: additionalHoursCharge != null ? String(additionalHoursCharge) : f.extra_hours_amount,
+        };
+      }
+      // Duration <= 10h: clear any auto-populated additional hours
+      if (f.extra_hours_enabled || f.extra_hours || f.extra_hours_amount) {
+        return { ...f, extra_hours_enabled: false, extra_hours: "", extra_hours_amount: "" };
+      }
+      return f;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [additionalHours, additionalHoursCharge]);
+
   const totalKm = useMemo(() => {
     const s = num(form.start_km);
     const e = num(form.end_km);
@@ -652,6 +684,22 @@ const BillingManager = ({
                   <Label>Total Time</Label>
                   <Input readOnly value={formatDuration(totalMinutes)} placeholder="--" className="bg-muted" />
                 </div>
+                {additionalHours != null && (
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Additional Hours</Label>
+                      <Input readOnly value={`${additionalHours} Hrs`} className="bg-amber-50 dark:bg-amber-950/30 font-semibold" />
+                    </div>
+                    <div>
+                      <Label>Additional Hourly Charges</Label>
+                      <Input
+                        readOnly
+                        value={additionalHoursCharge != null ? `₹${additionalHoursCharge.toLocaleString("en-IN")}` : "Set Per-Hour Rate"}
+                        className="bg-amber-50 dark:bg-amber-950/30 font-semibold"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Kilometer */}
@@ -710,10 +758,6 @@ const BillingManager = ({
               <h3 className="text-primary font-semibold">Additional Charges</h3>
               <div className="flex gap-2">
                 <Button type="button" variant="outline" size="sm"
-                  onClick={() => setForm({ ...form, extra_hours_enabled: !form.extra_hours_enabled, extra_hours: form.extra_hours_enabled ? "" : form.extra_hours, extra_hours_amount: form.extra_hours_enabled ? "" : form.extra_hours_amount })}>
-                  {form.extra_hours_enabled ? <><Minus className="h-4 w-4 mr-1" />Remove Extra Hours</> : <><Plus className="h-4 w-4 mr-1" />Extra Hours</>}
-                </Button>
-                <Button type="button" variant="outline" size="sm"
                   onClick={() => setForm({ ...form, extra_km_enabled: !form.extra_km_enabled, extra_km: form.extra_km_enabled ? "" : form.extra_km, extra_km_amount: form.extra_km_enabled ? "" : form.extra_km_amount })}>
                   {form.extra_km_enabled ? <><Minus className="h-4 w-4 mr-1" />Remove Extra KM</> : <><Plus className="h-4 w-4 mr-1" />Extra Kilometer</>}
                 </Button>
@@ -735,11 +779,11 @@ const BillingManager = ({
               {form.extra_hours_enabled && (
                 <>
                 <div>
-                  <Label>Extra Hours (Hrs)</Label>
-                  <Input type="number" value={form.extra_hours} onChange={(e) => setForm({ ...form, extra_hours: e.target.value })} placeholder="Enter Hours" />
+                  <Label>Additional Hours (Hrs) <span className="text-xs text-muted-foreground">(auto)</span></Label>
+                  <Input readOnly type="number" value={form.extra_hours} className="bg-muted" />
                 </div>
                 <div>
-                  <Label>Extra Hours Amount (₹)</Label>
+                  <Label>Additional Hourly Charges (₹) <span className="text-xs text-muted-foreground">(auto)</span></Label>
                   <Input type="number" value={form.extra_hours_amount} onChange={(e) => setForm({ ...form, extra_hours_amount: e.target.value })} placeholder="Enter Amount" />
                 </div>
                 </>
