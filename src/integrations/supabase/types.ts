@@ -292,6 +292,152 @@ export type Database = {
         }
         Relationships: []
       }
+      driver_bills: {
+        Row: {
+          advance: number | null
+          balance: number | null
+          bill_category: string | null
+          bill_date: string
+          bill_no: string
+          created_at: string
+          customer_address: string | null
+          customer_name: string
+          customer_phone: string | null
+          day_rent: number | null
+          driver_bata: number | null
+          driver_name: string | null
+          drop_location: string | null
+          end_date: string | null
+          end_km: number | null
+          end_time: string | null
+          extra_hours: number | null
+          extra_hours_amount: number | null
+          extra_km: number | null
+          extra_km_amount: number | null
+          id: string
+          night_halt: number | null
+          other_charges: number | null
+          parking: number | null
+          permit: number | null
+          pickup: string | null
+          place: string | null
+          remarks: string | null
+          source_bill_id: string | null
+          start_date: string | null
+          start_km: number | null
+          start_time: string | null
+          status: string
+          tollgate: number | null
+          total_amount: number | null
+          total_days: number | null
+          total_km: number | null
+          total_time_minutes: number | null
+          trip_amount: number | null
+          trip_type: string | null
+          updated_at: string
+          vehicle_number: string | null
+          vehicle_type: string | null
+        }
+        Insert: {
+          advance?: number | null
+          balance?: number | null
+          bill_category?: string | null
+          bill_date?: string
+          bill_no: string
+          created_at?: string
+          customer_address?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          day_rent?: number | null
+          driver_bata?: number | null
+          driver_name?: string | null
+          drop_location?: string | null
+          end_date?: string | null
+          end_km?: number | null
+          end_time?: string | null
+          extra_hours?: number | null
+          extra_hours_amount?: number | null
+          extra_km?: number | null
+          extra_km_amount?: number | null
+          id?: string
+          night_halt?: number | null
+          other_charges?: number | null
+          parking?: number | null
+          permit?: number | null
+          pickup?: string | null
+          place?: string | null
+          remarks?: string | null
+          source_bill_id?: string | null
+          start_date?: string | null
+          start_km?: number | null
+          start_time?: string | null
+          status?: string
+          tollgate?: number | null
+          total_amount?: number | null
+          total_days?: number | null
+          total_km?: number | null
+          total_time_minutes?: number | null
+          trip_amount?: number | null
+          trip_type?: string | null
+          updated_at?: string
+          vehicle_number?: string | null
+          vehicle_type?: string | null
+        }
+        Update: {
+          advance?: number | null
+          balance?: number | null
+          bill_category?: string | null
+          bill_date?: string
+          bill_no?: string
+          created_at?: string
+          customer_address?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          day_rent?: number | null
+          driver_bata?: number | null
+          driver_name?: string | null
+          drop_location?: string | null
+          end_date?: string | null
+          end_km?: number | null
+          end_time?: string | null
+          extra_hours?: number | null
+          extra_hours_amount?: number | null
+          extra_km?: number | null
+          extra_km_amount?: number | null
+          id?: string
+          night_halt?: number | null
+          other_charges?: number | null
+          parking?: number | null
+          permit?: number | null
+          pickup?: string | null
+          place?: string | null
+          remarks?: string | null
+          source_bill_id?: string | null
+          start_date?: string | null
+          start_km?: number | null
+          start_time?: string | null
+          status?: string
+          tollgate?: number | null
+          total_amount?: number | null
+          total_days?: number | null
+          total_km?: number | null
+          total_time_minutes?: number | null
+          trip_amount?: number | null
+          trip_type?: string | null
+          updated_at?: string
+          vehicle_number?: string | null
+          vehicle_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_bills_source_bill_id_fkey"
+            columns: ["source_bill_id"]
+            isOneToOne: true
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       enquiries: {
         Row: {
           category: string | null
