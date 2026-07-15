@@ -75,13 +75,14 @@ export const printDriverBill = (bill: DriverBill) => {
     @page { size: A4; margin: 12mm; }
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #0f172a; margin: 0; padding: 0; font-size: 12px; }
-    .header { display: flex; align-items: center; gap: 18px; border-bottom: 2px solid #b45309; padding-bottom: 12px; margin-bottom: 14px; }
-    .header img.logo { width: 170px; height: auto; object-fit: contain; }
-    .brand h1 { margin: 0 0 4px; color: #b45309; font-size: 20px; letter-spacing: 0.3px; }
+    .header { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #b45309; padding-bottom: 12px; margin-bottom: 14px; }
+    .header img.logo { width: 150px; height: auto; object-fit: contain; flex-shrink: 0; }
+    .brand { flex: 1; min-width: 0; }
+    .brand h1 { margin: 0 0 4px; color: #b45309; font-size: 17px; letter-spacing: 0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .brand .line { color: #475569; font-size: 11px; }
     .brand .msme { font-weight: 700; color: #0f5132; font-size: 11px; margin-top: 3px; }
-    .title-block { margin-left: auto; text-align: right; }
-    .title-block h2 { margin: 0; color: #b45309; font-size: 24px; letter-spacing: 3px; }
+    .title-block { margin-left: auto; text-align: right; flex-shrink: 0; padding-left: 8px; }
+    .title-block h2 { margin: 0; color: #b45309; font-size: 20px; letter-spacing: 2px; white-space: nowrap; }
     .title-block div { font-size: 11px; color: #334155; }
     .info { display: flex; gap: 12px; margin-bottom: 12px; }
     .info .box { flex: 1; border: 1px solid #e7d1a3; border-radius: 4px; overflow: hidden; }
