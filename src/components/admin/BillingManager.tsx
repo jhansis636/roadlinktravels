@@ -986,6 +986,17 @@ const BillingManager = ({
                           <Download className="h-4 w-4" />
                         </Button>
                         <Button size="icon" variant="ghost" onClick={() => printBill(b)}><Printer className="h-4 w-4" /></Button>
+                        {onCreateDriverBill && (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            title="Create Driver Bill"
+                            className="text-amber-700 hover:text-amber-800"
+                            onClick={() => onCreateDriverBill(b)}
+                          >
+                            <UserRound className="h-4 w-4" />
+                          </Button>
+                        )}
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button size="icon" variant="ghost" className="text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
