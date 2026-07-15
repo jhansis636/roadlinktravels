@@ -93,44 +93,116 @@ const buildChargeRows = (bill: Bill): [string, number][] => {
 export const printBill = (bill: Bill) => {
   const win = window.open("", "_blank", "width=900,height=1000");
   if (!win) return;
-  const rows = buildRows(bill);
+  const bx = bill as unknown as {
+    trip_type?: string; pickup?: string; drop_location?: string;
+    customer_phone?: string; customer_address?: string; bill_category?: string;
+  };
+  const charges = buildChargeRows(bill);
+  const timeRow = `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`;
+  const kmRow = `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
+  const total = Number(bill.total_amount ?? 0);
+  const advance = Number(bill.advance ?? 0);
+  const balance = Number(bill.balance ?? (total - advance));
 
-  win.document.write(`<!doctype html><html><head><title>Bill ${bill.bill_no ?? ""}</title>
+  win.document.write(`<!doctype html><html><head><title>Invoice ${bill.bill_no ?? ""}</title>
   <style>
+    @page { size: A4; margin: 12mm; }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #0f172a; padding: 32px; }
-    .header { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #1d4ed8; padding-bottom: 12px; margin-bottom: 16px; }
-    .header img { width: 80px; height: 80px; object-fit: contain; }
-    .brand h1 { margin: 0 0 2px; color: #1d4ed8; font-size: 22px; }
-    .brand .msme { font-weight: 700; color: #0f5132; font-size: 13px; margin-top: 2px; }
-    .sub { color: #64748b; margin-bottom: 24px; }
-    .meta { display: flex; justify-content: space-between; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-    th { background: #eff6ff; color: #1e40af; }
-    .total { margin-top: 24px; text-align: right; font-size: 16px; font-weight: 600; color: #0f172a; }
-    .balance { text-align: right; font-size: 14px; color: #059669; }
-    @media print { body { padding: 16px; } }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #0f172a; margin: 0; padding: 0; font-size: 12px; }
+    .header { display: flex; align-items: center; gap: 18px; border-bottom: 2px solid #1d4ed8; padding-bottom: 12px; margin-bottom: 14px; }
+    .header img.logo { width: 170px; height: auto; object-fit: contain; }
+    .brand h1 { margin: 0 0 4px; color: #1d4ed8; font-size: 20px; letter-spacing: 0.3px; }
+    .brand .line { color: #475569; font-size: 11px; }
+    .brand .msme { font-weight: 700; color: #0f5132; font-size: 11px; margin-top: 3px; }
+    .title-block { margin-left: auto; text-align: right; }
+    .title-block h2 { margin: 0; color: #1d4ed8; font-size: 26px; letter-spacing: 3px; }
+    .title-block div { font-size: 11px; color: #334155; }
+    .info { display: flex; gap: 12px; margin-bottom: 12px; }
+    .info .box { flex: 1; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; }
+    .info .box h3 { margin: 0; padding: 6px 10px; background: #eff6ff; color: #1e40af; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .info table { width: 100%; border-collapse: collapse; }
+    .info td { padding: 5px 10px; font-size: 11px; vertical-align: top; border-bottom: 1px solid #f1f5f9; }
+    .info td:first-child { font-weight: 600; color: #64748b; width: 90px; }
+    table.charges { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    table.charges th, table.charges td { border: 1px solid #cbd5e1; padding: 7px 10px; font-size: 12px; }
+    table.charges th { background: #1d4ed8; color: #fff; text-align: left; }
+    table.charges th:last-child, table.charges td:last-child { text-align: right; width: 130px; white-space: nowrap; }
+    table.charges tr.detail td { background: #f8fafc; font-style: italic; color: #475569; }
+    .summary { display: flex; margin-top: 14px; gap: 14px; }
+    .words { flex: 1; font-size: 11px; font-style: italic; color: #334155; }
+    .totals { width: 260px; border: 1px solid #1d4ed8; border-radius: 4px; overflow: hidden; }
+    .totals .row { display: flex; justify-content: space-between; padding: 6px 12px; font-size: 12px; }
+    .totals .row.bal { background: #eff6ff; font-weight: 700; color: #059669; font-size: 14px; }
+    .footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #cbd5e1; padding-top: 10px; }
+    .footer .thanks { color: #1d4ed8; font-weight: 700; font-size: 12px; }
+    .footer .gen { color: #94a3b8; font-size: 10px; margin-top: 2px; }
+    .sign { text-align: center; }
+    .sign img { width: 140px; height: auto; display: block; margin: 0 auto -6px; }
+    .sign .line { width: 160px; border-top: 1px solid #64748b; margin: 0 auto; }
+    .sign .lbl { font-weight: 700; font-size: 11px; color: #334155; margin-top: 3px; }
   </style></head><body>
     <div class="header">
-      <img src="${logo}" alt="Roadlink" />
+      <img class="logo" src="${logo}" alt="Roadlink" />
       <div class="brand">
         <h1>${COMPANY}</h1>
-        <div class="sub" style="margin:0">${CONTACT}</div>
+        <div class="line">${ADDRESS}</div>
+        <div class="line">Contact: ${CONTACT}</div>
         <div class="msme">${MSME}</div>
       </div>
+      <div class="title-block">
+        <h2>INVOICE</h2>
+        <div><strong>Bill No:</strong> ${bill.bill_no ?? "-"}</div>
+        <div><strong>Date:</strong> ${bill.bill_date ?? "-"}</div>
+        <div><strong>Category:</strong> ${bx.bill_category ?? "-"}</div>
+      </div>
     </div>
-    <div class="meta">
-      <div><strong>Bill No:</strong> ${bill.bill_no ?? "-"}</div>
-      <div><strong>Date:</strong> ${bill.bill_date ?? "-"}</div>
+    <div class="info">
+      <div class="box">
+        <h3>Customer Information</h3>
+        <table>
+          <tr><td>Name</td><td>${bill.customer_name ?? "-"}</td></tr>
+          <tr><td>Phone</td><td>${bx.customer_phone ?? "-"}</td></tr>
+          <tr><td>Address</td><td>${bx.customer_address ?? "-"}</td></tr>
+        </table>
+      </div>
+      <div class="box">
+        <h3>Trip Information</h3>
+        <table>
+          <tr><td>Trip Type</td><td>${tripTypeLabel(bx.trip_type)}</td></tr>
+          <tr><td>Pickup</td><td>${bx.pickup ?? "-"}</td></tr>
+          <tr><td>Drop</td><td>${bx.drop_location ?? "-"}</td></tr>
+          <tr><td>Vehicle</td><td>${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}</td></tr>
+          <tr><td>Dates</td><td>${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})</td></tr>
+        </table>
+      </div>
     </div>
-    <table>
+    <table class="charges">
+      <thead><tr><th>Description</th><th>Amount</th></tr></thead>
       <tbody>
-        ${rows.map(([k, v]) => `<tr><th style="width:40%">${k}</th><td>${v}</td></tr>`).join("")}
+        <tr class="detail"><td>Time: ${timeRow}</td><td>-</td></tr>
+        <tr class="detail"><td>Kilometer: ${kmRow}</td><td>-</td></tr>
+        ${charges.length ? charges.map(([k, v]) => `<tr><td>${k}</td><td>${fmt(v)}</td></tr>`).join("") : `<tr><td>No charges</td><td>-</td></tr>`}
       </tbody>
     </table>
-    <div class="total">Total: ${fmt(bill.total_amount)}</div>
-    <div class="balance">Balance: ${fmt(bill.balance)}</div>
+    <div class="summary">
+      <div class="words"><strong>Amount in Words:</strong><br/>${numToWords(total)}${bill.remarks ? `<br/><br/><strong>Remarks:</strong> ${bill.remarks}` : ""}</div>
+      <div class="totals">
+        <div class="row"><span>Sub Total</span><span>${fmt(total)}</span></div>
+        <div class="row"><span>Advance</span><span>${fmt(advance)}</span></div>
+        <div class="row bal"><span>Balance</span><span>${fmt(balance)}</span></div>
+      </div>
+    </div>
+    <div class="footer">
+      <div>
+        <div class="thanks">Thank you for choosing Roadlink Tours and Travels!</div>
+        <div class="gen">Generated by Roadlink</div>
+      </div>
+      <div class="sign">
+        <img src="${seal}" alt="Seal" />
+        <div class="line"></div>
+        <div class="lbl">Authorized Signature</div>
+      </div>
+    </div>
     <script>window.onload = () => { window.print(); };</script>
   </body></html>`);
   win.document.close();
