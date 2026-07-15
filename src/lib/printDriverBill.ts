@@ -1,10 +1,11 @@
 import type { DriverBill } from "@/hooks/useDriverBills";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-hires.png";
+import seal from "@/assets/company-seal.png";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const fmt = (v: number | null | undefined) =>
-  v == null || Number.isNaN(v) ? "-" : `₹${Number(v).toLocaleString("en-IN")}`;
+  v == null || Number.isNaN(v) ? "-" : `Rs. ${Number(v).toLocaleString("en-IN")}`;
 
 const MSME = "UDYAM Reg. No: TN-03-0046434";
 const COMPANY = "Roadlink Tours and Travels";
@@ -59,69 +60,113 @@ const buildChargeRows = (bill: DriverBill): [string, number][] => {
 export const printDriverBill = (bill: DriverBill) => {
   const win = window.open("", "_blank", "width=900,height=1000");
   if (!win) return;
-  const rows: [string, string][] = [
-    ["Bill Date", bill.bill_date ?? "-"],
-    ["Bill Category", bill.bill_category ?? "-"],
-    ["Trip Type", tripTypeLabel(bill.trip_type)],
-    ["Customer", bill.customer_name ?? "-"],
-    ["Driver", bill.driver_name ?? "-"],
-    ["Pickup", bill.pickup ?? "-"],
-    ["Drop", bill.drop_location ?? "-"],
-    ["Place", bill.place ?? "-"],
-    ["Vehicle Type", bill.vehicle_type ?? "-"],
-    ["Vehicle Number", bill.vehicle_number ?? "-"],
-    ["Start Date → End Date", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"}`],
-    ["Total Days", bill.total_days?.toString() ?? "-"],
-    ["Start Time → End Time", `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`],
-    ["Start KM → End KM", `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"}`],
-    ["Total KM", bill.total_km?.toString() ?? "-"],
-    ["Advance", fmt(bill.advance)],
-    ["Remarks", bill.remarks ?? "-"],
-  ];
   const charges = buildChargeRows(bill);
+  const total = Number(bill.total_amount ?? 0);
+  const advance = Number(bill.advance ?? 0);
+  const balance = Number(bill.balance ?? (total - advance));
+  const timeRow = `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`;
+  const kmRow = `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
 
   win.document.write(`<!doctype html><html><head><title>Driver Bill ${bill.bill_no}</title>
   <style>
+    @page { size: A4; margin: 12mm; }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #0f172a; padding: 32px; }
-    .header { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #b45309; padding-bottom: 12px; margin-bottom: 16px; }
-    .header img { width: 80px; height: 80px; object-fit: contain; }
-    .brand h1 { margin: 0 0 2px; color: #b45309; font-size: 22px; }
-    .brand .msme { font-weight: 700; color: #0f5132; font-size: 13px; margin-top: 2px; }
-    .label { color: #b45309; font-weight: 800; font-size: 18px; letter-spacing: 2px; }
-    .meta { display: flex; justify-content: space-between; margin: 12px 0 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-    th { background: #fef3c7; color: #92400e; }
-    .total { margin-top: 20px; text-align: right; font-size: 16px; font-weight: 700; color: #0f172a; }
-    .balance { text-align: right; font-size: 14px; color: #059669; }
-    @media print { body { padding: 16px; } }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #0f172a; margin: 0; padding: 0; font-size: 12px; }
+    .header { display: flex; align-items: center; gap: 18px; border-bottom: 2px solid #b45309; padding-bottom: 12px; margin-bottom: 14px; }
+    .header img.logo { width: 170px; height: auto; object-fit: contain; }
+    .brand h1 { margin: 0 0 4px; color: #b45309; font-size: 20px; letter-spacing: 0.3px; }
+    .brand .line { color: #475569; font-size: 11px; }
+    .brand .msme { font-weight: 700; color: #0f5132; font-size: 11px; margin-top: 3px; }
+    .title-block { margin-left: auto; text-align: right; }
+    .title-block h2 { margin: 0; color: #b45309; font-size: 24px; letter-spacing: 3px; }
+    .title-block div { font-size: 11px; color: #334155; }
+    .info { display: flex; gap: 12px; margin-bottom: 12px; }
+    .info .box { flex: 1; border: 1px solid #e7d1a3; border-radius: 4px; overflow: hidden; }
+    .info .box h3 { margin: 0; padding: 6px 10px; background: #fef3c7; color: #92400e; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .info table { width: 100%; border-collapse: collapse; }
+    .info td { padding: 5px 10px; font-size: 11px; vertical-align: top; border-bottom: 1px solid #f5efe0; }
+    .info td:first-child { font-weight: 600; color: #78716c; width: 90px; }
+    table.charges { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    table.charges th, table.charges td { border: 1px solid #e7d1a3; padding: 7px 10px; font-size: 12px; }
+    table.charges th { background: #b45309; color: #fff; text-align: left; }
+    table.charges th:last-child, table.charges td:last-child { text-align: right; width: 130px; white-space: nowrap; }
+    table.charges tr.detail td { background: #fdf6e3; font-style: italic; color: #78716c; }
+    .summary { display: flex; margin-top: 14px; gap: 14px; }
+    .words { flex: 1; font-size: 11px; font-style: italic; color: #334155; }
+    .totals { width: 260px; border: 1px solid #b45309; border-radius: 4px; overflow: hidden; }
+    .totals .row { display: flex; justify-content: space-between; padding: 6px 12px; font-size: 12px; }
+    .totals .row.bal { background: #fef3c7; font-weight: 700; color: #059669; font-size: 14px; }
+    .footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #e7d1a3; padding-top: 10px; }
+    .footer .thanks { color: #b45309; font-weight: 700; font-size: 12px; }
+    .footer .gen { color: #94a3b8; font-size: 10px; margin-top: 2px; }
+    .sign { text-align: center; }
+    .sign img { width: 140px; height: auto; display: block; margin: 0 auto -6px; }
+    .sign .line { width: 160px; border-top: 1px solid #64748b; margin: 0 auto; }
+    .sign .lbl { font-weight: 700; font-size: 11px; color: #334155; margin-top: 3px; }
   </style></head><body>
     <div class="header">
-      <img src="${logo}" alt="Roadlink" />
+      <img class="logo" src="${logo}" alt="Roadlink" />
       <div class="brand">
         <h1>${COMPANY}</h1>
-        <div style="color:#64748b">${CONTACT}</div>
+        <div class="line">${ADDRESS}</div>
+        <div class="line">Contact: ${CONTACT}</div>
         <div class="msme">${MSME}</div>
       </div>
+      <div class="title-block">
+        <h2>DRIVER BILL</h2>
+        <div><strong>Bill No:</strong> ${bill.bill_no}</div>
+        <div><strong>Date:</strong> ${bill.bill_date ?? "-"}</div>
+        <div><strong>Category:</strong> ${bill.bill_category ?? "-"}</div>
+      </div>
     </div>
-    <div class="label">DRIVER BILL</div>
-    <div class="meta">
-      <div><strong>Bill No:</strong> ${bill.bill_no}</div>
-      <div><strong>Date:</strong> ${bill.bill_date}</div>
+    <div class="info">
+      <div class="box">
+        <h3>Parties</h3>
+        <table>
+          <tr><td>Customer</td><td>${bill.customer_name ?? "-"}</td></tr>
+          <tr><td>Driver</td><td>${bill.driver_name ?? "-"}</td></tr>
+          <tr><td>Phone</td><td>${bill.customer_phone ?? "-"}</td></tr>
+          <tr><td>Address</td><td>${bill.customer_address ?? "-"}</td></tr>
+        </table>
+      </div>
+      <div class="box">
+        <h3>Trip Information</h3>
+        <table>
+          <tr><td>Trip Type</td><td>${tripTypeLabel(bill.trip_type)}</td></tr>
+          <tr><td>Pickup</td><td>${bill.pickup ?? "-"}</td></tr>
+          <tr><td>Drop</td><td>${bill.drop_location ?? "-"}</td></tr>
+          <tr><td>Vehicle</td><td>${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}</td></tr>
+          <tr><td>Dates</td><td>${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})</td></tr>
+        </table>
+      </div>
     </div>
-    <table><tbody>
-      ${rows.map(([k, v]) => `<tr><th style="width:40%">${k}</th><td>${v}</td></tr>`).join("")}
-    </tbody></table>
-    <h3 style="margin-top:20px;color:#b45309">Charges</h3>
-    <table>
-      <thead><tr><th>Description</th><th style="text-align:right">Amount</th></tr></thead>
+    <table class="charges">
+      <thead><tr><th>Description</th><th>Amount</th></tr></thead>
       <tbody>
-        ${charges.length ? charges.map(([k, v]) => `<tr><td>${k}</td><td style="text-align:right">${fmt(v)}</td></tr>`).join("") : `<tr><td colspan="2">No charges</td></tr>`}
+        <tr class="detail"><td>Time: ${timeRow}</td><td>-</td></tr>
+        <tr class="detail"><td>Kilometer: ${kmRow}</td><td>-</td></tr>
+        ${charges.length ? charges.map(([k, v]) => `<tr><td>${k}</td><td>${fmt(v)}</td></tr>`).join("") : `<tr><td>No charges</td><td>-</td></tr>`}
       </tbody>
     </table>
-    <div class="total">Total: ${fmt(bill.total_amount)}</div>
-    <div class="balance">Balance: ${fmt(bill.balance)}</div>
+    <div class="summary">
+      <div class="words"><strong>Amount in Words:</strong><br/>${numToWords(total)}${bill.remarks ? `<br/><br/><strong>Remarks:</strong> ${bill.remarks}` : ""}</div>
+      <div class="totals">
+        <div class="row"><span>Sub Total</span><span>${fmt(total)}</span></div>
+        <div class="row"><span>Advance</span><span>${fmt(advance)}</span></div>
+        <div class="row bal"><span>Balance</span><span>${fmt(balance)}</span></div>
+      </div>
+    </div>
+    <div class="footer">
+      <div>
+        <div class="thanks">Driver Payment Slip — Roadlink Tours and Travels</div>
+        <div class="gen">Generated by Roadlink</div>
+      </div>
+      <div class="sign">
+        <img src="${seal}" alt="Seal" />
+        <div class="line"></div>
+        <div class="lbl">Authorized Signature</div>
+      </div>
+    </div>
     <script>window.onload = () => { window.print(); };</script>
   </body></html>`);
   win.document.close();
@@ -151,33 +196,35 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
   const margin = 40;
   const contentWidth = pageWidth - margin * 2;
 
-  const logoSize = 56;
+  // ===== Header =====
+  const logoW = 150;
+  const logoH = 84;
   try {
     const logoData = await loadImageDataUrl(logo);
-    doc.addImage(logoData, "PNG", margin, margin, logoSize, logoSize);
+    doc.addImage(logoData, "PNG", margin, margin - 8, logoW, logoH);
   } catch { /* ignore */ }
 
-  const textLeft = margin + logoSize + 14;
-  doc.setFont("helvetica", "bold").setFontSize(17).setTextColor(180, 83, 9);
-  doc.text(COMPANY, textLeft, margin + 18);
+  const textLeft = margin + logoW + 16;
+  doc.setFont("helvetica", "bold").setFontSize(18).setTextColor(180, 83, 9);
+  doc.text(COMPANY, textLeft, margin + 14);
   doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(80, 80, 80);
-  doc.text(ADDRESS, textLeft, margin + 32);
-  doc.text(`Contact: ${CONTACT}`, textLeft, margin + 44);
+  doc.text(ADDRESS, textLeft, margin + 30);
+  doc.text(`Contact: ${CONTACT}`, textLeft, margin + 42);
   doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(15, 81, 50);
   doc.text(MSME, textLeft, margin + 56);
 
   doc.setFont("helvetica", "bold").setFontSize(22).setTextColor(180, 83, 9);
-  doc.text("DRIVER BILL", pageWidth - margin, margin + 20, { align: "right" });
+  doc.text("DRIVER BILL", pageWidth - margin, margin + 16, { align: "right" });
   doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(60, 60, 60);
-  doc.text(`Bill No: ${bill.bill_no}`, pageWidth - margin, margin + 36, { align: "right" });
-  doc.text(`Date: ${bill.bill_date}`, pageWidth - margin, margin + 48, { align: "right" });
-  doc.text(`Category: ${bill.bill_category ?? "-"}`, pageWidth - margin, margin + 60, { align: "right" });
+  doc.text(`Bill No: ${bill.bill_no}`, pageWidth - margin, margin + 32, { align: "right" });
+  doc.text(`Date: ${bill.bill_date}`, pageWidth - margin, margin + 44, { align: "right" });
+  doc.text(`Category: ${bill.bill_category ?? "-"}`, pageWidth - margin, margin + 56, { align: "right" });
 
-  const dividerY = margin + logoSize + 14;
+  const dividerY = margin + logoH + 4;
   doc.setDrawColor(180, 83, 9).setLineWidth(1.2);
   doc.line(margin, dividerY, pageWidth - margin, dividerY);
 
-  let y = dividerY + 18;
+  let y = dividerY + 16;
   const colWidth = (contentWidth - 12) / 2;
 
   const drawInfoBox = (x: number, top: number, title: string, rows: [string, string][]) => {
@@ -195,7 +242,7 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
       doc.text(lines, x + 90, ry);
       ry += Math.max(12, lines.length * 11);
     });
-    doc.setDrawColor(210, 220, 235);
+    doc.setDrawColor(231, 209, 163);
     doc.rect(x, top, colWidth, ry - top + 4);
     return ry + 4;
   };
@@ -212,24 +259,31 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
     ["Drop", bill.drop_location ?? "-"],
     ["Vehicle", `${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}`],
     ["Dates", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})`],
-    ["Time", `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`],
-    ["Kilometer", `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"})`],
   ];
   const custEnd = drawInfoBox(margin, y, "Parties", partiesRows);
   const tripEnd = drawInfoBox(margin + colWidth + 12, y, "Trip Information", tripRows);
   y = Math.max(custEnd, tripEnd) + 10;
 
   const chargeRows = buildChargeRows(bill);
+  const timeStr = `Time: ${bill.start_time ?? "-"} to ${bill.end_time ?? "-"}`;
+  const kmStr = `Kilometer: ${bill.start_km ?? "-"} to ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
+  const bodyRows: (string | { content: string; styles?: Record<string, unknown> })[][] = [
+    [{ content: timeStr, styles: { fontStyle: "italic", textColor: [120, 113, 108], fillColor: [253, 246, 227] } },
+     { content: "-", styles: { halign: "right", fillColor: [253, 246, 227] } }],
+    [{ content: kmStr, styles: { fontStyle: "italic", textColor: [120, 113, 108], fillColor: [253, 246, 227] } },
+     { content: "-", styles: { halign: "right", fillColor: [253, 246, 227] } }],
+    ...(chargeRows.length ? chargeRows.map(([k, v]) => [k, fmt(v)] as string[]) : [["No charges", "-"]]),
+  ];
   autoTable(doc, {
     startY: y,
-    head: [["Description", "Amount (INR)"]],
-    body: chargeRows.length ? chargeRows.map(([k, v]) => [k, fmt(v)]) : [["No charges", "-"]],
+    head: [["Description", "Amount"]],
+    body: bodyRows as unknown as string[][],
     theme: "grid",
     headStyles: { fillColor: [180, 83, 9], textColor: [255, 255, 255], fontStyle: "bold" },
-    styles: { fontSize: 10, cellPadding: 6 },
+    styles: { fontSize: 10, cellPadding: 6, overflow: "linebreak" },
     columnStyles: {
-      0: { cellWidth: contentWidth - 140 },
-      1: { cellWidth: 140, halign: "right" },
+      0: { cellWidth: contentWidth - 130 },
+      1: { cellWidth: 130, halign: "right" },
     },
     margin: { left: margin, right: margin },
   });
@@ -240,35 +294,41 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
   const advance = Number(bill.advance ?? 0);
   const balance = Number(bill.balance ?? (total - advance));
   const sumY = afterTable + 14;
-  const boxW = 220;
+  const boxW = 240;
   const boxX = pageWidth - margin - boxW;
   doc.setDrawColor(180, 83, 9).setLineWidth(0.6);
-  doc.rect(boxX, sumY, boxW, 68);
+  doc.rect(boxX, sumY, boxW, 74);
   doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(60, 60, 60);
-  doc.text("Sub Total", boxX + 10, sumY + 16);
-  doc.text(fmt(total), boxX + boxW - 10, sumY + 16, { align: "right" });
-  doc.text("Advance", boxX + 10, sumY + 32);
-  doc.text(fmt(advance), boxX + boxW - 10, sumY + 32, { align: "right" });
+  doc.text("Sub Total", boxX + 12, sumY + 18);
+  doc.text(fmt(total), boxX + boxW - 12, sumY + 18, { align: "right" });
+  doc.text("Advance", boxX + 12, sumY + 36);
+  doc.text(fmt(advance), boxX + boxW - 12, sumY + 36, { align: "right" });
   doc.setFillColor(254, 243, 199);
-  doc.rect(boxX, sumY + 42, boxW, 26, "F");
-  doc.setFont("helvetica", "bold").setFontSize(12).setTextColor(5, 150, 105);
-  doc.text("Balance", boxX + 10, sumY + 60);
-  doc.text(fmt(balance), boxX + boxW - 10, sumY + 60, { align: "right" });
+  doc.rect(boxX, sumY + 46, boxW, 28, "F");
+  doc.setFont("helvetica", "bold").setFontSize(13).setTextColor(5, 150, 105);
+  doc.text("Balance", boxX + 12, sumY + 65);
+  doc.text(fmt(balance), boxX + boxW - 12, sumY + 65, { align: "right" });
 
   doc.setFont("helvetica", "italic").setFontSize(9).setTextColor(60, 60, 60);
   const words = numToWords(total);
   const wrapped = doc.splitTextToSize(`Amount in Words: ${words}`, contentWidth - boxW - 20);
-  doc.text(wrapped, margin, sumY + 16);
+  doc.text(wrapped, margin, sumY + 18);
 
   if (bill.remarks) {
     doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(80, 80, 80);
-    doc.text("Remarks:", margin, sumY + 46);
+    doc.text("Remarks:", margin, sumY + 50);
     doc.setFont("helvetica", "normal").setTextColor(30, 30, 30);
     const rem = doc.splitTextToSize(bill.remarks, contentWidth - boxW - 20);
-    doc.text(rem, margin, sumY + 58);
+    doc.text(rem, margin, sumY + 62);
   }
 
+  // ===== Footer with company seal =====
   const footerY = pageHeight - margin - 30;
+  const sealSize = 80;
+  try {
+    const sealData = await loadImageDataUrl(seal);
+    doc.addImage(sealData, "PNG", pageWidth - margin - sealSize - 20, footerY - sealSize - 4, sealSize, sealSize);
+  } catch { /* ignore */ }
   doc.setDrawColor(200, 200, 200).setLineWidth(0.5);
   doc.line(margin, footerY - 10, pageWidth - margin, footerY - 10);
   doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(180, 83, 9);
@@ -278,7 +338,7 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
   doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(60, 60, 60);
   doc.text("Authorized Signature", pageWidth - margin, footerY + 2, { align: "right" });
   doc.setDrawColor(120, 120, 120);
-  doc.line(pageWidth - margin - 120, footerY - 4, pageWidth - margin, footerY - 4);
+  doc.line(pageWidth - margin - 130, footerY - 4, pageWidth - margin, footerY - 4);
 
   doc.save(`DriverBill-${bill.bill_no}.pdf`);
 };
