@@ -203,23 +203,26 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
   const contentWidth = pageWidth - margin * 2;
 
   // ===== Header =====
-  const logoW = 150;
-  const logoH = 84;
+  const logoW = 130;
+  const logoH = 73;
   try {
     const logoData = await loadImageDataUrl(logo);
     doc.addImage(logoData, "PNG", margin, margin - 8, logoW, logoH);
   } catch { /* ignore */ }
 
-  const textLeft = margin + logoW + 16;
-  doc.setFont("helvetica", "bold").setFontSize(18).setTextColor(180, 83, 9);
-  doc.text(COMPANY, textLeft, margin + 14);
+  const titleWidth = 130;
+  const textLeft = margin + logoW + 14;
+  const brandMaxWidth = pageWidth - margin - titleWidth - textLeft - 10;
+  doc.setFont("helvetica", "bold").setFontSize(15).setTextColor(180, 83, 9);
+  const companyLines = doc.splitTextToSize(COMPANY, brandMaxWidth);
+  doc.text(companyLines, textLeft, margin + 14);
   doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(80, 80, 80);
   doc.text(ADDRESS, textLeft, margin + 30);
   doc.text(`Contact: ${CONTACT}`, textLeft, margin + 42);
   doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(15, 81, 50);
   doc.text(MSME, textLeft, margin + 56);
 
-  doc.setFont("helvetica", "bold").setFontSize(22).setTextColor(180, 83, 9);
+  doc.setFont("helvetica", "bold").setFontSize(18).setTextColor(180, 83, 9);
   doc.text("DRIVER BILL", pageWidth - margin, margin + 16, { align: "right" });
   doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(60, 60, 60);
   doc.text(`Bill No: ${bill.bill_no}`, pageWidth - margin, margin + 32, { align: "right" });
