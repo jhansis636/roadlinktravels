@@ -18,7 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import {
   FileText, Plus, Minus, Loader2, Save, Eraser, Printer,
-  Pencil, Trash2, Eye, Search, RotateCcw, Download,
+  Pencil, Trash2, Eye, Search, RotateCcw, Download, UserRound,
 } from "lucide-react";
 import { useBills, useSaveBill, useDeleteBill, type Bill } from "@/hooks/useBills";
 import { useVehicleTariffs } from "@/hooks/useVehicleTariffs";
@@ -291,7 +291,11 @@ const billToForm = (b: Bill): FormState => ({
 
 // ---------- component ----------
 
-const BillingManager = () => {
+const BillingManager = ({
+  onCreateDriverBill,
+}: {
+  onCreateDriverBill?: (b: Bill) => void;
+} = {}) => {
   const { data: bills, isLoading } = useBills();
   const saveBill = useSaveBill();
   const deleteBill = useDeleteBill();
