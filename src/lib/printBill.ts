@@ -1,10 +1,11 @@
 import type { Bill } from "@/hooks/useBills";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-hires.png";
+import seal from "@/assets/company-seal.png";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const fmt = (v: number | null | undefined) =>
-  v == null || Number.isNaN(v) ? "-" : `₹${Number(v).toLocaleString("en-IN")}`;
+  v == null || Number.isNaN(v) ? "-" : `Rs. ${Number(v).toLocaleString("en-IN")}`;
 
 const MSME = "UDYAM Reg. No: TN-03-0046434";
 const COMPANY = "Roadlink Tours and Travels";
