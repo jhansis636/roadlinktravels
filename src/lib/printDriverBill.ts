@@ -51,7 +51,7 @@ const buildChargeRows = (bill: DriverBill): [string, number][] => {
   add("Parking", bill.parking);
   add("Tollgate", bill.tollgate);
   add("Permit", bill.permit);
-  if (bill.extra_hours_amount) rows.push([`Extra Hours${bill.extra_hours ? ` (${bill.extra_hours} hrs)` : ""}`, Number(bill.extra_hours_amount)]);
+  if (bill.extra_hours_amount) rows.push(["Additional Hourly Charges", Number(bill.extra_hours_amount)]);
   if (bill.extra_km_amount) rows.push([`Extra KM${bill.extra_km ? ` (${bill.extra_km} km)` : ""}`, Number(bill.extra_km_amount)]);
   add("Other Charges", bill.other_charges);
   return rows;
@@ -66,6 +66,9 @@ export const printDriverBill = (bill: DriverBill) => {
   const balance = Number(bill.balance ?? (total - advance));
   const timeRow = `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`;
   const kmRow = `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
+  const totalMins = bill.total_time_minutes ?? null;
+  const totalTimeStr = totalMins != null ? `${Math.floor(totalMins / 60)}h ${totalMins % 60}m` : "-";
+  const addlHrs = bill.extra_hours != null ? Number(bill.extra_hours) : null;
 
   win.document.write(`<!doctype html><html><head><title>Driver Bill ${bill.bill_no}</title>
   <style>
@@ -144,6 +147,8 @@ export const printDriverBill = (bill: DriverBill) => {
       <thead><tr><th>Description</th><th>Amount</th></tr></thead>
       <tbody>
         <tr class="detail"><td>Time: ${timeRow}</td><td>-</td></tr>
+        <tr class="detail"><td>Total Time: ${totalTimeStr}</td><td>-</td></tr>
+        ${addlHrs != null && addlHrs > 0 ? `<tr class="detail"><td>Additional Hours: ${addlHrs} Hours</td><td>-</td></tr>` : ""}
         <tr class="detail"><td>Kilometer: ${kmRow}</td><td>-</td></tr>
         ${charges.length ? charges.map(([k, v]) => `<tr><td>${k}</td><td>${fmt(v)}</td></tr>`).join("") : `<tr><td>No charges</td><td>-</td></tr>`}
       </tbody>
@@ -267,9 +272,18 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
   const chargeRows = buildChargeRows(bill);
   const timeStr = `Time: ${bill.start_time ?? "-"} to ${bill.end_time ?? "-"}`;
   const kmStr = `Kilometer: ${bill.start_km ?? "-"} to ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
+  const totalMinsPdf = bill.total_time_minutes ?? null;
+  const totalTimePdf = `Total Time: ${totalMinsPdf != null ? `${Math.floor(totalMinsPdf / 60)}h ${totalMinsPdf % 60}m` : "-"}`;
+  const addlHrsPdf = bill.extra_hours != null ? Number(bill.extra_hours) : null;
   const bodyRows: (string | { content: string; styles?: Record<string, unknown> })[][] = [
     [{ content: timeStr, styles: { fontStyle: "italic", textColor: [120, 113, 108], fillColor: [253, 246, 227] } },
      { content: "-", styles: { halign: "right", fillColor: [253, 246, 227] } }],
+    [{ content: totalTimePdf, styles: { fontStyle: "italic", textColor: [120, 113, 108], fillColor: [253, 246, 227] } },
+     { content: "-", styles: { halign: "right", fillColor: [253, 246, 227] } }],
+    ...(addlHrsPdf != null && addlHrsPdf > 0 ? [[
+      { content: `Additional Hours: ${addlHrsPdf} Hours`, styles: { fontStyle: "italic", textColor: [120, 113, 108], fillColor: [253, 246, 227] } },
+      { content: "-", styles: { halign: "right", fillColor: [253, 246, 227] } },
+    ]] : []),
     [{ content: kmStr, styles: { fontStyle: "italic", textColor: [120, 113, 108], fillColor: [253, 246, 227] } },
      { content: "-", styles: { halign: "right", fillColor: [253, 246, 227] } }],
     ...(chargeRows.length ? chargeRows.map(([k, v]) => [k, fmt(v)] as string[]) : [["No charges", "-"]]),
