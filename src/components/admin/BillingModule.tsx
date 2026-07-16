@@ -12,7 +12,7 @@ import type { Bill } from "@/hooks/useBills";
 const billToDriverPrefill = (b: Bill): DriverBillPrefill => {
   const bx = b as unknown as {
     bill_category?: string; trip_type?: string; customer_phone?: string;
-    customer_address?: string; pickup?: string; drop_location?: string;
+    customer_address?: string; pickup?: string; drop_location?: string; department?: string;
   };
   return {
     source_bill_id: b.id,
@@ -21,6 +21,7 @@ const billToDriverPrefill = (b: Bill): DriverBillPrefill => {
     bill_category: bx.bill_category ?? "",
     trip_type: bx.trip_type ?? "full_day",
     customer_name: b.customer_name ?? "",
+    department: bx.department ?? "",
     driver_name: "",
     customer_phone: bx.customer_phone ?? "",
     customer_address: bx.customer_address ?? "",
@@ -35,6 +36,7 @@ const billToDriverPrefill = (b: Bill): DriverBillPrefill => {
     end_time: b.end_time ?? "",
     start_km: b.start_km?.toString() ?? "",
     end_km: b.end_km?.toString() ?? "",
+    extra_km_source: b.extra_km?.toString() ?? "",
     remarks: b.remarks ?? "",
   };
 };
