@@ -633,6 +633,10 @@ const BillingManager = ({
                 <Input value={form.customer_address} onChange={(e) => setForm({ ...form, customer_address: e.target.value })} placeholder="Enter Address" />
               </div>
               <div>
+                <Label>Department</Label>
+                <Input value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} placeholder="Enter Department" />
+              </div>
+              <div>
                 <Label>Pickup</Label>
                 <Input value={form.pickup} onChange={(e) => setForm({ ...form, pickup: e.target.value })} placeholder="Enter Pickup Location" />
               </div>
