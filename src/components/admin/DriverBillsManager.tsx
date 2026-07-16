@@ -334,13 +334,6 @@ const DriverBillsManager = ({
       toast({ title: "Customer required", variant: "destructive" });
       return;
     }
-    const totalKm = num(form.start_km) != null && num(form.end_km) != null
-      ? Math.max(0, (num(form.end_km) as number) - (num(form.start_km) as number))
-      : null;
-    const totalDays = form.start_date && form.end_date
-      ? Math.max(1, Math.round((new Date(form.end_date).getTime() - new Date(form.start_date).getTime()) / 86400000) + 1)
-      : null;
-
     const saved = await save.mutateAsync({
       id: form.id,
       source_bill_id: form.source_bill_id,
