@@ -289,7 +289,7 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
   y = Math.max(custEnd, tripEnd) + 10;
 
   const chargeRows = buildChargeRows(bill);
-  const timeStr = `Time: ${bill.start_time ?? "-"} to ${bill.end_time ?? "-"}`;
+  const timeStr = `Time: ${time12(bill.start_time)} to ${time12(bill.end_time)}`;
   const kmStr = `Kilometer: ${bill.start_km ?? "-"} to ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
   const totalMinsPdf = bill.total_time_minutes ?? null;
   const totalTimePdf = `Total Time: ${totalMinsPdf != null ? `${Math.floor(totalMinsPdf / 60)}h ${totalMinsPdf % 60}m` : "-"}`;
