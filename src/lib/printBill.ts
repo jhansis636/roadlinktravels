@@ -234,7 +234,7 @@ export const downloadBillPdf = async (bill: Bill) => {
   const contentWidth = pageWidth - margin * 2;
   const bx = bill as unknown as {
     trip_type?: string; pickup?: string; drop_location?: string;
-    customer_phone?: string; customer_address?: string;
+    customer_phone?: string; customer_address?: string; department?: string;
   };
 
   // ===== Header with larger logo =====
@@ -260,7 +260,6 @@ export const downloadBillPdf = async (bill: Bill) => {
   doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(60, 60, 60);
   doc.text(`Bill No: ${bill.bill_no ?? "-"}`, pageWidth - margin, margin + 32, { align: "right" });
   doc.text(`Date: ${bill.bill_date ?? "-"}`, pageWidth - margin, margin + 44, { align: "right" });
-  doc.text(`Category: ${(bill as unknown as { bill_category?: string }).bill_category ?? "-"}`, pageWidth - margin, margin + 56, { align: "right" });
 
   const dividerY = margin + logoH + 4;
   doc.setDrawColor(29, 78, 216).setLineWidth(1.2);
@@ -292,16 +291,21 @@ export const downloadBillPdf = async (bill: Bill) => {
   };
 
   const customerRows: [string, string][] = [
-    ["Name", bill.customer_name ?? "-"],
-    ["Phone", bx.customer_phone ?? "-"],
-    ["Address", bx.customer_address ?? "-"],
-  ];
-  const tripRows: [string, string][] = [
+    ["Customer Name", bill.customer_name ?? "-"],
+    ["Department", bx.department ?? "-"],
     ["Trip Type", tripTypeLabel(bx.trip_type)],
-    ["Pickup", bx.pickup ?? "-"],
-    ["Drop", bx.drop_location ?? "-"],
+    ["Place", bill.place ?? "-"],
+  ];
+  const addlHoursPdf = bill.extra_hours != null ? Number(bill.extra_hours) : null;
+  const addlKmPdf = bill.extra_km != null ? Number(bill.extra_km) : null;
+  const tripRows: [string, string][] = [
+    ["Date", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} Day${(bill.total_days ?? 0) === 1 ? "" : "s"})`],
     ["Vehicle", `${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}`],
-    ["Dates", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})`],
+    ["Start Time", time12(bill.start_time)],
+    ["End Time", time12(bill.end_time)],
+    ["Total Time", formatMinutes(bill.total_time_minutes)],
+    ["Additional Hours", addlHoursPdf != null && addlHoursPdf > 0 ? `${addlHoursPdf} Hours` : "-"],
+    ["Additional KM", addlKmPdf != null && addlKmPdf > 0 ? `${addlKmPdf} km` : "-"],
   ];
   const custEnd = drawInfoBox(margin, y, "Customer Information", customerRows);
   const tripEnd = drawInfoBox(margin + colWidth + 12, y, "Trip Information", tripRows);
@@ -309,24 +313,9 @@ export const downloadBillPdf = async (bill: Bill) => {
 
   // ===== Charges table =====
   const chargeRows = buildChargeRows(bill);
-  const timeStr = `Time: ${bill.start_time ?? "-"} to ${bill.end_time ?? "-"}`;
-  const kmStr = `Kilometer: ${bill.start_km ?? "-"} to ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
-  const totalMinsPdf = bill.total_time_minutes ?? null;
-  const totalTimeStr = `Total Time: ${totalMinsPdf != null ? `${Math.floor(totalMinsPdf / 60)}h ${totalMinsPdf % 60}m` : "-"}`;
-  const addlHrsPdf = bill.extra_hours != null ? Number(bill.extra_hours) : null;
-  const bodyRows: (string | { content: string; styles?: Record<string, unknown> })[][] = [
-    [{ content: timeStr, styles: { fontStyle: "italic", textColor: [71, 85, 105], fillColor: [248, 250, 252] } },
-     { content: "-", styles: { halign: "right", fillColor: [248, 250, 252] } }],
-    [{ content: totalTimeStr, styles: { fontStyle: "italic", textColor: [71, 85, 105], fillColor: [248, 250, 252] } },
-     { content: "-", styles: { halign: "right", fillColor: [248, 250, 252] } }],
-    ...(addlHrsPdf != null && addlHrsPdf > 0 ? [[
-      { content: `Additional Hours: ${addlHrsPdf} Hours`, styles: { fontStyle: "italic", textColor: [71, 85, 105], fillColor: [248, 250, 252] } },
-      { content: "-", styles: { halign: "right", fillColor: [248, 250, 252] } },
-    ]] : []),
-    [{ content: kmStr, styles: { fontStyle: "italic", textColor: [71, 85, 105], fillColor: [248, 250, 252] } },
-     { content: "-", styles: { halign: "right", fillColor: [248, 250, 252] } }],
-    ...(chargeRows.length ? chargeRows.map(([k, v]) => [k, fmt(v)] as string[]) : [["No charges", "-"]]),
-  ];
+  const bodyRows: string[][] = chargeRows.length
+    ? chargeRows.map(([k, v]) => [k, fmt(v)])
+    : [["No charges", "-"]];
   autoTable(doc, {
     startY: y,
     head: [["Description", "Amount"]],
