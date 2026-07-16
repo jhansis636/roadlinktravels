@@ -17,6 +17,15 @@ const tripTypeLabel = (t?: string | null) =>
   t === "pickup_drop" ? "Pick Up & Drop" :
   "Full Day Rent";
 
+const time12 = (t?: string | null): string => {
+  if (!t) return "-";
+  const [hh, mm] = t.split(":").map(Number);
+  if (Number.isNaN(hh) || Number.isNaN(mm)) return t;
+  const p = hh >= 12 ? "PM" : "AM";
+  const h12 = ((hh + 11) % 12) + 1;
+  return `${String(h12).padStart(2, "0")}:${String(mm).padStart(2, "0")} ${p}`;
+};
+
 const numToWords = (n: number): string => {
   if (!Number.isFinite(n) || n <= 0) return "";
   const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
