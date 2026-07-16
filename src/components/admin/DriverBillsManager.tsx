@@ -410,8 +410,31 @@ const DriverBillsManager = ({
           <section className="rounded-xl border bg-card p-4">
             <div className="grid gap-4 md:grid-cols-3">
               <div>
-                <Label>Bill No <span className="text-destructive">*</span></Label>
-                <Input value={form.bill_no} onChange={(e) => setForm({ ...form, bill_no: e.target.value })} placeholder="Bill Number" />
+                <Label>Bill No <span className="text-destructive">*</span> <span className="text-xs text-muted-foreground">(select customer bill)</span></Label>
+                <div className="flex gap-1">
+                  <Input
+                    list="driverbill-billno-list"
+                    value={form.bill_no}
+                    onChange={(e) => {
+                      const bn = e.target.value;
+                      const match = (customerBills ?? []).find((b) => b.bill_no === bn);
+                      if (match) applySourceBill(match);
+                      else setForm({ ...form, bill_no: bn, source_bill_id: null });
+                    }}
+                    placeholder="Search Bill No"
+                  />
+                  {form.source_bill_id && (
+                    <Button type="button" size="icon" variant="outline" title="Unlink customer bill"
+                      onClick={() => setForm({ ...form, source_bill_id: null })}>
+                      <RotateCcw className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+                <datalist id="driverbill-billno-list">
+                  {(customerBills ?? []).map((b) => (
+                    <option key={b.id} value={b.bill_no ?? ""}>{b.customer_name}</option>
+                  ))}
+                </datalist>
               </div>
               <div>
                 <Label>Bill Date</Label>
@@ -431,7 +454,7 @@ const DriverBillsManager = ({
               </div>
               <div>
                 <Label>Trip Type</Label>
-                <Select value={form.trip_type} onValueChange={(v) => setForm({ ...form, trip_type: v })}>
+                <Select value={form.trip_type} onValueChange={(v) => setForm({ ...form, trip_type: v })} disabled={locked}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="half_day">Half Day Rent</SelectItem>
@@ -447,10 +470,22 @@ const DriverBillsManager = ({
                   value={form.customer_name}
                   onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
                   placeholder="Search or enter customer"
+                  readOnly={locked}
+                  className={locked ? "bg-muted" : ""}
                 />
                 <datalist id="driverbill-customer-list">
                   {(customers ?? []).map((c) => <option key={c.id} value={c.name} />)}
                 </datalist>
+              </div>
+              <div>
+                <Label>Department</Label>
+                <Input
+                  value={form.department}
+                  onChange={(e) => setForm({ ...form, department: e.target.value })}
+                  placeholder="Department"
+                  readOnly={locked}
+                  className={locked ? "bg-muted" : ""}
+                />
               </div>
               <div>
                 <Label>Driver Name</Label>
@@ -469,23 +504,23 @@ const DriverBillsManager = ({
               </div>
               <div>
                 <Label>Customer Phone</Label>
-                <Input value={form.customer_phone} onChange={(e) => setForm({ ...form, customer_phone: e.target.value })} />
+                <Input value={form.customer_phone} onChange={(e) => setForm({ ...form, customer_phone: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} />
               </div>
               <div>
                 <Label>Customer Address</Label>
-                <Input value={form.customer_address} onChange={(e) => setForm({ ...form, customer_address: e.target.value })} />
+                <Input value={form.customer_address} onChange={(e) => setForm({ ...form, customer_address: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} />
               </div>
               <div>
                 <Label>Place / Destination</Label>
-                <Input value={form.place} onChange={(e) => setForm({ ...form, place: e.target.value })} />
+                <Input value={form.place} onChange={(e) => setForm({ ...form, place: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} />
               </div>
               <div>
                 <Label>Pickup</Label>
-                <Input value={form.pickup} onChange={(e) => setForm({ ...form, pickup: e.target.value })} />
+                <Input value={form.pickup} onChange={(e) => setForm({ ...form, pickup: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} />
               </div>
               <div>
                 <Label>Drop</Label>
-                <Input value={form.drop} onChange={(e) => setForm({ ...form, drop: e.target.value })} />
+                <Input value={form.drop} onChange={(e) => setForm({ ...form, drop: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} />
               </div>
             </div>
           </section>
@@ -494,8 +529,19 @@ const DriverBillsManager = ({
           <section className="rounded-xl border bg-card p-4">
             <h3 className="text-amber-700 font-semibold mb-3">Vehicle Details</h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <div><Label>Vehicle Type</Label><Input value={form.vehicle_type} onChange={(e) => setForm({ ...form, vehicle_type: e.target.value })} /></div>
-              <div><Label>Vehicle Number</Label><Input value={form.vehicle_number} onChange={(e) => setForm({ ...form, vehicle_number: e.target.value })} /></div>
+              <div>
+                <Label>Vehicle Type</Label>
+                <Select value={form.vehicle_type || undefined} onValueChange={(v) => setForm({ ...form, vehicle_type: v })} disabled={locked}>
+                  <SelectTrigger><SelectValue placeholder="Select Vehicle Type" /></SelectTrigger>
+                  <SelectContent>
+                    {vehicleOptions.map((v) => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Vehicle Number</Label>
+                <Input value={form.vehicle_number} onChange={(e) => setForm({ ...form, vehicle_number: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} />
+              </div>
             </div>
           </section>
 
@@ -503,14 +549,17 @@ const DriverBillsManager = ({
           <section className="rounded-xl border bg-card p-4">
             <h3 className="text-amber-700 font-semibold mb-3">Trip Details</h3>
             <div className="grid gap-4 md:grid-cols-3">
-              <div><Label>Start Date</Label><Input type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} /></div>
-              <div><Label>End Date</Label><Input type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} /></div>
-              <div />
-              <div><Label>Start Time</Label><Input type="time" value={form.start_time} onChange={(e) => setForm({ ...form, start_time: e.target.value })} /></div>
-              <div><Label>End Time</Label><Input type="time" value={form.end_time} onChange={(e) => setForm({ ...form, end_time: e.target.value })} /></div>
-              <div />
-              <div><Label>Start KM</Label><Input type="number" value={form.start_km} onChange={(e) => setForm({ ...form, start_km: e.target.value })} /></div>
-              <div><Label>End KM</Label><Input type="number" value={form.end_km} onChange={(e) => setForm({ ...form, end_km: e.target.value })} /></div>
+              <div><Label>Start Date</Label><Input type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} /></div>
+              <div><Label>End Date</Label><Input type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} /></div>
+              <div><Label>Total Days</Label><Input readOnly value={totalDays ?? ""} className="bg-muted" /></div>
+              <div><Label>Start Time</Label><Time12Input value={form.start_time} onChange={(v) => setForm({ ...form, start_time: v })} disabled={locked} /></div>
+              <div><Label>End Time</Label><Time12Input value={form.end_time} onChange={(v) => setForm({ ...form, end_time: v })} disabled={locked} /></div>
+              <div><Label>Total Time</Label><Input readOnly value={totalTimeDisplay} className="bg-muted" /></div>
+              <div><Label>Start KM</Label><Input type="number" value={form.start_km} onChange={(e) => setForm({ ...form, start_km: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} /></div>
+              <div><Label>End KM</Label><Input type="number" value={form.end_km} onChange={(e) => setForm({ ...form, end_km: e.target.value })} readOnly={locked} className={locked ? "bg-muted" : ""} /></div>
+              <div><Label>Total KM</Label><Input readOnly value={totalKm ?? ""} className="bg-muted" /></div>
+              <div><Label>Additional Hours</Label><Input readOnly value={form.extra_hours || (computedAddlHrs != null ? String(computedAddlHrs) : "")} className="bg-amber-50 dark:bg-amber-950/30" /></div>
+              <div><Label>Additional Kilometers</Label><Input readOnly value={form.extra_km_source || ""} className="bg-amber-50 dark:bg-amber-950/30" /></div>
             </div>
           </section>
 
