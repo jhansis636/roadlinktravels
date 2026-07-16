@@ -17,6 +17,19 @@ const tripTypeLabel = (t?: string | null) =>
   t === "pickup_drop" ? "Pick Up & Drop" :
   "Full Day Rent";
 
+// Format "HH:MM" 24h string → "hh:mm AM/PM"
+const time12 = (t?: string | null): string => {
+  if (!t) return "-";
+  const [hh, mm] = t.split(":").map(Number);
+  if (Number.isNaN(hh) || Number.isNaN(mm)) return t;
+  const p = hh >= 12 ? "PM" : "AM";
+  const h12 = ((hh + 11) % 12) + 1;
+  return `${String(h12).padStart(2, "0")}:${String(mm).padStart(2, "0")} ${p}`;
+};
+
+const formatMinutes = (m: number | null | undefined): string =>
+  m == null ? "-" : `${Math.floor(m / 60)}h ${m % 60}m`;
+
 // Convert an integer amount (rupees) to Indian words
 const numToWords = (n: number): string => {
   if (!Number.isFinite(n) || n <= 0) return "";
