@@ -188,6 +188,7 @@ interface FormState {
   customer_name: string;
   customer_phone: string;
   customer_address: string;
+  department: string;
   pickup: string;
   drop: string;
   place: string;
@@ -222,6 +223,7 @@ const emptyForm = (): FormState => ({
   customer_name: "",
   customer_phone: "",
   customer_address: "",
+  department: "",
   pickup: "",
   drop: "",
   place: "",
@@ -261,6 +263,7 @@ const billToForm = (b: Bill): FormState => ({
   customer_name: b.customer_name,
   customer_phone: (b as unknown as { customer_phone?: string | null }).customer_phone ?? "",
   customer_address: (b as unknown as { customer_address?: string | null }).customer_address ?? "",
+  department: (b as unknown as { department?: string | null }).department ?? "",
   pickup: (b as unknown as { pickup?: string | null }).pickup ?? "",
   drop: (b as unknown as { drop_location?: string | null }).drop_location ?? "",
   place: b.place ?? "",
@@ -522,6 +525,7 @@ const BillingManager = ({
       customer_name: form.customer_name.trim(),
       customer_phone: form.customer_phone || null,
       customer_address: form.customer_address || null,
+      department: form.department || null,
       pickup: form.pickup || null,
       drop_location: form.drop || null,
       place: form.place || null,
