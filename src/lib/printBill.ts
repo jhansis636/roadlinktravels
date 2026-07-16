@@ -42,47 +42,29 @@ const numToWords = (n: number): string => {
 
 // Rows shown on the printed/PDF invoice. Parking & Tollgate, Permit and
 // Night Halt are intentionally excluded from the printout (still saved in DB).
-const buildRows = (bill: Bill): [string, string][] => [
-  ["Bill Date", bill.bill_date ?? "-"],
-  ["Bill Category", (bill as unknown as { bill_category?: string }).bill_category ?? "-"],
-  ["Trip Type", tripTypeLabel((bill as unknown as { trip_type?: string }).trip_type)],
-  ["Customer", bill.customer_name ?? "-"],
-  ["Customer Phone", (bill as unknown as { customer_phone?: string }).customer_phone ?? "-"],
-  ["Customer Address", (bill as unknown as { customer_address?: string }).customer_address ?? "-"],
-  ["Pickup", (bill as unknown as { pickup?: string }).pickup ?? "-"],
-  ["Drop", (bill as unknown as { drop_location?: string }).drop_location ?? "-"],
-  ["Place / Destination", bill.place ?? "-"],
-  ["Vehicle Type", bill.vehicle_type ?? "-"],
-  ["Vehicle Number", bill.vehicle_number ?? "-"],
-  ["Start Date → End Date", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"}`],
-  ["Total Days", bill.total_days?.toString() ?? "-"],
-  ["Start Time → End Time", `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`],
-  ["Total Time (minutes)", bill.total_time_minutes?.toString() ?? "-"],
-  ["Start KM → End KM", `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"}`],
-  ["Total KM", bill.total_km?.toString() ?? "-"],
-  ["Advance", fmt(bill.advance)],
-  ["Remarks", bill.remarks ?? "-"],
-];
-
 const buildChargeRows = (bill: Bill): [string, number][] => {
   const b = bill as unknown as {
     day_rent?: number | null; driver_bata?: number | null;
     extra_hours_amount?: number | null; extra_km_amount?: number | null;
-    trip_type?: string | null;
+    trip_type?: string | null; other_charges?: number | null;
   };
   const days = bill.total_days ?? 1;
   const rows: [string, number][] = [];
   if (b.day_rent) {
     const label = tripTypeLabel(b.trip_type);
     const total = b.trip_type === "pickup_drop" ? Number(b.day_rent) : Number(b.day_rent) * days;
-    rows.push([`${label}${b.trip_type !== "pickup_drop" ? ` × ${days} day(s)` : ""}`, total]);
+    const calc = b.trip_type === "pickup_drop"
+      ? `${label} = Rs. ${Number(b.day_rent).toLocaleString("en-IN")}`
+      : `${label} — Rs. ${Number(b.day_rent).toLocaleString("en-IN")} × ${days} Day${days === 1 ? "" : "s"}`;
+    rows.push([calc, total]);
   }
-  if (b.driver_bata) rows.push([`Driver Bata × ${days} day(s)`, Number(b.driver_bata) * days]);
-  if (b.extra_hours_amount) rows.push(["Additional Hourly Charges", Number(b.extra_hours_amount)]);
-  if (b.extra_km_amount) rows.push(["Extra Kilometer", Number(b.extra_km_amount)]);
   if (bill.parking_tollgate) rows.push(["Parking & Tollgate", Number(bill.parking_tollgate)]);
   if (bill.permit) rows.push(["Permit", Number(bill.permit)]);
   if (bill.night_halt) rows.push(["Night Halt", Number(bill.night_halt)]);
+  if (b.driver_bata) rows.push([`Driver Bata × ${days} Day${days === 1 ? "" : "s"}`, Number(b.driver_bata) * days]);
+  if (b.extra_hours_amount) rows.push(["Additional Hourly Charges", Number(b.extra_hours_amount)]);
+  if (b.extra_km_amount) rows.push(["Additional Kilometer Charges", Number(b.extra_km_amount)]);
+  if (b.other_charges) rows.push(["Other Charges", Number(b.other_charges)]);
   return rows;
 };
 
