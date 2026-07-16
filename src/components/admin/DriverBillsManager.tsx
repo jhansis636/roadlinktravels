@@ -24,6 +24,8 @@ import {
   useDriverBills, useSaveDriverBill, useDeleteDriverBill, type DriverBill,
 } from "@/hooks/useDriverBills";
 import { useCustomers } from "@/hooks/useCustomers";
+import { useBills, type Bill } from "@/hooks/useBills";
+import { useVehicleTariffs } from "@/hooks/useVehicleTariffs";
 import { printDriverBill, downloadDriverBillPdf } from "@/lib/printDriverBill";
 import { toast } from "@/hooks/use-toast";
 
@@ -32,6 +34,47 @@ const num = (v: string): number | null => {
   if (v === "" || v == null) return null;
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
+};
+
+// 12-hour time picker (stores "HH:MM" 24h)
+const to12h = (v: string): { h: string; m: string; p: "AM" | "PM" } => {
+  if (!v) return { h: "", m: "", p: "AM" };
+  const [hh, mm] = v.split(":").map(Number);
+  if (Number.isNaN(hh) || Number.isNaN(mm)) return { h: "", m: "", p: "AM" };
+  const p: "AM" | "PM" = hh >= 12 ? "PM" : "AM";
+  const h12 = ((hh + 11) % 12) + 1;
+  return { h: String(h12).padStart(2, "0"), m: String(mm).padStart(2, "0"), p };
+};
+const from12h = (h: string, m: string, p: "AM" | "PM"): string => {
+  if (!h || !m) return "";
+  let hh = Number(h) % 12;
+  if (p === "PM") hh += 12;
+  return `${String(hh).padStart(2, "0")}:${m}`;
+};
+const Time12Input = ({ value, onChange, disabled }: { value: string; onChange: (v: string) => void; disabled?: boolean }) => {
+  const { h, m, p } = to12h(value);
+  const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+  const mins = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
+  const update = (nh: string, nm: string, np: "AM" | "PM") => onChange(from12h(nh, nm, np));
+  return (
+    <div className="flex gap-1">
+      <Select value={h} onValueChange={(v) => update(v, m || "00", p)} disabled={disabled}>
+        <SelectTrigger className="w-[70px]"><SelectValue placeholder="HH" /></SelectTrigger>
+        <SelectContent>{hours.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent>
+      </Select>
+      <Select value={m} onValueChange={(v) => update(h || "12", v, p)} disabled={disabled}>
+        <SelectTrigger className="w-[70px]"><SelectValue placeholder="MM" /></SelectTrigger>
+        <SelectContent>{mins.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent>
+      </Select>
+      <Select value={p} onValueChange={(v) => update(h || "12", m || "00", v as "AM" | "PM")} disabled={disabled}>
+        <SelectTrigger className="w-[70px]"><SelectValue /></SelectTrigger>
+        <SelectContent>
+          <SelectItem value="AM">AM</SelectItem>
+          <SelectItem value="PM">PM</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
 };
 
 const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
@@ -65,6 +108,7 @@ interface FormState {
   bill_category: string;
   trip_type: string;
   customer_name: string;
+  department: string;
   driver_name: string;
   customer_phone: string;
   customer_address: string;
@@ -79,6 +123,7 @@ interface FormState {
   end_time: string;
   start_km: string;
   end_km: string;
+  extra_km_source: string; // Additional Kilometers copied from source bill (read-only display)
   trip_amount: string;
   day_rent: string;
   driver_bata: string;
@@ -102,6 +147,7 @@ const emptyForm = (): FormState => ({
   bill_category: "",
   trip_type: "full_day",
   customer_name: "",
+  department: "",
   driver_name: "",
   customer_phone: "",
   customer_address: "",
@@ -116,6 +162,7 @@ const emptyForm = (): FormState => ({
   end_time: "",
   start_km: "",
   end_km: "",
+  extra_km_source: "",
   trip_amount: "",
   day_rent: "",
   driver_bata: "",
@@ -140,6 +187,7 @@ const billToForm = (b: DriverBill): FormState => ({
   bill_category: b.bill_category ?? "",
   trip_type: b.trip_type ?? "full_day",
   customer_name: b.customer_name,
+  department: (b as unknown as { department?: string | null }).department ?? "",
   driver_name: b.driver_name ?? "",
   customer_phone: b.customer_phone ?? "",
   customer_address: b.customer_address ?? "",
@@ -154,6 +202,7 @@ const billToForm = (b: DriverBill): FormState => ({
   end_time: b.end_time ?? "",
   start_km: b.start_km?.toString() ?? "",
   end_km: b.end_km?.toString() ?? "",
+  extra_km_source: b.extra_km?.toString() ?? "",
   trip_amount: b.trip_amount?.toString() ?? "",
   day_rent: b.day_rent?.toString() ?? "",
   driver_bata: b.driver_bata?.toString() ?? "",
@@ -181,8 +230,73 @@ const DriverBillsManager = ({
   const save = useSaveDriverBill();
   const remove = useDeleteDriverBill();
   const { data: customers } = useCustomers();
+  const { data: customerBills } = useBills();
+  const { data: tariffs } = useVehicleTariffs();
+  const vehicleOptions = useMemo(
+    () => (tariffs ?? []).map((t) => t.vehicle_type),
+    [tariffs],
+  );
+
+  // Helpers to compute Total Time & Additional Hours from Start/End Time.
+  const computeTimes = (start?: string | null, end?: string | null) => {
+    if (!start || !end) return { totalMin: null as number | null, addlHrs: null as number | null };
+    const [sh, sm] = start.split(":").map(Number);
+    const [eh, em] = end.split(":").map(Number);
+    if ([sh, sm, eh, em].some(Number.isNaN)) return { totalMin: null, addlHrs: null };
+    let diff = eh * 60 + em - (sh * 60 + sm);
+    if (diff < 0) diff += 24 * 60;
+    const addlHrs = diff > 600 ? Math.round(((diff - 600) / 60) * 100) / 100 : null;
+    return { totalMin: diff, addlHrs };
+  };
 
   const [form, setForm] = useState<FormState>(emptyForm());
+  const locked = !!form.source_bill_id;
+  const { totalMin: computedTotalMin, addlHrs: computedAddlHrs } = computeTimes(form.start_time, form.end_time);
+  const totalTimeDisplay = computedTotalMin != null ? `${Math.floor(computedTotalMin / 60)}h ${computedTotalMin % 60}m` : "";
+
+  const totalDays = useMemo(() => {
+    if (!form.start_date || !form.end_date) return null;
+    return Math.max(1, Math.round((new Date(form.end_date).getTime() - new Date(form.start_date).getTime()) / 86400000) + 1);
+  }, [form.start_date, form.end_date]);
+  const totalKm = useMemo(() => {
+    const s = num(form.start_km);
+    const e = num(form.end_km);
+    return s != null && e != null ? Math.max(0, e - s) : null;
+  }, [form.start_km, form.end_km]);
+
+  // Populate the form from an existing Customer Bill.
+  const applySourceBill = (b: Bill) => {
+    const bx = b as unknown as {
+      trip_type?: string; pickup?: string; drop_location?: string;
+      customer_phone?: string; customer_address?: string;
+      department?: string; driver_bata?: number | null;
+    };
+    setForm((f) => ({
+      ...f,
+      source_bill_id: b.id,
+      bill_no: b.bill_no ?? "",
+      bill_date: b.bill_date ?? f.bill_date,
+      bill_category: (b as unknown as { bill_category?: string }).bill_category ?? "",
+      trip_type: bx.trip_type ?? "full_day",
+      customer_name: b.customer_name ?? "",
+      department: bx.department ?? "",
+      customer_phone: bx.customer_phone ?? "",
+      customer_address: bx.customer_address ?? "",
+      place: b.place ?? "",
+      pickup: bx.pickup ?? "",
+      drop: bx.drop_location ?? "",
+      vehicle_type: b.vehicle_type ?? "",
+      vehicle_number: b.vehicle_number ?? "",
+      start_date: b.start_date ?? f.start_date,
+      end_date: b.end_date ?? f.end_date,
+      start_time: b.start_time ?? "",
+      end_time: b.end_time ?? "",
+      start_km: b.start_km?.toString() ?? "",
+      end_km: b.end_km?.toString() ?? "",
+      extra_hours: b.extra_hours?.toString() ?? "",
+      extra_km_source: b.extra_km?.toString() ?? "",
+    }));
+  };
 
   useEffect(() => {
     if (prefill) {
