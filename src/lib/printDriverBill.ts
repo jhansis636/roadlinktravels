@@ -17,6 +17,15 @@ const tripTypeLabel = (t?: string | null) =>
   t === "pickup_drop" ? "Pick Up & Drop" :
   "Full Day Rent";
 
+const time12 = (t?: string | null): string => {
+  if (!t) return "-";
+  const [hh, mm] = t.split(":").map(Number);
+  if (Number.isNaN(hh) || Number.isNaN(mm)) return t;
+  const p = hh >= 12 ? "PM" : "AM";
+  const h12 = ((hh + 11) % 12) + 1;
+  return `${String(h12).padStart(2, "0")}:${String(mm).padStart(2, "0")} ${p}`;
+};
+
 const numToWords = (n: number): string => {
   if (!Number.isFinite(n) || n <= 0) return "";
   const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
@@ -128,6 +137,7 @@ export const printDriverBill = (bill: DriverBill) => {
         <h3>Parties</h3>
         <table>
           <tr><td>Customer</td><td>${bill.customer_name ?? "-"}</td></tr>
+          <tr><td>Department</td><td>${(bill as unknown as { department?: string | null }).department ?? "-"}</td></tr>
           <tr><td>Driver</td><td>${bill.driver_name ?? "-"}</td></tr>
           <tr><td>Phone</td><td>${bill.customer_phone ?? "-"}</td></tr>
           <tr><td>Address</td><td>${bill.customer_address ?? "-"}</td></tr>
@@ -141,13 +151,15 @@ export const printDriverBill = (bill: DriverBill) => {
           <tr><td>Drop</td><td>${bill.drop_location ?? "-"}</td></tr>
           <tr><td>Vehicle</td><td>${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}</td></tr>
           <tr><td>Dates</td><td>${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})</td></tr>
+          <tr><td>Start Time</td><td>${time12(bill.start_time)}</td></tr>
+          <tr><td>End Time</td><td>${time12(bill.end_time)}</td></tr>
         </table>
       </div>
     </div>
     <table class="charges">
       <thead><tr><th>Description</th><th>Amount</th></tr></thead>
       <tbody>
-        <tr class="detail"><td>Time: ${timeRow}</td><td>-</td></tr>
+        <tr class="detail"><td>Time: ${time12(bill.start_time)} → ${time12(bill.end_time)}</td><td>-</td></tr>
         <tr class="detail"><td>Total Time: ${totalTimeStr}</td><td>-</td></tr>
         ${addlHrs != null && addlHrs > 0 ? `<tr class="detail"><td>Additional Hours: ${addlHrs} Hours</td><td>-</td></tr>` : ""}
         <tr class="detail"><td>Kilometer: ${kmRow}</td><td>-</td></tr>
@@ -258,6 +270,7 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
 
   const partiesRows: [string, string][] = [
     ["Customer", bill.customer_name ?? "-"],
+    ["Department", (bill as unknown as { department?: string | null }).department ?? "-"],
     ["Driver", bill.driver_name ?? "-"],
     ["Phone", bill.customer_phone ?? "-"],
     ["Address", bill.customer_address ?? "-"],
@@ -268,13 +281,15 @@ export const downloadDriverBillPdf = async (bill: DriverBill) => {
     ["Drop", bill.drop_location ?? "-"],
     ["Vehicle", `${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}`],
     ["Dates", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})`],
+    ["Start Time", time12(bill.start_time)],
+    ["End Time", time12(bill.end_time)],
   ];
   const custEnd = drawInfoBox(margin, y, "Parties", partiesRows);
   const tripEnd = drawInfoBox(margin + colWidth + 12, y, "Trip Information", tripRows);
   y = Math.max(custEnd, tripEnd) + 10;
 
   const chargeRows = buildChargeRows(bill);
-  const timeStr = `Time: ${bill.start_time ?? "-"} to ${bill.end_time ?? "-"}`;
+  const timeStr = `Time: ${time12(bill.start_time)} to ${time12(bill.end_time)}`;
   const kmStr = `Kilometer: ${bill.start_km ?? "-"} to ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
   const totalMinsPdf = bill.total_time_minutes ?? null;
   const totalTimePdf = `Total Time: ${totalMinsPdf != null ? `${Math.floor(totalMinsPdf / 60)}h ${totalMinsPdf % 60}m` : "-"}`;

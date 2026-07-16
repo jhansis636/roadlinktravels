@@ -88,6 +88,7 @@ export type Database = {
           customer_name: string
           customer_phone: string | null
           day_rent: number | null
+          department: string | null
           driver_bata: number | null
           drop_location: string | null
           end_date: string | null
@@ -132,6 +133,7 @@ export type Database = {
           customer_name: string
           customer_phone?: string | null
           day_rent?: number | null
+          department?: string | null
           driver_bata?: number | null
           drop_location?: string | null
           end_date?: string | null
@@ -176,6 +178,7 @@ export type Database = {
           customer_name?: string
           customer_phone?: string | null
           day_rent?: number | null
+          department?: string | null
           driver_bata?: number | null
           drop_location?: string | null
           end_date?: string | null
@@ -304,6 +307,7 @@ export type Database = {
           customer_name: string
           customer_phone: string | null
           day_rent: number | null
+          department: string | null
           driver_bata: number | null
           driver_name: string | null
           drop_location: string | null
@@ -349,6 +353,7 @@ export type Database = {
           customer_name: string
           customer_phone?: string | null
           day_rent?: number | null
+          department?: string | null
           driver_bata?: number | null
           driver_name?: string | null
           drop_location?: string | null
@@ -394,6 +399,7 @@ export type Database = {
           customer_name?: string
           customer_phone?: string | null
           day_rent?: number | null
+          department?: string | null
           driver_bata?: number | null
           driver_name?: string | null
           drop_location?: string | null

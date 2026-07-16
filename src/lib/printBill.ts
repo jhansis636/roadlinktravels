@@ -17,6 +17,19 @@ const tripTypeLabel = (t?: string | null) =>
   t === "pickup_drop" ? "Pick Up & Drop" :
   "Full Day Rent";
 
+// Format "HH:MM" 24h string → "hh:mm AM/PM"
+const time12 = (t?: string | null): string => {
+  if (!t) return "-";
+  const [hh, mm] = t.split(":").map(Number);
+  if (Number.isNaN(hh) || Number.isNaN(mm)) return t;
+  const p = hh >= 12 ? "PM" : "AM";
+  const h12 = ((hh + 11) % 12) + 1;
+  return `${String(h12).padStart(2, "0")}:${String(mm).padStart(2, "0")} ${p}`;
+};
+
+const formatMinutes = (m: number | null | undefined): string =>
+  m == null ? "-" : `${Math.floor(m / 60)}h ${m % 60}m`;
+
 // Convert an integer amount (rupees) to Indian words
 const numToWords = (n: number): string => {
   if (!Number.isFinite(n) || n <= 0) return "";
@@ -42,47 +55,29 @@ const numToWords = (n: number): string => {
 
 // Rows shown on the printed/PDF invoice. Parking & Tollgate, Permit and
 // Night Halt are intentionally excluded from the printout (still saved in DB).
-const buildRows = (bill: Bill): [string, string][] => [
-  ["Bill Date", bill.bill_date ?? "-"],
-  ["Bill Category", (bill as unknown as { bill_category?: string }).bill_category ?? "-"],
-  ["Trip Type", tripTypeLabel((bill as unknown as { trip_type?: string }).trip_type)],
-  ["Customer", bill.customer_name ?? "-"],
-  ["Customer Phone", (bill as unknown as { customer_phone?: string }).customer_phone ?? "-"],
-  ["Customer Address", (bill as unknown as { customer_address?: string }).customer_address ?? "-"],
-  ["Pickup", (bill as unknown as { pickup?: string }).pickup ?? "-"],
-  ["Drop", (bill as unknown as { drop_location?: string }).drop_location ?? "-"],
-  ["Place / Destination", bill.place ?? "-"],
-  ["Vehicle Type", bill.vehicle_type ?? "-"],
-  ["Vehicle Number", bill.vehicle_number ?? "-"],
-  ["Start Date → End Date", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"}`],
-  ["Total Days", bill.total_days?.toString() ?? "-"],
-  ["Start Time → End Time", `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`],
-  ["Total Time (minutes)", bill.total_time_minutes?.toString() ?? "-"],
-  ["Start KM → End KM", `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"}`],
-  ["Total KM", bill.total_km?.toString() ?? "-"],
-  ["Advance", fmt(bill.advance)],
-  ["Remarks", bill.remarks ?? "-"],
-];
-
 const buildChargeRows = (bill: Bill): [string, number][] => {
   const b = bill as unknown as {
     day_rent?: number | null; driver_bata?: number | null;
     extra_hours_amount?: number | null; extra_km_amount?: number | null;
-    trip_type?: string | null;
+    trip_type?: string | null; other_charges?: number | null;
   };
   const days = bill.total_days ?? 1;
   const rows: [string, number][] = [];
   if (b.day_rent) {
     const label = tripTypeLabel(b.trip_type);
     const total = b.trip_type === "pickup_drop" ? Number(b.day_rent) : Number(b.day_rent) * days;
-    rows.push([`${label}${b.trip_type !== "pickup_drop" ? ` × ${days} day(s)` : ""}`, total]);
+    const calc = b.trip_type === "pickup_drop"
+      ? `${label} = Rs. ${Number(b.day_rent).toLocaleString("en-IN")}`
+      : `${label} — Rs. ${Number(b.day_rent).toLocaleString("en-IN")} × ${days} Day${days === 1 ? "" : "s"}`;
+    rows.push([calc, total]);
   }
-  if (b.driver_bata) rows.push([`Driver Bata × ${days} day(s)`, Number(b.driver_bata) * days]);
-  if (b.extra_hours_amount) rows.push(["Additional Hourly Charges", Number(b.extra_hours_amount)]);
-  if (b.extra_km_amount) rows.push(["Extra Kilometer", Number(b.extra_km_amount)]);
   if (bill.parking_tollgate) rows.push(["Parking & Tollgate", Number(bill.parking_tollgate)]);
   if (bill.permit) rows.push(["Permit", Number(bill.permit)]);
   if (bill.night_halt) rows.push(["Night Halt", Number(bill.night_halt)]);
+  if (b.driver_bata) rows.push([`Driver Bata × ${days} Day${days === 1 ? "" : "s"}`, Number(b.driver_bata) * days]);
+  if (b.extra_hours_amount) rows.push(["Additional Hourly Charges", Number(b.extra_hours_amount)]);
+  if (b.extra_km_amount) rows.push(["Additional Kilometer Charges", Number(b.extra_km_amount)]);
+  if (b.other_charges) rows.push(["Other Charges", Number(b.other_charges)]);
   return rows;
 };
 
@@ -95,14 +90,13 @@ export const printBill = (bill: Bill) => {
   if (!win) return;
   const bx = bill as unknown as {
     trip_type?: string; pickup?: string; drop_location?: string;
-    customer_phone?: string; customer_address?: string; bill_category?: string;
+    customer_phone?: string; customer_address?: string; department?: string;
   };
   const charges = buildChargeRows(bill);
-  const timeRow = `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`;
-  const kmRow = `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
   const totalMins = bill.total_time_minutes ?? null;
-  const totalHoursDisplay = totalMins != null ? `${Math.floor(totalMins / 60)}h ${totalMins % 60}m` : "-";
+  const totalHoursDisplay = formatMinutes(totalMins);
   const addlHours = bill.extra_hours != null ? Number(bill.extra_hours) : null;
+  const addlKm = bill.extra_km != null ? Number(bill.extra_km) : null;
   const total = Number(bill.total_amount ?? 0);
   const advance = Number(bill.advance ?? 0);
   const balance = Number(bill.balance ?? (total - advance));
@@ -156,36 +150,34 @@ export const printBill = (bill: Bill) => {
         <h2>INVOICE</h2>
         <div><strong>Bill No:</strong> ${bill.bill_no ?? "-"}</div>
         <div><strong>Date:</strong> ${bill.bill_date ?? "-"}</div>
-        <div><strong>Category:</strong> ${bx.bill_category ?? "-"}</div>
       </div>
     </div>
     <div class="info">
       <div class="box">
         <h3>Customer Information</h3>
         <table>
-          <tr><td>Name</td><td>${bill.customer_name ?? "-"}</td></tr>
-          <tr><td>Phone</td><td>${bx.customer_phone ?? "-"}</td></tr>
-          <tr><td>Address</td><td>${bx.customer_address ?? "-"}</td></tr>
+          <tr><td>Customer Name</td><td>${bill.customer_name ?? "-"}</td></tr>
+          <tr><td>Department</td><td>${bx.department ?? "-"}</td></tr>
+          <tr><td>Trip Type</td><td>${tripTypeLabel(bx.trip_type)}</td></tr>
+          <tr><td>Place / Destination</td><td>${bill.place ?? "-"}</td></tr>
         </table>
       </div>
       <div class="box">
         <h3>Trip Information</h3>
         <table>
-          <tr><td>Trip Type</td><td>${tripTypeLabel(bx.trip_type)}</td></tr>
-          <tr><td>Pickup</td><td>${bx.pickup ?? "-"}</td></tr>
-          <tr><td>Drop</td><td>${bx.drop_location ?? "-"}</td></tr>
+          <tr><td>Date</td><td>${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} Day${(bill.total_days ?? 0) === 1 ? "" : "s"})</td></tr>
           <tr><td>Vehicle</td><td>${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}</td></tr>
-          <tr><td>Dates</td><td>${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})</td></tr>
+          <tr><td>Start Time</td><td>${time12(bill.start_time)}</td></tr>
+          <tr><td>End Time</td><td>${time12(bill.end_time)}</td></tr>
+          <tr><td>Total Time</td><td>${totalHoursDisplay}</td></tr>
+          <tr><td>Additional Hours</td><td>${addlHours != null && addlHours > 0 ? `${addlHours} Hours` : "-"}</td></tr>
+          <tr><td>Additional KM</td><td>${addlKm != null && addlKm > 0 ? `${addlKm} km` : "-"}</td></tr>
         </table>
       </div>
     </div>
     <table class="charges">
       <thead><tr><th>Description</th><th>Amount</th></tr></thead>
       <tbody>
-        <tr class="detail"><td>Time: ${timeRow}</td><td>-</td></tr>
-        <tr class="detail"><td>Total Time: ${totalHoursDisplay}</td><td>-</td></tr>
-        ${addlHours != null && addlHours > 0 ? `<tr class="detail"><td>Additional Hours: ${addlHours} Hours</td><td>-</td></tr>` : ""}
-        <tr class="detail"><td>Kilometer: ${kmRow}</td><td>-</td></tr>
         ${charges.length ? charges.map(([k, v]) => `<tr><td>${k}</td><td>${fmt(v)}</td></tr>`).join("") : `<tr><td>No charges</td><td>-</td></tr>`}
       </tbody>
     </table>
@@ -242,7 +234,7 @@ export const downloadBillPdf = async (bill: Bill) => {
   const contentWidth = pageWidth - margin * 2;
   const bx = bill as unknown as {
     trip_type?: string; pickup?: string; drop_location?: string;
-    customer_phone?: string; customer_address?: string;
+    customer_phone?: string; customer_address?: string; department?: string;
   };
 
   // ===== Header with larger logo =====
@@ -268,7 +260,6 @@ export const downloadBillPdf = async (bill: Bill) => {
   doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(60, 60, 60);
   doc.text(`Bill No: ${bill.bill_no ?? "-"}`, pageWidth - margin, margin + 32, { align: "right" });
   doc.text(`Date: ${bill.bill_date ?? "-"}`, pageWidth - margin, margin + 44, { align: "right" });
-  doc.text(`Category: ${(bill as unknown as { bill_category?: string }).bill_category ?? "-"}`, pageWidth - margin, margin + 56, { align: "right" });
 
   const dividerY = margin + logoH + 4;
   doc.setDrawColor(29, 78, 216).setLineWidth(1.2);
@@ -300,16 +291,21 @@ export const downloadBillPdf = async (bill: Bill) => {
   };
 
   const customerRows: [string, string][] = [
-    ["Name", bill.customer_name ?? "-"],
-    ["Phone", bx.customer_phone ?? "-"],
-    ["Address", bx.customer_address ?? "-"],
-  ];
-  const tripRows: [string, string][] = [
+    ["Customer Name", bill.customer_name ?? "-"],
+    ["Department", bx.department ?? "-"],
     ["Trip Type", tripTypeLabel(bx.trip_type)],
-    ["Pickup", bx.pickup ?? "-"],
-    ["Drop", bx.drop_location ?? "-"],
+    ["Place", bill.place ?? "-"],
+  ];
+  const addlHoursPdf = bill.extra_hours != null ? Number(bill.extra_hours) : null;
+  const addlKmPdf = bill.extra_km != null ? Number(bill.extra_km) : null;
+  const tripRows: [string, string][] = [
+    ["Date", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} Day${(bill.total_days ?? 0) === 1 ? "" : "s"})`],
     ["Vehicle", `${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}`],
-    ["Dates", `${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})`],
+    ["Start Time", time12(bill.start_time)],
+    ["End Time", time12(bill.end_time)],
+    ["Total Time", formatMinutes(bill.total_time_minutes)],
+    ["Additional Hours", addlHoursPdf != null && addlHoursPdf > 0 ? `${addlHoursPdf} Hours` : "-"],
+    ["Additional KM", addlKmPdf != null && addlKmPdf > 0 ? `${addlKmPdf} km` : "-"],
   ];
   const custEnd = drawInfoBox(margin, y, "Customer Information", customerRows);
   const tripEnd = drawInfoBox(margin + colWidth + 12, y, "Trip Information", tripRows);
@@ -317,24 +313,9 @@ export const downloadBillPdf = async (bill: Bill) => {
 
   // ===== Charges table =====
   const chargeRows = buildChargeRows(bill);
-  const timeStr = `Time: ${bill.start_time ?? "-"} to ${bill.end_time ?? "-"}`;
-  const kmStr = `Kilometer: ${bill.start_km ?? "-"} to ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
-  const totalMinsPdf = bill.total_time_minutes ?? null;
-  const totalTimeStr = `Total Time: ${totalMinsPdf != null ? `${Math.floor(totalMinsPdf / 60)}h ${totalMinsPdf % 60}m` : "-"}`;
-  const addlHrsPdf = bill.extra_hours != null ? Number(bill.extra_hours) : null;
-  const bodyRows: (string | { content: string; styles?: Record<string, unknown> })[][] = [
-    [{ content: timeStr, styles: { fontStyle: "italic", textColor: [71, 85, 105], fillColor: [248, 250, 252] } },
-     { content: "-", styles: { halign: "right", fillColor: [248, 250, 252] } }],
-    [{ content: totalTimeStr, styles: { fontStyle: "italic", textColor: [71, 85, 105], fillColor: [248, 250, 252] } },
-     { content: "-", styles: { halign: "right", fillColor: [248, 250, 252] } }],
-    ...(addlHrsPdf != null && addlHrsPdf > 0 ? [[
-      { content: `Additional Hours: ${addlHrsPdf} Hours`, styles: { fontStyle: "italic", textColor: [71, 85, 105], fillColor: [248, 250, 252] } },
-      { content: "-", styles: { halign: "right", fillColor: [248, 250, 252] } },
-    ]] : []),
-    [{ content: kmStr, styles: { fontStyle: "italic", textColor: [71, 85, 105], fillColor: [248, 250, 252] } },
-     { content: "-", styles: { halign: "right", fillColor: [248, 250, 252] } }],
-    ...(chargeRows.length ? chargeRows.map(([k, v]) => [k, fmt(v)] as string[]) : [["No charges", "-"]]),
-  ];
+  const bodyRows: string[][] = chargeRows.length
+    ? chargeRows.map(([k, v]) => [k, fmt(v)])
+    : [["No charges", "-"]];
   autoTable(doc, {
     startY: y,
     head: [["Description", "Amount"]],
