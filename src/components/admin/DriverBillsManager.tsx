@@ -349,6 +349,7 @@ const DriverBillsManager = ({
       bill_category: form.bill_category || null,
       trip_type: form.trip_type || null,
       customer_name: form.customer_name.trim(),
+      department: form.department || null,
       driver_name: form.driver_name || null,
       customer_phone: form.customer_phone || null,
       customer_address: form.customer_address || null,
@@ -362,6 +363,7 @@ const DriverBillsManager = ({
       total_days: totalDays,
       start_time: form.start_time || null,
       end_time: form.end_time || null,
+      total_time_minutes: computedTotalMin,
       start_km: num(form.start_km),
       end_km: num(form.end_km),
       total_km: totalKm,
@@ -372,9 +374,9 @@ const DriverBillsManager = ({
       parking: num(form.parking),
       tollgate: num(form.tollgate),
       permit: num(form.permit),
-      extra_hours: num(form.extra_hours),
+      extra_hours: num(form.extra_hours) ?? computedAddlHrs,
       extra_hours_amount: num(form.extra_hours_amount),
-      extra_km: num(form.extra_km),
+      extra_km: num(form.extra_km_source) ?? num(form.extra_km),
       extra_km_amount: num(form.extra_km_amount),
       other_charges: num(form.other_charges),
       advance: num(form.advance),
@@ -382,7 +384,7 @@ const DriverBillsManager = ({
       balance: totals.total ? totals.balance : null,
       remarks: form.remarks || null,
       status: "draft",
-    });
+    } as never);
     setForm(billToForm(saved));
   };
 
