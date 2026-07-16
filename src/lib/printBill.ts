@@ -90,14 +90,13 @@ export const printBill = (bill: Bill) => {
   if (!win) return;
   const bx = bill as unknown as {
     trip_type?: string; pickup?: string; drop_location?: string;
-    customer_phone?: string; customer_address?: string; bill_category?: string;
+    customer_phone?: string; customer_address?: string; department?: string;
   };
   const charges = buildChargeRows(bill);
-  const timeRow = `${bill.start_time ?? "-"} → ${bill.end_time ?? "-"}`;
-  const kmRow = `${bill.start_km ?? "-"} → ${bill.end_km ?? "-"} (Total: ${bill.total_km ?? "-"} km)`;
   const totalMins = bill.total_time_minutes ?? null;
-  const totalHoursDisplay = totalMins != null ? `${Math.floor(totalMins / 60)}h ${totalMins % 60}m` : "-";
+  const totalHoursDisplay = formatMinutes(totalMins);
   const addlHours = bill.extra_hours != null ? Number(bill.extra_hours) : null;
+  const addlKm = bill.extra_km != null ? Number(bill.extra_km) : null;
   const total = Number(bill.total_amount ?? 0);
   const advance = Number(bill.advance ?? 0);
   const balance = Number(bill.balance ?? (total - advance));
@@ -151,36 +150,34 @@ export const printBill = (bill: Bill) => {
         <h2>INVOICE</h2>
         <div><strong>Bill No:</strong> ${bill.bill_no ?? "-"}</div>
         <div><strong>Date:</strong> ${bill.bill_date ?? "-"}</div>
-        <div><strong>Category:</strong> ${bx.bill_category ?? "-"}</div>
       </div>
     </div>
     <div class="info">
       <div class="box">
         <h3>Customer Information</h3>
         <table>
-          <tr><td>Name</td><td>${bill.customer_name ?? "-"}</td></tr>
-          <tr><td>Phone</td><td>${bx.customer_phone ?? "-"}</td></tr>
-          <tr><td>Address</td><td>${bx.customer_address ?? "-"}</td></tr>
+          <tr><td>Customer Name</td><td>${bill.customer_name ?? "-"}</td></tr>
+          <tr><td>Department</td><td>${bx.department ?? "-"}</td></tr>
+          <tr><td>Trip Type</td><td>${tripTypeLabel(bx.trip_type)}</td></tr>
+          <tr><td>Place / Destination</td><td>${bill.place ?? "-"}</td></tr>
         </table>
       </div>
       <div class="box">
         <h3>Trip Information</h3>
         <table>
-          <tr><td>Trip Type</td><td>${tripTypeLabel(bx.trip_type)}</td></tr>
-          <tr><td>Pickup</td><td>${bx.pickup ?? "-"}</td></tr>
-          <tr><td>Drop</td><td>${bx.drop_location ?? "-"}</td></tr>
+          <tr><td>Date</td><td>${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} Day${(bill.total_days ?? 0) === 1 ? "" : "s"})</td></tr>
           <tr><td>Vehicle</td><td>${bill.vehicle_type ?? "-"}${bill.vehicle_number ? ` (${bill.vehicle_number})` : ""}</td></tr>
-          <tr><td>Dates</td><td>${bill.start_date ?? "-"} → ${bill.end_date ?? "-"} (${bill.total_days ?? "-"} day${(bill.total_days ?? 0) === 1 ? "" : "s"})</td></tr>
+          <tr><td>Start Time</td><td>${time12(bill.start_time)}</td></tr>
+          <tr><td>End Time</td><td>${time12(bill.end_time)}</td></tr>
+          <tr><td>Total Time</td><td>${totalHoursDisplay}</td></tr>
+          <tr><td>Additional Hours</td><td>${addlHours != null && addlHours > 0 ? `${addlHours} Hours` : "-"}</td></tr>
+          <tr><td>Additional KM</td><td>${addlKm != null && addlKm > 0 ? `${addlKm} km` : "-"}</td></tr>
         </table>
       </div>
     </div>
     <table class="charges">
       <thead><tr><th>Description</th><th>Amount</th></tr></thead>
       <tbody>
-        <tr class="detail"><td>Time: ${timeRow}</td><td>-</td></tr>
-        <tr class="detail"><td>Total Time: ${totalHoursDisplay}</td><td>-</td></tr>
-        ${addlHours != null && addlHours > 0 ? `<tr class="detail"><td>Additional Hours: ${addlHours} Hours</td><td>-</td></tr>` : ""}
-        <tr class="detail"><td>Kilometer: ${kmRow}</td><td>-</td></tr>
         ${charges.length ? charges.map(([k, v]) => `<tr><td>${k}</td><td>${fmt(v)}</td></tr>`).join("") : `<tr><td>No charges</td><td>-</td></tr>`}
       </tbody>
     </table>
