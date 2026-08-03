@@ -65,8 +65,8 @@ const WhyUs = () => {
   return (
     <div className="pt-16 md:pt-20">
       <SEO
-        title="Why Choose Roadlink — Best Taxi Service in Coimbatore | 24/7 Cabs"
-        description="Why Roadlink Tours & Travels is the best taxi service in Coimbatore — on-time pickup, affordable pricing, professional drivers, well-maintained fleet and 24/7 customer support."
+        title="Why Choose Roadlink | Best Taxi Service in Coimbatore"
+        description="On-time pickup, fair pricing, professional drivers, a well-maintained fleet and 24/7 support make Roadlink the trusted taxi service in Coimbatore."
         path="/why-us"
         keywords="best taxi service in Coimbatore, why choose Coimbatore taxi, affordable taxi service Coimbatore"
       />

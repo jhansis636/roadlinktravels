@@ -97,7 +97,7 @@ const Testimonials = () => {
     <div className="pt-16 md:pt-20">
       <SEO
         title="Customer Reviews — Roadlink Coimbatore Taxi & Travels"
-        description="Read genuine customer reviews of Roadlink Tours and Travels — Coimbatore's most reviewed taxi service for airport pickup, outstation trips and tour packages."
+        description="Genuine customer reviews of Roadlink Tours and Travels, a trusted Coimbatore taxi service for airport pickup, outstation trips and tour packages."
         path="/testimonials"
         keywords="Coimbatore taxi reviews, best Coimbatore travels reviews"
       />

@@ -99,8 +99,8 @@ const Services = () => {
   return (
     <div className="pt-16 md:pt-20">
       <SEO
-        title="Coimbatore Taxi Services — Local, Outstation, Airport & Tour Packages"
-        description="Complete Coimbatore taxi services: local cab booking, outstation taxi, Coimbatore airport pickup & drop, corporate travel, family trips and tourist taxi packages to Ooty, Munnar, Kodaikanal & Mysore."
+        title="Coimbatore Taxi Services | Local, Outstation & Airport"
+        description="Coimbatore taxi services: local cabs, outstation trips, airport pickup and drop, corporate travel, family trips and tourist packages to Ooty and Munnar."
         path="/services"
         keywords="Coimbatore taxi services, Coimbatore cab service, Coimbatore airport taxi, outstation taxi Coimbatore, Coimbatore tourist taxi"
       />

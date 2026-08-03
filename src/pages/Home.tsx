@@ -78,8 +78,8 @@ const Home = () => {
   return (
     <div ref={containerRef} style={{ perspective: "1200px" }}>
       <SEO
-        title="Best Taxi Service in Coimbatore | Roadlink Tours & Travels — 24/7 Cab Booking"
-        description="Roadlink Tours & Travels — best taxi service in Coimbatore. 24/7 cab booking, Coimbatore airport taxi, outstation trips to Ooty, Munnar, Kodaikanal, Mysore & Valparai, Innova & Tempo Traveller hire and luxury sedan rentals."
+        title="Best Taxi Service in Coimbatore | Roadlink Travels"
+        description="Book Coimbatore taxis 24/7 with Roadlink — airport cabs, outstation trips to Ooty, Munnar and Kodaikanal, Innova hire and luxury sedan rentals."
         path="/"
         keywords="best taxi service in Coimbatore, Coimbatore taxi booking, Coimbatore travels, Coimbatore cab service, Coimbatore airport taxi, outstation taxi Coimbatore, Coimbatore to Ooty taxi, luxury car rental Coimbatore, Innova rental Coimbatore, Tempo Traveller Coimbatore, Coimbatore tour packages, 24/7 taxi service Coimbatore"
         schema={{

@@ -13,8 +13,8 @@ const TariffKmBasis = () => {
   return (
     <div className="min-h-screen pt-20 pb-16">
       <SEO
-        title="Outstation Taxi Tariff Km Basis Coimbatore | Per Kilometre Cab Rates"
-        description="Per-kilometre outstation taxi tariff from Coimbatore — Swift, Etios, Ertiga, Innova, Crysta, Hycross, Tempo Traveller, Urbania, Coach Van and luxury sedan rates with driver bata."
+        title="Coimbatore Outstation Taxi Tariff | Per Kilometre Rates"
+        description="Per-kilometre outstation taxi rates from Coimbatore for Swift, Etios, Ertiga, Innova, Crysta, Tempo Traveller and luxury sedans, including driver bata."
         path="/tariff/km-basis"
         keywords="Coimbatore taxi km basis, outstation taxi per km Coimbatore, Coimbatore car rental, Innova rental Coimbatore"
       />
