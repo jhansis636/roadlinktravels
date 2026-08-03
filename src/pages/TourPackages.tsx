@@ -13,11 +13,11 @@ const TourPackages = () => {
 
   const durationLabel = duration ? duration.replace("-", " ") : "";
   const seoTitle = packageData
-    ? `${packageData.heading} | Coimbatore Tour Package`
-    : "Coimbatore Tour Packages — 1 to 8 Day Trips to Ooty, Munnar & More";
+    ? `${packageData.heading}`.slice(0, 60)
+    : "Coimbatore Tour Packages | 1 to 8 Day Trips";
   const seoDesc = packageData
-    ? `Explore our ${durationLabel} Coimbatore tour package — ${packageData.heading}. Includes vehicle, driver, popular sightseeing spots and customised itineraries.`
-    : "Best Coimbatore tour packages for 1 to 8 days covering Ooty, Munnar, Kodaikanal, Mysore, Valparai, Wayanad and more — with cab, driver and customised itinerary.";
+    ? `Our ${durationLabel} Coimbatore tour package includes vehicle, driver, popular sightseeing spots and a customised itinerary. Book on call or WhatsApp.`
+    : "Coimbatore tour packages for 1 to 8 days covering Ooty, Munnar, Kodaikanal, Mysore and Wayanad, with cab, driver and a customised itinerary.";
 
   const imageMap = useMemo(() => {
     const m: Record<string, string> = {};

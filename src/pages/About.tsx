@@ -23,8 +23,8 @@ const features = [{
 const About = () => {
   return <div className="pt-16 md:pt-20">
       <SEO
-        title="About Roadlink Tours & Travels | Best Coimbatore Travels Company"
-        description="Learn about Roadlink Tours and Travels — Coimbatore's trusted taxi and travels company offering airport taxi, outstation cab, luxury car rentals and tour packages to Ooty, Munnar, Kodaikanal & Mysore."
+        title="About Roadlink Tours & Travels | Coimbatore Travels"
+        description="Roadlink Tours and Travels is a trusted Coimbatore travels company offering airport taxis, outstation cabs, luxury car rentals and tour packages."
         path="/about"
         keywords="about Coimbatore travels, best travels in Coimbatore, Coimbatore taxi service, Coimbatore tourist taxi"
       />

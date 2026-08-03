@@ -13,8 +13,8 @@ const TariffDayBasis = () => {
   return (
     <div className="min-h-screen pt-20 pb-16">
       <SEO
-        title="Outstation Taxi Tariff Day Basis Coimbatore | Innova, Crysta, Tempo Traveller Fares"
-        description="Transparent day-basis outstation taxi tariff from Coimbatore for Swift, Etios, Ertiga, Innova, Crysta, Hycross, Tempo Traveller, Urbania and luxury sedans (Audi, Benz, BMW, Jaguar). 100 free km/day."
+        title="Coimbatore Outstation Taxi Tariff | Day Basis Rates"
+        description="Day-basis outstation taxi rates from Coimbatore for Swift, Etios, Ertiga, Innova, Crysta, Tempo Traveller and luxury sedans, with 100 free km per day."
         path="/tariff/day-basis"
         keywords="outstation taxi Coimbatore, Coimbatore taxi tariff day basis, Innova rental Coimbatore, Tempo Traveller Coimbatore, luxury sedan rental Coimbatore"
       />

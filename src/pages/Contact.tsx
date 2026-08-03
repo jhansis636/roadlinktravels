@@ -41,8 +41,8 @@ const Contact = () => {
   };
   return <div className="pt-16 md:pt-20">
       <SEO
-        title="Contact Roadlink Tours & Travels Coimbatore | Book Taxi 24/7"
-        description="Contact Roadlink Tours and Travels for Coimbatore taxi booking, airport pickup, outstation cab and tour package enquiries. Call +91 82481 99154 or WhatsApp 24/7."
+        title="Contact Roadlink Coimbatore | Book a Taxi 24/7"
+        description="Contact Roadlink for Coimbatore taxi booking, airport pickup, outstation cabs and tour packages. Call or WhatsApp +91 82481 99154 anytime."
         path="/contact"
         keywords="Coimbatore taxi booking, contact Coimbatore travels, 24/7 taxi service Coimbatore"
       />
