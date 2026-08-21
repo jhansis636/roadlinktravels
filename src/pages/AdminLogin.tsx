@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import NoIndex from "@/components/NoIndex";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -72,6 +73,7 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
+      <NoIndex title="Admin Login | Roadlink Tours and Travels" />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto w-12 h-12 rounded-full bg-primary flex items-center justify-center mb-4">
