@@ -1,83 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://roadlinktravels.lovable.app/</loc>
+    <loc>https://roadlinktoursandtravels.com/</loc>
     <priority>1.0</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/about</loc>
+    <loc>https://roadlinktoursandtravels.com/about</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/services</loc>
+    <loc>https://roadlinktoursandtravels.com/services</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tariff/day-basis</loc>
+    <loc>https://roadlinktoursandtravels.com/tariff/day-basis</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tariff/km-basis</loc>
+    <loc>https://roadlinktoursandtravels.com/tariff/km-basis</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tour-packages/1-day</loc>
+    <loc>https://roadlinktoursandtravels.com/tour-packages/1-day</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tour-packages/2-days</loc>
+    <loc>https://roadlinktoursandtravels.com/tour-packages/2-days</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tour-packages/3-days</loc>
+    <loc>https://roadlinktoursandtravels.com/tour-packages/3-days</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tour-packages/4-days</loc>
+    <loc>https://roadlinktoursandtravels.com/tour-packages/4-days</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tour-packages/5-days</loc>
+    <loc>https://roadlinktoursandtravels.com/tour-packages/5-days</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tour-packages/6-days</loc>
+    <loc>https://roadlinktoursandtravels.com/tour-packages/6-days</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tour-packages/7-days</loc>
+    <loc>https://roadlinktoursandtravels.com/tour-packages/7-days</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/tour-packages/8-days</loc>
+    <loc>https://roadlinktoursandtravels.com/tour-packages/8-days</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/why-us</loc>
+    <loc>https://roadlinktoursandtravels.com/why-us</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/testimonials</loc>
+    <loc>https://roadlinktoursandtravels.com/testimonials</loc>
     <priority>0.6</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://roadlinktravels.lovable.app/contact</loc>
+    <loc>https://roadlinktoursandtravels.com/contact</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://roadlinktoursandtravels.com/payment-review</loc>
+    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
   </url>
 </urlset>

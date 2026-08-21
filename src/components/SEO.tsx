@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-const SITE_URL = "https://roadlinktravels.lovable.app";
+const SITE_URL = "https://roadlinktoursandtravels.com";
 const DEFAULT_DESC =
   "Roadlink Tours and Travels — best taxi service in Coimbatore. 24/7 cab booking, airport taxi, outstation trips to Ooty, Munnar, Kodaikanal, Mysore, Valparai, luxury sedan rentals & tour packages.";
 

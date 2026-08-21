@@ -15,6 +15,7 @@ import QuotationManager from "@/components/admin/QuotationManager";
 import BannerManager from "@/components/admin/BannerManager";
 import TourPlaceImagesManager from "@/components/admin/TourPlaceImagesManager";
 import BillingModule from "@/components/admin/BillingModule";
+import NoIndex from "@/components/NoIndex";
 
 const homeContentSections = [
   { key: "hero", label: "Hero Section", fields: ["title", "subtitle", "content", "image_url"] },
@@ -74,6 +75,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-muted/30">
+      <NoIndex title="Admin Dashboard | Roadlink Tours and Travels" />
       {/* Header */}
       <header className="bg-background border-b border-border px-4 py-3 sticky top-0 z-50">
         <div className="container mx-auto flex items-center justify-between">
