@@ -87,7 +87,7 @@ const Home = () => {
           "@type": "TaxiService",
           name: "Roadlink Tours and Travels",
           description: "Best taxi service in Coimbatore offering 24/7 cab booking, airport taxi, outstation trips and luxury car rentals.",
-          url: "https://roadlinktravels.lovable.app",
+          url: "https://roadlinktoursandtravels.com",
           telephone: "+918248199154",
           priceRange: "₹₹",
           areaServed: ["Coimbatore", "Ooty", "Munnar", "Kodaikanal", "Mysore", "Valparai", "Tamil Nadu"],

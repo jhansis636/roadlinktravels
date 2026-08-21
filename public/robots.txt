@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://roadlinktravels.lovable.app/sitemap.xml
+Sitemap: https://roadlinktoursandtravels.com/sitemap.xml
