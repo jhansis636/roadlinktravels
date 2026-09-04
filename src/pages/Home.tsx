@@ -120,10 +120,16 @@ const Home = () => {
         <Suspense fallback={null}><PageSlider pageName="home" className="container mx-auto px-4 py-8" /></Suspense>
       </div>
       
+      {/* Our Videos */}
+      <div data-anim="section">
+        <Suspense fallback={null}><YouTubeVideosSection /></Suspense>
+      </div>
+
       {/* Home Page Videos */}
       <div data-anim="section">
         <Suspense fallback={null}><PageVideos pageName="home" title="Watch Our Videos" /></Suspense>
       </div>
+
       
       {/* Vehicle Booking Section */}
       <Suspense fallback={null}><RadialLogoMenu /></Suspense>
