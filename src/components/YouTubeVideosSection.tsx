@@ -43,10 +43,15 @@ const YouTubeVideosSection = () => {
               <AspectRatio ratio={16 / 9} className="bg-muted">
                 <img
                   src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`}
-                  srcSet={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg 480w, https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg 1280w`}
                   alt={v.title}
                   loading="lazy"
                   decoding="async"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.src.includes("/default.jpg")) {
+                      target.src = `https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;
+                    }
+                  }}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
