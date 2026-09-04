@@ -6,6 +6,7 @@ const CabBookingForm = lazy(() => import("@/components/CabBookingForm"));
 const VehicleBookingSection = lazy(() => import("@/components/VehicleBookingSection"));
 const PageSlider = lazy(() => import("@/components/PageSlider"));
 const PageVideos = lazy(() => import("@/components/PageVideos"));
+const YouTubeVideosSection = lazy(() => import("@/components/YouTubeVideosSection"));
 const Sitemap = lazy(() => import("@/components/Sitemap"));
 const RadialLogoMenu = lazy(() => import("@/components/RadialLogoMenu"));
 import { Link } from "react-router-dom";
