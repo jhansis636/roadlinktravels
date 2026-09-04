@@ -7,6 +7,7 @@ const VehicleBookingSection = lazy(() => import("@/components/VehicleBookingSect
 const PageSlider = lazy(() => import("@/components/PageSlider"));
 const PageVideos = lazy(() => import("@/components/PageVideos"));
 const YouTubeVideosSection = lazy(() => import("@/components/YouTubeVideosSection"));
+const GoogleReviewsSection = lazy(() => import("@/components/GoogleReviewsSection"));
 const Sitemap = lazy(() => import("@/components/Sitemap"));
 const RadialLogoMenu = lazy(() => import("@/components/RadialLogoMenu"));
 import { Link } from "react-router-dom";
@@ -124,6 +125,11 @@ const Home = () => {
       {/* Our Videos */}
       <div data-anim="section">
         <Suspense fallback={null}><YouTubeVideosSection /></Suspense>
+      </div>
+
+      {/* Google-style customer reviews */}
+      <div data-anim="section">
+        <Suspense fallback={null}><GoogleReviewsSection /></Suspense>
       </div>
 
       {/* Home Page Videos */}
