@@ -117,6 +117,15 @@ const Home = () => {
         />
       </div>
 
+      <section className="bg-background px-4 py-6 text-center">
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+          Coimbatore Taxi &amp; Travel Services
+        </h1>
+        <p className="mx-auto mt-3 max-w-3xl text-base text-muted-foreground md:text-lg">
+          Roadlink Tours and Travels provides local taxi rides, airport transfers, and outstation trips from Coimbatore.
+        </p>
+      </section>
+
       {/* Home Page Slider */}
       <div data-anim="banner">
         <Suspense fallback={null}><PageSlider pageName="home" className="container mx-auto px-4 py-8" /></Suspense>
